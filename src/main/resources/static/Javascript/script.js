@@ -35,7 +35,7 @@
         container.classList.remove("active");
     });
     
-    
+   
     
     document.getElementById("signupButton").addEventListener("click", function(event) {
     var form = document.getElementById("registrationForm");
