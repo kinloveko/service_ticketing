@@ -1,5 +1,4 @@
 package com.ticketing_project.Ticketing.Project;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import java.util.Random;
+import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TicketController {
 	
@@ -23,10 +22,20 @@ public class TicketController {
 		return "redirect:/dashboard";
 	}
 	
-	@GetMapping("/tickets/all")
-	@ResponseBody
-	public List<Ticket> getAllTickets(){
-		return ticketService.getAllTickets();
+	/*
+	 * @GetMapping("/tickets/all")
+	 * 
+	 * @ResponseBody public List<Ticket> getAllTickets(){ return
+	 * ticketService.getAllTickets(); }
+	 */
+	
+	@GetMapping("/dashboard")
+	public ModelAndView getAllTicket() {
+		List<Ticket>list=ticketService.getAllTickets();
+//		ModelAndView m = new ModelAndView();
+//		m.setViewName("dashboard");
+//		m.addObject("ticket",list);
+		return new ModelAndView("dashboard","Ticket",list);
 	}
 	
 	@GetMapping("/tickets/all/filter")

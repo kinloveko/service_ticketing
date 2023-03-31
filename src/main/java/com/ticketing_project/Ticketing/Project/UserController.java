@@ -27,12 +27,6 @@ public class UserController {
  	return "Login";
 	}
 
-	@GetMapping("/dashboard")
-	public String dashboard() {
- 	return "dashboard";
-	}
-	
-	
 	@PostMapping("/save")
 	public String addUser(@ModelAttribute User user) {
 		userService.save(user);
