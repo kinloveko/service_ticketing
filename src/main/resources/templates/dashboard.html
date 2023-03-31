@@ -3,7 +3,8 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+	<!-- Fontawesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<!-- Boxicons -->
 	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 	<!-- My CSS -->
@@ -115,7 +116,7 @@
 						</li>
 					</ul>
 				</div>
-				<a style="cursor:pointer;" data-toggle="modal" data-target="#exampleModal" class="btn-download">
+				<a style="cursor:pointer;" data-toggle="modal" data-target="#createTicket" class="btn-download">
 					<i class='bx bxs-cloud-download' ></i>
 					<span class="text">Create Ticket</span>
 				</a>
@@ -155,103 +156,39 @@
 					</div>
 					<table>
 						<thead>
-							<tr>								
+							<tr>	
+								<th>#</th>							
 								<th>User</th>
 								<th>Ticket ID</th>
 								<th>Title</th>
 								<th>Date issue</th>
 								<th>Status</th>
+								<th>Action</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
+							<tr th:each="b, i :${Ticket}">	
+								<td th:text="${i.count}"></td>
+								<td th:text="${b.user_name}"></td>
+								<td th:text="${b.ticket_id}"></td>
+								<td th:text="${b.title}"></td>
+								<td th:text="${b.created_on}"></td>
+								<td th:text="${b.status}"><span class="status completed"></span></td>
 								<td>
-									<img src="img/people.png">
-									<p>John Doe</p>
+								<button type="button" class="btn btn-primary my-2 ml-2" data-toggle="modal" data-target="#viewTicket"><i data-toggle="tooltip" class="fa fa-eye" style="font-size:20px;"></i></button>
+								<button type="button" class="btn btn-success my-2" data-toggle="modal" data-target="#editTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
+								<button type="button" class="btn btn-danger my-2"><i class="fa fa-trash" style="font-size:20px;"></i></button>
 								</td>
-								<td>01</td>
-								<td>No Display</td>
-								<td>01-10-2021</td>
-								<td><span class="status completed">Completed</span></td>
-							</tr>
-							<tr>
-								<td>
-									<img src="img/people.png">
-									<p>John Doe</p>
-								</td>
-								<td>01</td>
-								<td>No Display</td>
-								<td>01-10-2021</td>
-								<td><span class="status completed">Completed</span></td>
-							</tr>
-							<tr>
-								<td>
-									<img src="img/people.png">
-									<p>John Doe</p>
-								</td>
-								<td>01</td>
-								<td>No Display</td>
-								<td>01-10-2021</td>
-								<td><span class="status pending">Pending</span></td>
-							</tr>
-							<tr>
-								<td>
-									<img src="img/people.png">
-									<p>John Doe</p>
-								</td>
-								<td>01</td>
-								<td>No Display</td>
-								<td>01-10-2021</td>
-								<td><span class="status pending">Pending</span></td>
-							</tr>
-							<tr>
-								<td>
-									<img src="img/people.png">
-									<p>John Doe</p>
-								</td>
-								<td>01</td>
-								<td>No Display</td>
-								<td>01-10-2021</td>
-								<td><span class="status pending">Pending</span></td>
-							</tr>
+							</tr>							
 						</tbody>
 					</table>
-				</div>
-				<div class="todo">
-					<div class="head">
-						<h3>Todos</h3>
-						<i class='bx bx-plus' ></i>
-						<i class='bx bx-filter' ></i>
-					</div>
-					<ul class="todo-list">
-						<li class="completed">
-							<p>Todo List</p>
-							<i class='bx bx-dots-vertical-rounded' ></i>
-						</li>
-						<li class="completed">
-							<p>Todo List</p>
-							<i class='bx bx-dots-vertical-rounded' ></i>
-						</li>
-						<li class="not-completed">
-							<p>Todo List</p>
-							<i class='bx bx-dots-vertical-rounded' ></i>
-						</li>
-						<li class="completed">
-							<p>Todo List</p>
-							<i class='bx bx-dots-vertical-rounded' ></i>
-						</li>
-						<li class="not-completed">
-							<p>Todo List</p>
-							<i class='bx bx-dots-vertical-rounded' ></i>
-						</li>
-					</ul>
-				</div>
+				</div>			
 			</div>
 		</main>
 		<!-- MAIN -->
-		<!-- Modal -->
-		<form th:action="@{/tickets/post-ticket}" method="post">
-		<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<!-- Create Ticket Modal -->
+		<form method="post" th:action="@{/tickets/post-ticket}">
+		<div class="modal fade" id="createTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		  <div class="modal-dialog" role="document">
 		    <div class="modal-content">
 		      <div class="modal-header">
@@ -281,11 +218,82 @@
 		      </div>
 		    </div>
 		  </div>
-		</div>
-		</form>
+	  </div>
+	  </form>
+ 	<!-- Create Ticket End Modal -->
+	  <!-- View Ticket Modal -->
+		
+		<div class="modal fade" id="viewTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel">Create Ticket</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <form method="post" th:action="@{/tickets/edit-ticket}">
+		      <div class="modal-body">
+		      	<div class="form-group">
+				  <label for="title">Ticket ID:</label>
+				  <input type="text" class="form-control" name="ticket_id">
+				</div>
+				<div class="form-group">
+				  <label for="title">Title:</label>
+				  <input type="text" class="form-control" name="title">
+				</div>
+				<div class="form-group">
+				  <label for="issue">Issue:</label>
+				  <textarea class="form-control" rows="5" name="description"></textarea>
+				  			
+				</div>
+		      </div>
+		      </form>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary" id="createTicket">Save ticket</button>
+		      </div>
+		    </div>
+		  </div>
+		  </div>
+		  
+		  <!-- View Ticket End Modal -->
+		  <!-- Edit Ticket Modal -->
+		<form>
+		<div class="modal fade" id="editTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel">Edit Ticket</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+				<div class="form-group">
+				  <label for="title">Title:</label>
+				  <input type="text" class="form-control" name="title">
+				</div>
+				<div class="form-group">
+				  <label for="issue">Issue:</label>
+				  <textarea class="form-control" rows="5" name="description"></textarea>
+				  			
+				</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary" id="createTicket">Save ticket</button>
+		      </div>
+		    </div>
+		  </div>
+		  </div>
+		  </form>
+		  <!-- Edit Ticket End Modal -->	 
+		
 	</section>
 	<!-- CONTENT -->
 	
 
 	<script src="Javascript/dashboard.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </body>
