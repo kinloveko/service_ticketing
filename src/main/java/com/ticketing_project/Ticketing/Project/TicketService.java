@@ -31,7 +31,7 @@ public class TicketService {
 		final List<Ticket> filteredTicketList = repo
 				.findAll()
 				.stream()
-				.filter(ticket -> ticket.getStatus().equals(status) && ticket.getUserId() == userId)
+				.filter(ticket -> ticket.getStatus().equals(status) && ticket.getUser_id() == userId)
 				.toList();
 		return filteredTicketList;
 	}
@@ -39,7 +39,7 @@ public class TicketService {
 	public List<Ticket> getTicketsByUserId(int userId){
 		return repo.findAll()
 				.stream()
-				.filter(ticket -> ticket.getUserId() == userId)
+				.filter(ticket -> ticket.getUser_id() == userId)
 				.toList();
 	}
 }

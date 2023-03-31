@@ -33,6 +33,11 @@ public class Ticket {
 	
 	@Getter
 	@Setter
+	@Column(name="user_name", nullable=false)
+	private String user_name;
+	
+	@Getter
+	@Setter
 	@Column(name="title", nullable=false)
 	private String title;
 	
@@ -44,8 +49,8 @@ public class Ticket {
 
 	@Getter
 	@Setter
-	@Column(name="status", nullable=false)
-	private String status;
+	@Column(name="status")
+	private String status="Pending";
 	
 	@Getter
 	@Setter
@@ -55,7 +60,8 @@ public class Ticket {
 
 	@Getter
 	@Setter
-	@Column(name="userId", nullable=false, updatable=false)
-	private int userId;
+	@Column(name="user_id", updatable=false)
+	private int user_id;
+	
 }
 

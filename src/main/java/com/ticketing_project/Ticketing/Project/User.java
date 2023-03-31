@@ -32,7 +32,6 @@ public class User {
 	@Setter
 	private int user_id;
 	
-	
 	@Getter
 	@Setter
 	@Column(name="user_email", nullable=false)
@@ -51,7 +50,6 @@ public class User {
 	@Setter
 	@Column(name="user_role", nullable=false)
 	private String user_role = "client";
-	 
 }
 
 

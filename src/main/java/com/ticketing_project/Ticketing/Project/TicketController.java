@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
+import java.util.Random;
 @Controller
 public class TicketController {
 	
@@ -20,7 +20,7 @@ public class TicketController {
 	@PostMapping("/tickets/post-ticket")
 	public String addNewTicket(@ModelAttribute Ticket newTicket) {
 		ticketService.save(newTicket);
-		return "redirect:/";
+		return "redirect:/dashboard";
 	}
 	
 	@GetMapping("/tickets/all")
