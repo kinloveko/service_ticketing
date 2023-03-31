@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,19 +19,27 @@ public class TicketController {
 	@Autowired
 	private TicketService ticketService;
 	
+	//HTTP POST method
 	@PostMapping("/tickets/post-ticket")
 	public void addNewTicket(@ModelAttribute Ticket newTicket) {
 		ticketService.save(newTicket);
 	}
 	
+	//HTTP PUT method
 	@PutMapping("/tickets/update-ticket/{ticketId}")
 	@ResponseBody
 	public void updateTicket(@PathVariable final int ticketId, @ModelAttribute Ticket updatedTicket) {
 		ticketService.update(ticketId, updatedTicket);
 	}
 	
-	// HTTP GET methods
+	//HTTP DELETE method
+	@DeleteMapping("/tickets/delete/{ticketId}")
+	@ResponseBody
+	public void deleteTicket(@PathVariable final int ticketId) {
+		ticketService.delete(ticketId);
+	}
 	
+	// HTTP GET methods
 	@GetMapping("/tickets/all")
 	@ResponseBody
 	public List<Ticket> getAllTickets(){

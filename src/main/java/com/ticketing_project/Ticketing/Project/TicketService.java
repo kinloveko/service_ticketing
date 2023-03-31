@@ -35,9 +35,20 @@ public class TicketService {
 		    if (updatedTicket.getUser_id() != 0) {
 		    	matchingTicket.get(0).setUser_id(updatedTicket.getUser_id());
 		    }
+		    
 		    repo.save(matchingTicket.get(0));
 		}
-		return; 
+	}
+	
+	public void delete(int ticketId) {
+		//List containing the ticket that matches the ticketId
+		List<Ticket> matchingTicket = getAllTickets().stream()
+				.filter(ticket -> ticket.getTicket_id() == ticketId)
+				.toList();
+		
+		if(matchingTicket.size() != 0) {
+		    repo.delete(matchingTicket.get(0));
+		}
 	}
 	
 	public List<Ticket> getAllTickets()
