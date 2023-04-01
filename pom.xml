@@ -50,10 +50,6 @@
 		<dependency>
 		    <groupId>mysql</groupId>
 		    <artifactId>mysql-connector-java</artifactId>
-<<<<<<< HEAD
-=======
-		    <version>8.0.28</version>
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 		</dependency>
 
 	

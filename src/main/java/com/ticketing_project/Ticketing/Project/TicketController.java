@@ -1,17 +1,9 @@
 package com.ticketing_project.Ticketing.Project;
-<<<<<<< HEAD
-<<<<<<< HEAD
 import java.util.ArrayList;
-=======
->>>>>>> 977990951b9cc323b927cd061510243ef7ad865a
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
-=======
-import java.util.List;
-
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,20 +12,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import org.springframework.web.bind.annotation.RequestParam;
->>>>>>> 977990951b9cc323b927cd061510243ef7ad865a
-=======
-import org.springframework.web.bind.annotation.RequestParam;
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
 @Controller
 public class TicketController {
 	
-<<<<<<< HEAD
 	/*
 	 * @GetMapping("/tickets/assigned/{userId}/filter")
 	 * 
@@ -53,17 +37,13 @@ public class TicketController {
 	
 	
 	
-=======
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 	@Autowired
 	private TicketService ticketService;
 	
 	//HTTP POST method
 	@PostMapping("/tickets/post-ticket")
-	public void addNewTicket(@ModelAttribute Ticket newTicket) {
+	public String addNewTicket(@ModelAttribute Ticket newTicket) {
 		ticketService.save(newTicket);
-<<<<<<< HEAD
-<<<<<<< HEAD
 		return "redirect:/dashboard";
 		}
 	
@@ -75,64 +55,9 @@ public class TicketController {
 	
 	//HTTP DELETE method
 	@DeleteMapping("/tickets/delete/{ticketId}")
-=======
-=======
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
-	}
-	
-	//HTTP PUT method
-	@PutMapping("/tickets/update-ticket/{ticketId}")
-	@ResponseBody
-	public void updateTicket(@PathVariable final int ticketId, @ModelAttribute Ticket updatedTicket) {
-		ticketService.update(ticketId, updatedTicket);
-	}
-	
-	//HTTP DELETE method
-	@DeleteMapping("/tickets/delete/{ticketId}")
 	@ResponseBody
 	public void deleteTicket(@PathVariable final int ticketId) {
 		ticketService.delete(ticketId);
-	}
-	
-	// HTTP GET methods
-	@GetMapping("/tickets/all")
-<<<<<<< HEAD
->>>>>>> 977990951b9cc323b927cd061510243ef7ad865a
-	@ResponseBody
-	public void deleteTicket(@PathVariable final int ticketId) {
-		ticketService.delete(ticketId);
-=======
-	@ResponseBody
-	public List<Ticket> getAllTickets(){
-		return ticketService.getAllTickets();
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
-	}
-	/*
-	 * @GetMapping("/tickets/all")
-	 * 
-	 * @ResponseBody public List<Ticket> getAllTickets(){ return
-	 * ticketService.getAllTickets(); }
-	 */
-	
-	@GetMapping("/dashboard")
-	public ModelAndView getAllTicket() {
-		List<Ticket>list=ticketService.getAllTickets();
-//		ModelAndView m = new ModelAndView();
-//		m.setViewName("dashboard");
-//		m.addObject("ticket",list);
-		return new ModelAndView("dashboard","Ticket",list);
-	}
-	
-<<<<<<< HEAD
-	@GetMapping("/tickets/{ticketId}")
-	public Ticket getTicketById(int ticketId) {
-		return ticketService.getTicketById(ticketId);
-=======
-	@GetMapping("/tickets/all/filter")
-	@ResponseBody
-	public List<Ticket> getAllTicketsByStatus(@RequestParam final String status){
-		return ticketService.getTicketsByStatus(status);
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 	}
 	
 	@GetMapping("/tickets/{ticketId}")
@@ -146,7 +71,6 @@ public class TicketController {
 		return ticketService.getTicketsByUserId(userId);
 	}
 	
-<<<<<<< HEAD
 	
 
     @GetMapping("/dashboard")
@@ -185,12 +109,3 @@ public class TicketController {
     }
 
 }
-=======
-	@GetMapping("/tickets/assigned/{userId}/filter")
-	@ResponseBody
-	public List<Ticket> getTicketsByUserIdAndStatus(@PathVariable int userId, 
-			@RequestParam String status){
-		return ticketService.getTicketsByStatusAndUserId(userId, status);
-	}
-}
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673

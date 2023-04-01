@@ -1,11 +1,6 @@
 package com.ticketing_project.Ticketing.Project;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
-=======
-
-
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,10 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-<<<<<<< HEAD
 import org.springframework.ui.Model;
-=======
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,12 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class UserController {
 
 	@Autowired
-<<<<<<< HEAD
 	private TicketService ticketService;
 	
 	@Autowired
-=======
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 	private UserService userService;
 	
 	@GetMapping("/")
@@ -41,14 +30,8 @@ public class UserController {
  	return "Login";
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 	
 	
-=======
->>>>>>> 977990951b9cc323b927cd061510243ef7ad865a
-=======
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 	@PostMapping("/save")
 	public String addUser(@ModelAttribute User user) {
 		userService.save(user);
@@ -73,7 +56,6 @@ public class UserController {
 	        	session.setAttribute("user_id", i.getUser_id());
 	        	session.setAttribute("user_name", i.getUser_name());
 	        	session.setAttribute("user_role", i.getUser_role());
-<<<<<<< HEAD
 	        
 	        	if(i.getUser_role().equals("client")) {
 	        	      return "redirect:/dashboard"; // return the name of the dashboard page
@@ -83,15 +65,11 @@ public class UserController {
 	        	}
 	        	
 	      
-=======
-	            return "redirect:/dashboard"; // return the name of the dashboard page
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 	        }
 	    }
 	    return "login"; // return the name of the login page if no matching user is found
 	}
 	
-<<<<<<< HEAD
 
 	
 	@GetMapping("/admin.ark")
@@ -139,8 +117,6 @@ public String adminPage(Model m) {
 	
 	
 	
-=======
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 		session.removeAttribute("user_email");

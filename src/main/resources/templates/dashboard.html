@@ -10,19 +10,11 @@
 	<!-- My CSS -->
 	<link rel="stylesheet" href="css/style.css">
 	<!-- My Bootstrap CSS -->
-<<<<<<< HEAD
 		<link rel="stylesheet" th:href="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'">
 <script th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
 <script th:src="'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js'"></script>
 <script th:src="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'"></script>
 	
-=======
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	<!-- My Bootstrap JS -->
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 	<title>Dashboard</title>
 </head>
 <body>
@@ -41,31 +33,19 @@
 					<span class="text">Dashboard</span>
 				</a>
 			</li>
-<<<<<<< HEAD
 			<li class="menu-item " data-table="pending" onclick="handleClick(this)">
-=======
-			<li>
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 				<a href="#">
 					<i class='bx bxs-shopping-bag-alt' ></i>
 					<span class="text">My Tickets</span>
 				</a>
 			</li>
-<<<<<<< HEAD
 			<li class="menu-item " data-table="ongoing" onclick="handleClick(this)">
-=======
-			<li>
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 				<a href="#">
 					<i class='bx bxs-doughnut-chart' ></i>
 					<span class="text">On-going Tickets</span>
 				</a>
 			</li>
-<<<<<<< HEAD
 			<li class="menu-item " data-table="completed" onclick="handleClick(this)">
-=======
-			<li>
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 				<a href="#">
 					<i class='bx bxs-message-dots' ></i>
 					<span class="text">Completed Tickets</span>
@@ -142,7 +122,6 @@
 				</a>
 			</div>
 
-<<<<<<< HEAD
 		<ul class="box-info">
    <li class="menu-item active" data-table="pending" onclick="handleClick(this)">
         <i class='bx bxs-calendar-check' ></i>
@@ -168,7 +147,6 @@
 </ul>
 
 
-<<<<<<< HEAD
 			
 <!-- Pending Table -->
 		<div class="table-data" id="pending-table">
@@ -289,7 +267,7 @@
                                 <td th:text="${b.conforme_no}">
                                 <span class="status completed"></span></td>
                                 <td>
-                              <button type="button" class="btn btn-primary my-2 ml-2 eBtn" th:href="@{/tickets/{ticketId}(ticketId=${b.ticket_id})}" data-toggle="modal" data-target="#viewTicket">
+                              <button type="button" class="btn btn-primary my-2 ml-2 eBtn"  data-toggle="modal" data-target="#viewTicket">
 							    <i data-toggle="tooltip" class="fa fa-eye" style="font-size:20px;"></i>
 							</button>
 
@@ -303,75 +281,6 @@
     </div>
   
     
-=======
-=======
-			<ul class="box-info">
-				<li>
-					<i class='bx bxs-calendar-check' ></i>
-					<span class="text">
-						<h3>1020</h3>
-						<p>New Tickets</p>
-					</span>
-				</li>
-				<li>
-					<i class='bx bxs-group' ></i>
-					<span class="text">
-						<h3>2834</h3>
-						<p>On-oging Tickets</p>
-					</span>
-				</li>
-				<li>
-					<i class='bx bxs-check-circle' ></i>
-					<span class="text">
-						<h3>69</h3>
-						<p>Completed Tickets</p>
-					</span>
-				</li>
-			</ul>
-
-
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
-			<div class="table-data">
-				<div class="order">
-					<div class="head">
-						<h3>All tickets</h3>
-						<i class='bx bx-search' ></i>
-						<i class='bx bx-filter' ></i>
-					</div>
-					<table>
-						<thead>
-							<tr>	
-								<th>#</th>							
-								<th>User</th>
-								<th>Ticket ID</th>
-								<th>Title</th>
-								<th>Date issue</th>
-								<th>Status</th>
-								<th>Action</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:each="b, i :${Ticket}">	
-								<td th:text="${i.count}"></td>
-								<td th:text="${b.user_name}"></td>
-								<td th:text="${b.ticket_id}"></td>
-								<td th:text="${b.title}"></td>
-								<td th:text="${b.created_on}"></td>
-								<td th:text="${b.status}"><span class="status completed"></span></td>
-								<td>
-								<button type="button" class="btn btn-primary my-2 ml-2" data-toggle="modal" data-target="#viewTicket"><i data-toggle="tooltip" class="fa fa-eye" style="font-size:20px;"></i></button>
-								<button type="button" class="btn btn-success my-2" data-toggle="modal" data-target="#editTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
-								<button type="button" class="btn btn-danger my-2"><i class="fa fa-trash" style="font-size:20px;"></i></button>
-								</td>
-							</tr>							
-						</tbody>
-					</table>
-				</div>			
-			</div>
-<<<<<<< HEAD
->>>>>>> 977990951b9cc323b927cd061510243ef7ad865a
-=======
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 		</main>
 		<!-- MAIN -->
 		<!-- Create Ticket Modal -->
@@ -410,8 +319,6 @@
 	  </form>
  	<!-- Create Ticket End Modal -->
 	  <!-- View Ticket Modal -->
-<<<<<<< HEAD
-<<<<<<< HEAD
 	<!-- Modal Form -->
   <!-- Add this to your modal -->
   <form method="post" th:action="@{/tickets/post-ticket}">
@@ -468,48 +375,6 @@
     </div>
 </div>
 </form>
-=======
-=======
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
-		
-		<div class="modal fade" id="viewTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog" role="document">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel">Create Ticket</h5>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		          <span aria-hidden="true">&times;</span>
-		        </button>
-		      </div>
-		      <form method="post" th:action="@{/tickets/edit-ticket}">
-		      <div class="modal-body">
-		      	<div class="form-group">
-				  <label for="title">Ticket ID:</label>
-				  <input type="text" class="form-control" name="ticket_id">
-				</div>
-				<div class="form-group">
-				  <label for="title">Title:</label>
-				  <input type="text" class="form-control" name="title">
-				</div>
-				<div class="form-group">
-				  <label for="issue">Issue:</label>
-				  <textarea class="form-control" rows="5" name="description"></textarea>
-				  			
-				</div>
-		      </div>
-		      </form>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		        <button type="submit" class="btn btn-primary" id="createTicket">Save ticket</button>
-		      </div>
-		    </div>
-		  </div>
-		  </div>
-		  
-<<<<<<< HEAD
->>>>>>> 977990951b9cc323b927cd061510243ef7ad865a
-=======
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 		  <!-- View Ticket End Modal -->
 		  <!-- Edit Ticket Modal -->
 		<form>
@@ -546,10 +411,8 @@
 	</section>
 	<!-- CONTENT -->
 	
-<<<<<<< HEAD
 	<script src="Javascript/dashboard.js"></script>
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<<<<<<< HEAD
 	
 		<script type="text/javascript">
 		
@@ -613,11 +476,4 @@ function handleClick(menuItem) {
 	}
 </script>
 	
-=======
->>>>>>> 977990951b9cc323b927cd061510243ef7ad865a
-=======
-
-	<script src="Javascript/dashboard.js"></script>
-	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 </body>

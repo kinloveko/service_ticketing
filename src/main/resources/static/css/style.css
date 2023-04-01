@@ -153,13 +153,10 @@ body {
 #sidebar .side-menu.top li a:hover {
 	color: var(--blue);
 }
-<<<<<<< HEAD
 
 
 
 
-=======
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 #sidebar .side-menu li a .bx {
 	min-width: calc(60px  - ((4px + 6px) * 2));
 	display: flex;
@@ -221,12 +218,9 @@ body {
 	font-size: 16px;
 	transition: .3s ease;
 }
-<<<<<<< HEAD
 
 
 
-=======
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 #content nav .nav-link:hover {
 	color: var(--blue);
 }
@@ -482,7 +476,11 @@ body {
 #content main .table-data .order table tbody tr:hover {
 	background: var(--grey);
 }
-<<<<<<< HEAD
+
+#content main .menu .li:hover{
+		background: #f2f2f2;
+	box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
 
 #content main .menu-item:hover {
   background-color: #f2f2f2;
@@ -490,8 +488,6 @@ body {
    cursor:pointer;
 }
 
-=======
->>>>>>> 017941997f54cde4866ef63ecd3a7de9b25d2673
 #content main .table-data .order table tr td .status {
 	font-size: 10px;
 	padding: 6px 16px;
