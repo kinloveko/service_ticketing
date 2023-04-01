@@ -41,6 +41,7 @@ public class User {
 	@Setter
 	@Column(name="user_name", nullable=false)
 	private String user_name;
+	
 	@Getter
 	@Setter
 	@Column(name="user_password", nullable=false)

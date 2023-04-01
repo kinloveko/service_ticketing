@@ -1,5 +1,4 @@
 package com.ticketing_project.Ticketing.Project;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import java.util.Random;
+import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TicketController {
 	
@@ -24,26 +23,6 @@ public class TicketController {
 	public void addNewTicket(@ModelAttribute Ticket newTicket) {
 		ticketService.save(newTicket);
 	}
-	
-	//HTTP PUT method
-	@PutMapping("/tickets/update-ticket/{ticketId}")
-	@ResponseBody
-	public void updateTicket(@PathVariable final int ticketId, @ModelAttribute Ticket updatedTicket) {
-		ticketService.update(ticketId, updatedTicket);
-	}
-	
-	//HTTP DELETE method
-	@DeleteMapping("/tickets/delete/{ticketId}")
-	@ResponseBody
-	public void deleteTicket(@PathVariable final int ticketId) {
-		ticketService.delete(ticketId);
-	}
-	
-	// HTTP GET methods
-	@GetMapping("/tickets/all")
-	@ResponseBody
-	public List<Ticket> getAllTickets(){
-		return ticketService.getAllTickets();
 	}
 	
 	@GetMapping("/tickets/all/filter")
