@@ -23,6 +23,41 @@ public class TicketController {
 	public void addNewTicket(@ModelAttribute Ticket newTicket) {
 		ticketService.save(newTicket);
 	}
+	
+	//HTTP PUT method
+	@PutMapping("/tickets/update-ticket/{ticketId}")
+	@ResponseBody
+	public void updateTicket(@PathVariable final int ticketId, @ModelAttribute Ticket updatedTicket) {
+		ticketService.update(ticketId, updatedTicket);
+	}
+	
+	//HTTP DELETE method
+	@DeleteMapping("/tickets/delete/{ticketId}")
+	@ResponseBody
+	public void deleteTicket(@PathVariable final int ticketId) {
+		ticketService.delete(ticketId);
+	}
+	
+	// HTTP GET methods
+	@GetMapping("/tickets/all")
+	@ResponseBody
+	public List<Ticket> getAllTickets(){
+		return ticketService.getAllTickets();
+	}
+	/*
+	 * @GetMapping("/tickets/all")
+	 * 
+	 * @ResponseBody public List<Ticket> getAllTickets(){ return
+	 * ticketService.getAllTickets(); }
+	 */
+	
+	@GetMapping("/dashboard")
+	public ModelAndView getAllTicket() {
+		List<Ticket>list=ticketService.getAllTickets();
+//		ModelAndView m = new ModelAndView();
+//		m.setViewName("dashboard");
+//		m.addObject("ticket",list);
+		return new ModelAndView("dashboard","Ticket",list);
 	}
 	
 	@GetMapping("/tickets/all/filter")
