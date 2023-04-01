@@ -15,16 +15,16 @@ public class TicketService {
 	public void save(Ticket ticket) {
 		repo.save(ticket);
 	}
-	
-	/*
-	 * public List<Ticket> getAllTickets() { final List<Ticket> ticketList =
-	 * repo.findAll(); return ticketList; }
-	 */
-	
-	public List<Ticket> getAllTickets(){
-		return repo.findAll();
+  
+	public Ticket getTicketById(int ticketId) {
+		List<Ticket> matchingTicket = getAllTickets().stream()
+				.filter(ticket -> ticket.getTicket_id() == ticketId)
+				.toList();
+		
+		if(matchingTicket.size() == 0) return null;
+		
+		return matchingTicket.get(0);
 	}
-
 	
 	public List<Ticket> getTicketsByStatus(String status){
 		final List<Ticket> filteredTicketList = repo.findByStatus(status);

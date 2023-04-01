@@ -51,6 +51,11 @@ public class User {
 	@Setter
 	@Column(name="user_role", nullable=false)
 	private String user_role = "client";
+	
+	@Getter
+	@Setter
+	@Column(name="user_status", nullable=false)
+	private String user_status = "active";
 }
 
 
