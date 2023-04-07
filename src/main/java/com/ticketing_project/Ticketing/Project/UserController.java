@@ -72,7 +72,7 @@ public class UserController {
 	
 
 	
-	@GetMapping("/admin.ark")
+@GetMapping("/admin.ark")
 public String adminPage(Model m) {
 		
     List<Ticket> list = ticketService.getAllTickets();
@@ -92,7 +92,7 @@ public String adminPage(Model m) {
             pendingTickets.add(t);
             pendingCount++;
         }
-        else if(t.getStatus().equals("on_going")) {
+        else if(t.getStatus().equals("ongoing")) {
         	   ongoingTickets.add(t);
                ongoingCount++;
         }
@@ -100,8 +100,9 @@ public String adminPage(Model m) {
         	 completedTickets.add(t);
         	 completedCount++;
         }
-}
-
+	}
+	
+	
 	m.addAttribute("pending_tickets", pendingTickets);
     m.addAttribute("pending_ticket_count", pendingCount);
     
@@ -114,8 +115,6 @@ public String adminPage(Model m) {
     return "admin.ark";
 
 }
-	
-	
 	
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {

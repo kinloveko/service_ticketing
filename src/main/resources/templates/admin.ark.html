@@ -4,12 +4,21 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+	<!-- Fontawesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<!-- Boxicons -->
 	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 	<!-- My CSS -->
 	<link rel="stylesheet" href="css/style.css">
 	<!-- My Bootstrap CSS -->
-	<link rel="stylesheet" th:href="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'">
+	<!-- My Bootstrap CSS -->
+	<link
+	  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
+	  rel="stylesheet"
+	/>
+	
+	<!-- My Bootstrap CSS -->
+		<link rel="stylesheet" th:href="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'">
 <script th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
 <script th:src="'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js'"></script>
 <script th:src="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'"></script>
@@ -165,17 +174,18 @@
                 </tr>
             </thead>
             <tbody>
-            <tr th:each="t : ${pending_tickets}">
+                <tr th:each="t : ${pending_tickets}">
 			    <td scope="row" th:text="${t.ticket_id}"></td>
 			     <td th:text="${t.created_on}"></td>
 			    <td th:text="${t.title}"></td>
 			    <td th:text="${t.description}"></td>
 			    <td th:text="${t.user_name}"></td>
 			    <td th:text="${t.status}"></td>
-			       <td>
-			       <a class="btn btn-success btn-round-1 eBtn">View</a>
-			       <a class="btn btn-danger btn-round-1">Delete</a>
-			       </td>
+			      <td style=" display: none;" th:text="${t.conforme_no}"></td>
+			    <td>
+	 			     	 <button type="button" class="btn btn-success my-2 eBtn" th:href="@{/tickets/{ticketId}(ticketId=${t.ticket_id})}"  data-toggle="modal"  data-target="#viewTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
+	                     <button type="button" class="btn btn-danger my-2"><i class="fa fa-trash" style="font-size:20px;"></i></button>
+               </td>
 				</tr>
             </tbody>
         </table>
@@ -212,7 +222,7 @@
 			    <td th:text="${t.user_name}"></td>
 			    <td th:text="${t.status}"></td>
 			       <td>
-			       <a class="btn btn-success btn-round-1">View</a>
+			       <a class="btn btn-success btn-round-1 conforme_ongoing">View</a>
 			       <a class="btn btn-danger btn-round-1">Delete</a>
 			       </td>
 				</tr>
@@ -261,54 +271,150 @@
 </div>
     
 			
-			<div id="myForm">
-	 <form>
-	<div class="modal fade" id="modalView" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">View Details</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-       
-          <div class="form-group">
-            <label for="id" class="col-form-label">Ticket No</label>
-            <input type="text" class="form-control" id="id" value="">
-          </div>
-         <div class="form-group">
-            <label for="date" class="col-form-label">Date Created</label>
-            <input type="text" class="form-control" id="date" value="">
-          </div>
-                 <div class="form-group">
-            <label for="description" class="col-form-label">Description</label>
-            <input type="text" class="form-control" id="description" value="">
-          </div>
-                 <div class="form-group">
-            <label for="name" class="col-form-label">Client Name</label>
-            <input type="text" class="form-control" id="name" value="">
-          </div>
-                 <div class="form-group">
-            <label for="status" class="col-form-label">Status</label>
-            <input type="text" class="form-control" id="status" value="">
-          </div>
-         
-       
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Conforme Slip</button>
-      </div>
+ <div id="myForm">
+	
+		<div class="modal fade" id="viewTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		    <div class="modal-dialog" role="document">
+		        <div class="modal-content">
+		            <div class="modal-header">
+		                <h5 class="modal-title" id="exampleModalLabel">View Ticket</h5>
+		                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		                    <span aria-hidden="true">&times;</span>
+		                </button>
+		            </div>
+		            
+		            <div class="modal-body">
+		    <div class="row">
+		        <div class="col-sm-6">
+		            <div class="form-group">
+		                <label for="id" class="col-form-label">Ticket No</label>
+		                <input type="text" class="form-control" id="id" name="ticket_id" readonly>
+		            </div>
+		        </div>
+		        <div class="col-sm-6">
+		            <div class="form-group">
+		                <label for="date" class="col-form-label">Date Created</label>
+		                <input type="text" class="form-control" id="date" name="created_on" readonly>
+		            </div>
+		        </div>
+		    </div>
+		    <div class="form-group">
+		        <label for="title" class="col-form-label">Title</label>
+		        <input type="text" class="form-control" id="title" name="title" readonly>
+		    </div>
+		    <div class="form-group">
+		        <label for="description" class="col-form-label">Description</label>
+		        <textarea class="form-control" id="description" name="description"></textarea>
+		    </div>
+		    <div class="form-group">
+		        <label for="name" class="col-form-label">Client Name</label>
+		        <input type="text" class="form-control" id="name" name="user_name" readonly>
+		    </div>
+		    <div class="form-group">
+		        <label for="status" class="col-form-label">Status</label>
+		        <input type="text" class="form-control" id="status" name="status" readonly>
+		    </div>
+		     <input type="hidden" class="form-control" id="conforme_no" name="conforme_no">
+		</div>
+		            <div class="modal-footer">
+		                     <button type="submit" class="btn btn-primary conforme_btn" >Conforme Slip</button>
+		                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		            </div>
+		            
+		        </div>
+		    </div>
+		</div>
+		
+	</div>	
+	
+	<!-- Conformed Slip Modal -->
+	<div class="table-data">
+		<form>
+		<div class="modal fade" id="create_conforme" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conforme Ticket</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="id" class="col-form-label">Ticket No.</label>
+                <input type="text" class="form-control" name="ticket_id" readonly>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="conforme_no" class="col-form-label">Conforme No.</label>
+                <input type="text" class="form-control" name="conforme_no" readonly>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
- </form>
+     <div class="row">
+        <div class="col-sm-6">
+    <div class="form-group">
+        <label for="title" class="col-form-label">Title</label>
+        <input type="text" class="form-control" id="title" name="title" readonly>
+    </div>
+    </div>
+          <div class="col-sm-6">
+    <div class="form-group">
+        <label for="title" class="col-form-label">Client name</label>
+        <input type="text" class="form-control" id="user_name" name="user_name" readonly>
+    </div>
+    </div>
+    </div>
+    <div class="form-group">
+        <label for="description" class="col-form-label">Description</label>
+        <textarea class="form-control" rows="5" name="description" readonly></textarea>
+    </div>
+     <div class="row">
+        <div class="col-sm-6">
+        <div class="mb-3">
+	  	<label for="customFile" class="form-label">Client's Signature</label>
+	  	<input type="file" class="form-control" id="customFile" disabled/>
 	</div>
-			
-			
-			
+    </div>
+    <div class="col-sm-6">
+     <div class="mb-3">
+	  	<label for="customFile" class="form-label">Proof of Payment</label>
+	  	<input type="file" class="form-control" id="customFile" disabled/>
+	</div>
+	</div>
+	</div>
+	
+    <div class="form-group">
+        <label for="conforme_date" class="col-form-label">Conforme date</label>
+        <input type="text" class="form-control" name="conforme_date" readonly>
+    </div>
+   <div class="form-group">
+        <label for="name" class="col-form-label">Amount</label>
+        <input type="text" class="form-control" name="amount">
+    </div>
+	
+	<div class="mb-3">
+	  	<label for="customFile" class="form-label">Sale's Team Signature</label>
+	  	<input type="file" class="form-control" id="customFile" />
+	</div>
+	</div>
+            <div class="modal-footer">
+                     <button type="submit" class="btn btn-primary" >Submit</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+            
+        </div>
+    </div>
+		  </div>
+		  </form>
+	</div>
+	
+	 <!-- Conformed Slip End Modal -->
+	
 		</main>
 		<!-- MAIN -->
 
@@ -319,22 +425,69 @@
 	<script src="Javascript/dashboard.js"></script>
 	
 	<script type="text/javascript">
+	// Add click event listener to the button in the first modal
+	$('.conforme_btn').on('click', function(event) {
+	    // Extract data from the input fields in the second modal
+	    var ticketId = $('input[name="ticket_id"]').val();
+	    var dateCreated = $('input[name="created_on"]').val();
+	    var title = $('input[name="title"]').val();
+	    var description = $('textarea[name="description"]').val();
+	    var userName = $('input[name="user_name"]').val();
+	    var status = $('input[name="status"]').val();
+	    var conforme_no = $('input[name="conforme_no"').val();
+	    var currentDate = new Date().toLocaleDateString('en-US');
+	    // Pass the data to the corresponding input fields in the third modal
+	    $('#create_conforme input[name="ticket_id"]').val(ticketId);
+	    $('#create_conforme input[name="created_on"]').val(dateCreated);
+	    $('#create_conforme input[name="title"]').val(title);
+	    $('#create_conforme textarea[name="description"]').val(description);
+	    $('#create_conforme input[name="user_name"]').val(userName);
+	    $('#create_conforme input[name="status"]').val(status);
+	    $('#create_conforme input[name="conforme_no"]').val(conforme_no);
+	    $('#create_conforme input[name="conforme_date"]').val(currentDate);
+	    // Show the third modal
+	
+	    $('#create_conforme').modal();
+	});
+	
+	
+	
+	function updateTicket() {
+		  const form = document.querySelector('#updateTicketForm');
+		  const formData = new FormData(form);
+
+		  fetch(form.action, {
+		    method: 'PUT',
+		    body: formData
+		  })
+		  .then(response => {
+		    if (response.ok) {
+		      location.reload();
+		    } else {
+		      console.error('Failed to update ticket');
+		    }
+		  })
+		  .catch(error => console.error(error));
+		}
+	
 	$(document).ready(function() {
-		$('.eBtn').on('click', function(event) {
-			var ticketId = $(this).closest('tr').find('td:eq(0)').text();
-			var dateCreated = $(this).closest('tr').find('td:eq(1)').text();
-			var title = $(this).closest('tr').find('td:eq(2)').text();
-			var description = $(this).closest('tr').find('td:eq(3)').text();
-			var userName = $(this).closest('tr').find('td:eq(4)').text();
-			var status = $(this).closest('tr').find('td:eq(5)').text();
-			$('#id').val(ticketId);
-			$('#date').val(dateCreated);
-			$('#title').val(title);
-			$('#description').val(description);
-			$('#name').val(userName);
-			$('#status').val(status);
-			$('#modalView').modal();
-		});
+	    $('.eBtn').on('click', function(event) {
+	        var ticketId = $(this).closest('tr').find('td:eq(0)').text();
+	        var dateCreated = $(this).closest('tr').find('td:eq(1)').text();
+	        var title = $(this).closest('tr').find('td:eq(2)').text();
+	        var description = $(this).closest('tr').find('td:eq(3)').text();
+	        var userName = $(this).closest('tr').find('td:eq(4)').text();
+	        var status = $(this).closest('tr').find('td:eq(5)').text();
+	        var conformeNo = $(this).closest('tr').find('td:eq(6)').text(); // retrieve the conforme_no value from the button's data-conforme-no attribute
+	        $('#id').val(ticketId);
+	        $('#date').val(dateCreated);
+	        $('#title').val(title);
+	        $('#description').val(description);
+	        $('#name').val(userName);
+	        $('#status').val(status);
+	        $('#conforme_no').val(conformeNo); // set the conforme_no value in the #modalView modal
+	        $('#modalView').modal();
+	    });
 	});
 </script>
 <script>

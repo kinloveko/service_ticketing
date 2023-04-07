@@ -10,11 +10,14 @@ public class TicketService {
 	
 	@Autowired
 	private TicketRepository repo;
+		
 	
 	
 	public void save(Ticket ticket) {
 		repo.save(ticket);
 	}
+	
+	
 	public void update(int ticketId, Ticket updatedTicket) {
 		//List containing the ticket that matches the ticketId
 		List<Ticket> matchingTicket = getAllTickets().stream()
@@ -66,8 +69,6 @@ public class TicketService {
 		
 		return matchingTicket.get(0);
 	}
-	
-
 	
 	public List<Ticket> getTicketsByUserId(int user_id){
 		return repo.findAll()

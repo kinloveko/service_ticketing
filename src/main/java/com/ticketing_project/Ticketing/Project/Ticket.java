@@ -47,7 +47,6 @@ public class Ticket {
 	@Column(name="description", nullable=false, updatable=true)
 	private String description;
 	
-
 	@Getter
 	@Setter
 	@Column(name="status")
@@ -66,9 +65,29 @@ public class Ticket {
 	
 	@Getter
 	@Setter
-	@Column(name="conforme_no",nullable=false, updatable=false)
-	private String conforme_no="";
+	@Column(name="conforme_no", updatable=false)
+	private int conforme_no = Integer.parseInt((ticket_id+user_id) + String.valueOf(System.currentTimeMillis()).substring(6));
+
+	@Getter
+	@Setter
+	@Column(name="amount",nullable=false, updatable=false)
+	private String amount="";
 	
+	@Getter
+	@Setter
+	@Column(name="image_signature_link", nullable=false, updatable=false)
+	private String image_signature_link="";
+	
+	@Getter
+	@Setter
+	@CreationTimestamp
+    @Column(name="conforme_date", nullable=false, updatable=false)
+	private Timestamp conforme_date;
+	
+	@Getter
+	@Setter
+	@Column(name="progress",nullable=false, updatable=false)
+	private String progress="";
 	
 }
 

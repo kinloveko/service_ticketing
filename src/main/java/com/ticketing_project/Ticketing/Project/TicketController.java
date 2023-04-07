@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class TicketController {
@@ -39,14 +40,18 @@ public class TicketController {
 	
 	@Autowired
 	private TicketService ticketService;
+	//ticketController
+	
 	
 	//HTTP POST method
 	@PostMapping("/tickets/post-ticket")
-	public String addNewTicket(@ModelAttribute Ticket newTicket) {
+	public String addNewTicket(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes) {
 		ticketService.save(newTicket);
-		return "redirect:/dashboard";
+		redirectAttributes.addFlashAttribute("successMessage", "Ticket saved successfully!");
+		 return "redirect:/dashboard";
 		}
-	
+
+
 	@PutMapping("/tickets/update-ticket/{ticketId}")
 	@ResponseBody
 	public void updateTicket(@PathVariable final int ticketId, @ModelAttribute Ticket updatedTicket) {
@@ -70,7 +75,6 @@ public class TicketController {
 	public List<Ticket> getTicketsByUserId(@PathVariable final int userId){
 		return ticketService.getTicketsByUserId(userId);
 	}
-	
 	
 
     @GetMapping("/dashboard")
@@ -107,5 +111,4 @@ public class TicketController {
         
         return mav;
     }
-
 }

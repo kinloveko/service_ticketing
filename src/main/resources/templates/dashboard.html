@@ -9,6 +9,14 @@
 	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 	<!-- My CSS -->
 	<link rel="stylesheet" href="css/style.css">
+	<!-- SweetAlert -->
+	<link rel="stylesheet" href="sweetalert2.min.css">
+	<!-- My Bootstrap CSS -->
+	<link
+	  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
+	  rel="stylesheet"
+	/>
+	
 	<!-- My Bootstrap CSS -->
 		<link rel="stylesheet" th:href="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'">
 <script th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
@@ -179,11 +187,8 @@
                                 <td th:text="${b.conforme_no}">
                                 <span class="status completed"></span></td>
                                 <td>
-                              <button type="button" class="btn btn-primary my-2 ml-2 eBtn" th:href="@{/tickets/{ticketId}(ticketId=${b.ticket_id})}" data-toggle="modal" data-target="#viewTicket">
-							    <i data-toggle="tooltip" class="fa fa-eye" style="font-size:20px;"></i>
-							</button>
-
- 							 <button type="button" class="btn btn-success my-2" data-toggle="modal" data-target="#editTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
+                           
+ 							 <button type="button" class="btn btn-success my-2 eBtn" th:href="@{/tickets/{ticketId}(ticketId=${b.ticket_id})}"  data-toggle="modal" data-target="#viewTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
                                 <button type="button" class="btn btn-danger my-2"><i class="fa fa-trash" style="font-size:20px;"></i></button>
                                 </td>
                             </tr>
@@ -209,6 +214,7 @@
                                 <th>Description</th>
                                 <th>Date issue</th>
                                 <th>Status</th>
+                                  <th>Conforme no.</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -223,13 +229,10 @@
                                 <td th:text="${b.conforme_no}">
                                 <span class="status completed"></span></td>
                                 <td>
-                              <button type="button" class="btn btn-primary my-2 ml-2 eBtn" th:href="@{/tickets/{ticketId}(ticketId=${b.ticket_id})}" data-toggle="modal" data-target="#viewTicket">
+                              <button type="button" class="btn btn-primary my-2 ml-2 conforme_ongoing" th:href="@{/tickets/{ticketId}(ticketId=${b.ticket_id})}" data-toggle="modal" data-target="#conformeTicket">
 							    <i data-toggle="tooltip" class="fa fa-eye" style="font-size:20px;"></i>
 							</button>
-
- 							 <button type="button" class="btn btn-success my-2" data-toggle="modal" data-target="#editTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
-                                <button type="button" class="btn btn-danger my-2"><i class="fa fa-trash" style="font-size:20px;"></i></button>
-                                </td>
+ 							  </td>
                             </tr>
                         </tbody>
                     </table>
@@ -267,11 +270,11 @@
                                 <td th:text="${b.conforme_no}">
                                 <span class="status completed"></span></td>
                                 <td>
-                              <button type="button" class="btn btn-primary my-2 ml-2 eBtn"  data-toggle="modal" data-target="#viewTicket">
+                              <button type="button" class="btn btn-primary my-2 ml-2 "  data-toggle="modal" data-target="#viewTicket">
 							    <i data-toggle="tooltip" class="fa fa-eye" style="font-size:20px;"></i>
 							</button>
 
- 							 <button type="button" class="btn btn-success my-2" data-toggle="modal" data-target="#editTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
+ 							 <button type="button" class="btn btn-success my-2 " data-toggle="modal" data-target="#editTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
                                 <button type="button" class="btn btn-danger my-2"><i class="fa fa-trash" style="font-size:20px;"></i></button>
                                 </td>
                             </tr>
@@ -375,44 +378,100 @@
     </div>
 </div>
 </form>
-		  <!-- View Ticket End Modal -->
-		  <!-- Edit Ticket Modal -->
+	
+
+
+ <!-- Conformed Slip Modal -->
 		<form>
-		<div class="modal fade" id="editTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog" role="document">
-		    <div class="modal-content">
-		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel">Edit Ticket</h5>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		          <span aria-hidden="true">&times;</span>
-		        </button>
-		      </div>
-		      <div class="modal-body">
-				<div class="form-group">
-				  <label for="title">Title:</label>
-				  <input type="text" class="form-control" name="title">
-				</div>
-				<div class="form-group">
-				  <label for="issue">Issue:</label>
-				  <textarea class="form-control" rows="5" name="description"></textarea>
-				  			
-				</div>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		        <button type="submit" class="btn btn-primary" id="createTicket">Save ticket</button>
-		      </div>
-		    </div>
-		  </div>
+		<div class="modal fade" id="conformeTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" style="text-align:center;" id="exampleModalLabel">On-going Ticket</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="id" class="col-form-label">Ticket No.</label>
+                <input type="text" class="form-control" name="ticket_id" readonly>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="date" class="col-form-label">Conforme No.</label>
+                <input type="text" class="form-control" name="created_on" readonly>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="title" class="col-form-label">Title</label>
+        <input type="text" class="form-control" id="title" name="title" readonly>
+    </div>
+    <div class="form-group">
+        <label for="description" class="col-form-label">Description</label>
+        <textarea class="form-control" rows="5" name="description" readonly></textarea>
+    </div>
+     <div class="row">
+        <div class="col-sm-6">
+    <div class="form-group">
+        <label for="name" class="col-form-label">Amount</label>
+        <input type="text" class="form-control" name="user_name" readonly>
+    </div>
+    </div>
+     <div class="col-sm-6">
+    <div class="form-group">
+        <label for="status" class="col-form-label">Progress</label>
+        <input type="text" class="form-control" name="status" readonly>
+    </div>
+    </div>
+    </div>
+    <div class="mb-3">
+	  	<label for="customFile" class="form-label">Proof of Payment</label>
+	  	<input type="file" class="form-control" id="customFile" />
+	</div>
+	<div class="mb-3">
+	  	<label for="customFile" class="form-label">Client's Signature</label>
+	  	<input type="file" class="form-control" id="customFile" />
+	</div>
+	<div class="mb-1">
+	<label style="font-weight: bold;" for="formFileSm" class="form-label">Sale's Team Signature</label>
+	</div>
+	<div class="mb-5">
+	<img style="width:75px;height:75px;margin-left:30px;" src="img/sample_signature.png" class="rounded float-left">
+	</div>
+	</div>
+            <div class="modal-footer">
+                     <button type="submit" class="btn btn-primary" >Submit</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+            
+        </div>
+    </div>
 		  </div>
 		  </form>
-		  <!-- Edit Ticket End Modal -->	 
-		
+		  <!-- Conforme Ticket End Modal -->	
+	
 	</section>
 	<!-- CONTENT -->
 	
 	<script src="Javascript/dashboard.js"></script>
+	<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	 <script th:if="${successMessage}">
+        Swal.fire({
+            title: 'Success',
+            text: 'Ticket saved successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    </script>
+
 	
 		<script type="text/javascript">
 		
@@ -435,6 +494,31 @@
 			}
 		
 		
+			
+		$(document).ready(function() {
+			$('.conforme_ongoing').on('click', function(event) {
+				
+				event.preventDefault();	
+				
+				var ticketId = $(this).closest('tr').find('td:eq(0)').text();
+				var dateCreated = $(this).closest('tr').find('td:eq(4)').text();
+				var title = $(this).closest('tr').find('td:eq(2)').text();
+				var description = $(this).closest('tr').find('td:eq(3)').text();
+				var userName = $(this).closest('tr').find('td:eq(1)').text();
+				var status = $(this).closest('tr').find('td:eq(5)').text();
+				var conforme_no = $(this).closest('tr').find('td:eq(6)').text();
+				$('#id').val(ticketId);
+				$('#date').val(dateCreated);
+				$('#title').val(title);
+				$('#description').val(description);
+				$('#name').val(userName);
+				$('#status').val(status);
+				$('#conforme_no').val(conforme_no);
+				$('#conformeTicket').modal();
+				
+				
+			});
+		});
 	$(document).ready(function() {
 		$('.eBtn').on('click', function(event) {
 			
