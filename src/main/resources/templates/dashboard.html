@@ -211,7 +211,6 @@
                                 <th>Ticket #</th>
                                 <th>User</th>
                                  <th>Title</th>
-                                <th>Description</th>
                                 <th>Date issue</th>
                                 <th>Status</th>
                                   <th>Conforme no.</th>
@@ -223,7 +222,7 @@
                                  <td th:text="${b.ticket_id}"></td>    
                                           <td th:text="${b.user_name}"></td>
                                 <td  th:text="${b.title}"></td>
-                                  <td th:text="${b.description}"></td>
+                                <td style=" display: none;"  th:text="${b.description}"></td>
                                 <td th:text="${b.created_on}"></td>
                                 <td th:text="${b.status}">
                                 <td th:text="${b.conforme_no}">
@@ -322,10 +321,7 @@
 	  </form>
  	<!-- Create Ticket End Modal -->
 	  <!-- View Ticket Modal -->
-	<!-- Modal Form -->
-  <!-- Add this to your modal -->
   <form method="post" th:action="@{/tickets/post-ticket}">
-	
 	
 <div class="modal fade" id="viewTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

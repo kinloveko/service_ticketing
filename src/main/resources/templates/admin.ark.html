@@ -10,7 +10,8 @@
 	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 	<!-- My CSS -->
 	<link rel="stylesheet" href="css/style.css">
-	<!-- My Bootstrap CSS -->
+<!-- SweetAlert -->
+	<link rel="stylesheet" href="sweetalert2.min.css">
 	<!-- My Bootstrap CSS -->
 	<link
 	  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
@@ -26,7 +27,6 @@
 	<title>Admin</title>
 </head>
 <body>
-
 
 	<!-- SIDEBAR -->
 	<section id="sidebar">
@@ -82,8 +82,6 @@
 		</ul>
 	</section>
 	<!-- SIDEBAR -->
-
-
 
 	<!-- CONTENT -->
 	<section id="content">
@@ -222,8 +220,11 @@
 			    <td th:text="${t.user_name}"></td>
 			    <td th:text="${t.status}"></td>
 			       <td>
-			       <a class="btn btn-success btn-round-1 conforme_ongoing">View</a>
-			       <a class="btn btn-danger btn-round-1">Delete</a>
+			       	 <button type="button" class="btn btn-success my-2 conforme_ongoing" 
+			       	 th:href="@{/tickets/{ticketId}(ticketId=${t.ticket_id})}" 
+			       	  data-toggle="modal"  data-target="#ongoing_conforme">
+			       	  <i class="fa fa-edit" style="font-size:20px;"></i></button>
+			      
 			       </td>
 				</tr>
             </tbody>
@@ -324,15 +325,17 @@
 		        </div>
 		    </div>
 		</div>
-		
 	</div>	
 	
-	<!-- Conformed Slip Modal -->
+<!-- Conformed Slip Modal -->
 	<div class="table-data">
-		<form>
+	  <form th:action="@{/tickets/update-ticket}" enctype="multipart/form-data" method="post" >
 		<div class="modal fade" id="create_conforme" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		  <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
+        
+              <input type="hidden" class="form-control" id="status" name="status">
+               <input type="hidden" class="form-control" id="progress" name="progress">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Conforme Ticket</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -386,34 +389,135 @@
 	  	<input type="file" class="form-control" id="customFile" disabled/>
 	</div>
 	</div>
-	</div>
-	
+	</div>	
+	 <div class="row">
+        <div class="col-sm-6">
     <div class="form-group">
         <label for="conforme_date" class="col-form-label">Conforme date</label>
         <input type="text" class="form-control" name="conforme_date" readonly>
     </div>
+    </div>
+   <div class="col-sm-6">
    <div class="form-group">
         <label for="name" class="col-form-label">Amount</label>
-        <input type="text" class="form-control" name="amount">
+        <input type="text" class="form-control" id="amount" name="amount" required>
     </div>
-	
+	</div>
+	</div>
 	<div class="mb-3">
 	  	<label for="customFile" class="form-label">Sale's Team Signature</label>
-	  	<input type="file" class="form-control" id="customFile" />
+	  	<input type="file" class="form-control" id="customFile" name="img" required/>
 	</div>
 	</div>
             <div class="modal-footer">
                      <button type="submit" class="btn btn-primary" >Submit</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
+        </div>
+    </div>
+		  </div>
+		  </form>
+	</div>
+ <!-- Conformed Slip End Modal -->
+ 
+ 
+ 
+ <!-- Ongoing Slip -->
+	
+	<div class="table-data">
+	  <form th:action="@{/tickets/update-ticket}" enctype="multipart/form-data" method="post" >
+		<div class="modal fade" id="ongoing_conforme" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+        
+              <input type="hidden" class="form-control" id="status" name="status">
+               <input type="hidden" class="form-control" id="progress" name="progress">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Conforme Ticket</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
             
+            <div class="modal-body">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="id" class="col-form-label">Ticket No.</label>
+                <input type="text" class="form-control" name="ticket_id" readonly>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="conforme_no" class="col-form-label">Conforme No.</label>
+                <input type="text" class="form-control" name="conforme_no" readonly>
+            </div>
+        </div>
+    </div>
+     <div class="row">
+        <div class="col-sm-6">
+    <div class="form-group">
+        <label for="title" class="col-form-label">Title</label>
+        <input type="text" class="form-control" id="title" name="title" readonly>
+    </div>
+    </div>
+          <div class="col-sm-6">
+    <div class="form-group">
+        <label for="title" class="col-form-label">Client name</label>
+        <input type="text" class="form-control" id="user_name" name="user_name" readonly>
+    </div>
+    </div>
+    </div>
+    <div class="form-group">
+        <label for="description" class="col-form-label">Description</label>
+        <textarea class="form-control" rows="5" name="description" readonly></textarea>
+    </div>
+     <div class="row">
+        <div class="col-sm-6">
+        <div class="mb-3">
+	  	<label for="customFile" class="form-label">Client's Signature</label>
+	  	<input type="file" class="form-control" id="customFile" disabled/>
+	</div>
+    </div>
+    <div class="col-sm-6">
+     <div class="mb-3">
+	  	<label for="customFile" class="form-label">Proof of Payment</label>
+	  	<input type="file" class="form-control" id="customFile" disabled/>
+	</div>
+	</div>
+	</div>	
+	 <div class="row">
+        <div class="col-sm-6">
+    <div class="form-group">
+        <label for="conforme_date" class="col-form-label">Conforme date</label>
+        <input type="text" class="form-control" name="conforme_date" readonly>
+    </div>
+    </div>
+   <div class="col-sm-6">
+   <div class="form-group">
+        <label for="name" class="col-form-label">Amount</label>
+        <input type="text" class="form-control" id="amount" name="amount" required>
+    </div>
+	</div>
+	</div>
+	<div class="mb-3">
+	  	<label for="customFile" class="form-label">Sale's Team Signature</label>
+	  	<input type="file" class="form-control" id="customFile" name="img" required/>
+	</div>
+	</div>
+            <div class="modal-footer">
+                     <button type="submit" class="btn btn-primary" >Submit</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 		  </div>
 		  </form>
 	</div>
 	
-	 <!-- Conformed Slip End Modal -->
+	<!--End Ongoing Slip -->
+	
+	
 	
 		</main>
 		<!-- MAIN -->
@@ -423,8 +527,43 @@
 	<!-- CONTENT -->
 	
 	<script src="Javascript/dashboard.js"></script>
+		<!-- SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	 <script th:if="${successMessage}">
+        Swal.fire({
+            title: 'Success',
+            text: 'Ticket saved successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    </script>
 	
 	<script type="text/javascript">
+	//conforme_ongoing
+		$(document).ready(function() {
+	    $('.conforme_ongoing').on('click', function(event) {
+	        var ticketId = $(this).closest('tr').find('td:eq(0)').text();
+	        var dateCreated = $(this).closest('tr').find('td:eq(1)').text();
+	        var title = $(this).closest('tr').find('td:eq(2)').text();
+	        var description = $(this).closest('tr').find('td:eq(3)').text();
+	        var userName = $(this).closest('tr').find('td:eq(4)').text();
+	        var status = $(this).closest('tr').find('td:eq(5)').text();
+	        var conformeNo = $(this).closest('tr').find('td:eq(6)').text(); // retrieve the conforme_no value from the button's data-conforme-no attribute
+	        $('#id').val(ticketId);
+	        $('#date').val(dateCreated);
+	        $('#title').val(title);
+	        $('#description').val(description);
+	        $('#name').val(userName);
+	        $('#status').val(status);
+	        $('#conforme_no').val(conformeNo); // set the conforme_no value in the #modalView modal
+	        $('#ongoing_conforme').modal();
+	    });
+	});
+	
+	
+
+	
 	// Add click event listener to the button in the first modal
 	$('.conforme_btn').on('click', function(event) {
 	    // Extract data from the input fields in the second modal
@@ -433,7 +572,6 @@
 	    var title = $('input[name="title"]').val();
 	    var description = $('textarea[name="description"]').val();
 	    var userName = $('input[name="user_name"]').val();
-	    var status = $('input[name="status"]').val();
 	    var conforme_no = $('input[name="conforme_no"').val();
 	    var currentDate = new Date().toLocaleDateString('en-US');
 	    // Pass the data to the corresponding input fields in the third modal
@@ -442,7 +580,8 @@
 	    $('#create_conforme input[name="title"]').val(title);
 	    $('#create_conforme textarea[name="description"]').val(description);
 	    $('#create_conforme input[name="user_name"]').val(userName);
-	    $('#create_conforme input[name="status"]').val(status);
+	    $('#create_conforme input[name="status"]').val("ongoing");
+	    $('#create_conforme input[name="progress"]').val("sales_team");
 	    $('#create_conforme input[name="conforme_no"]').val(conforme_no);
 	    $('#create_conforme input[name="conforme_date"]').val(currentDate);
 	    // Show the third modal
@@ -469,6 +608,8 @@
 		  })
 		  .catch(error => console.error(error));
 		}
+	
+	
 	
 	$(document).ready(function() {
 	    $('.eBtn').on('click', function(event) {

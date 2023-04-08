@@ -49,8 +49,8 @@ public class Ticket {
 	
 	@Getter
 	@Setter
-	@Column(name="status")
-	private String status="pending";
+	@Column(name="status",updatable=true)
+	private String status;
 	
 	@Getter
 	@Setter
@@ -70,24 +70,25 @@ public class Ticket {
 
 	@Getter
 	@Setter
-	@Column(name="amount",nullable=false, updatable=false)
-	private String amount="";
+	@Column(name="amount", updatable=true)
+	private String amount;
+	
+	//Ticket
+		@Getter
+		@Setter
+		@Column(name="salesSignature", updatable=true)
+		private String salesSignature;
+
 	
 	@Getter
 	@Setter
-	@Column(name="image_signature_link", nullable=false, updatable=false)
-	private String image_signature_link="";
+    @Column(name="conforme_date", updatable=true)
+	private String conforme_date;
 	
 	@Getter
 	@Setter
-	@CreationTimestamp
-    @Column(name="conforme_date", nullable=false, updatable=false)
-	private Timestamp conforme_date;
-	
-	@Getter
-	@Setter
-	@Column(name="progress",nullable=false, updatable=false)
-	private String progress="";
+	@Column(name="progress",nullable=true,updatable=true)
+	private String progress;
 	
 }
 

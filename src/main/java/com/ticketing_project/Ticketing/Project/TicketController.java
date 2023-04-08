@@ -1,10 +1,16 @@
 package com.ticketing_project.Ticketing.Project;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +18,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -48,15 +56,43 @@ public class TicketController {
 	public String addNewTicket(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes) {
 		ticketService.save(newTicket);
 		redirectAttributes.addFlashAttribute("successMessage", "Ticket saved successfully!");
+		
 		 return "redirect:/dashboard";
 		}
+	
 
+	@PostMapping("/tickets/update-ticket")
+		public String conformeTicket(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes, @RequestParam MultipartFile img) {
+			
+			newTicket.setSalesSignature(img.getOriginalFilename());
+			
+			Ticket uploadImg = ticketService.save(newTicket);
+			
+			if (uploadImg != null) {
+				try {
 
+					File saveFile = new ClassPathResource("static/img").getFile();
+					Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + img.getOriginalFilename());
+					System.out.println(path);
+					System.out.println(img.getOriginalFilename());
+					Files.copy(img.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			redirectAttributes.addFlashAttribute("successMessage", "Conforme slip saved successfully!");
+			 return "redirect:/admin.ark";
+			}
+		
+
+	
 	@PutMapping("/tickets/update-ticket/{ticketId}")
 	@ResponseBody
 	public void updateTicket(@PathVariable final int ticketId, @ModelAttribute Ticket updatedTicket) {
 		ticketService.update(ticketId, updatedTicket);
 	}
+	
 	
 	//HTTP DELETE method
 	@DeleteMapping("/tickets/delete/{ticketId}")
@@ -108,7 +144,8 @@ public class TicketController {
         mav.addObject("completed_tickets", completedTickets);
         mav.addObject("completed_count",completedPending);
         
-        
         return mav;
     }
+    
+    
 }

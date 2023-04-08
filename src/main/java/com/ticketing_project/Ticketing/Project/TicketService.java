@@ -1,9 +1,11 @@
 package com.ticketing_project.Ticketing.Project;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 @Service
 public class TicketService {
@@ -13,8 +15,8 @@ public class TicketService {
 		
 	
 	
-	public void save(Ticket ticket) {
-		repo.save(ticket);
+	public Ticket save(Ticket ticket) {
+		return repo.save(ticket);
 	}
 	
 	
@@ -76,4 +78,43 @@ public class TicketService {
 				.filter(ticket -> ticket.getUser_id() == user_id)
 				.toList();
 	}
+	
+	
+	  public void populateTicketModel(Model m) {
+	        List<Ticket> list = getAllTickets();
+	        
+	        int pendingCount = 0;
+	        int completedCount = 0;
+	        int ongoingCount = 0;
+	        
+	        List<Ticket> pendingTickets = new ArrayList<>();
+	        List<Ticket> ongoingTickets = new ArrayList<>();
+	        List<Ticket> completedTickets = new ArrayList<>();
+	        
+	        for(Ticket t : list) {
+	            if(t.getStatus().equals("pending")) {
+	                pendingTickets.add(t);
+	                pendingCount++;
+	            }
+	            else if(t.getStatus().equals("ongoing")) {
+	                ongoingTickets.add(t);
+	                ongoingCount++;
+	            }
+	            else if(t.getStatus().equals("completed")) {
+	                completedTickets.add(t);
+	                completedCount++;
+	            }
+	        }
+	        
+	        m.addAttribute("pending_tickets", pendingTickets);
+	        m.addAttribute("pending_ticket_count", pendingCount);
+	        
+	        m.addAttribute("completed_tickets", completedTickets);
+	        m.addAttribute("completed_ticket_count", completedCount);
+	        
+	        m.addAttribute("ongoing_tickets", ongoingTickets);
+	        m.addAttribute("ongoing_ticket_count", ongoingCount);
+	    }
+	
+	
 }

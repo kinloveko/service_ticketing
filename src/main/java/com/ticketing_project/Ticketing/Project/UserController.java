@@ -1,6 +1,5 @@
 package com.ticketing_project.Ticketing.Project;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,52 +68,14 @@ public class UserController {
 	    }
 	    return "login"; // return the name of the login page if no matching user is found
 	}
-	
 
-	
-@GetMapping("/admin.ark")
-public String adminPage(Model m) {
-		
-    List<Ticket> list = ticketService.getAllTickets();
-
+    //GET mapping method for /admin.ark
+    @GetMapping("/admin.ark")
+    public String adminPage(Model m) {
+        ticketService.populateTicketModel(m);
+        return "admin.ark";
+    }
     
-    int pendingCount = 0;
-    int completedCount = 0;
-    int ongoingCount = 0;
-    
-	List<Ticket> pendingTickets = new ArrayList<>();
-	List<Ticket> ongoingTickets = new ArrayList<>();
-	List<Ticket> completedTickets  = new ArrayList<>();
-	
-	
-	for(Ticket t : list) {
-        if(t.getStatus().equals("pending")) {
-            pendingTickets.add(t);
-            pendingCount++;
-        }
-        else if(t.getStatus().equals("ongoing")) {
-        	   ongoingTickets.add(t);
-               ongoingCount++;
-        }
-        else if(t.getStatus().equals("completed")) {
-        	 completedTickets.add(t);
-        	 completedCount++;
-        }
-	}
-	
-	
-	m.addAttribute("pending_tickets", pendingTickets);
-    m.addAttribute("pending_ticket_count", pendingCount);
-    
-    m.addAttribute("completed_tickets", completedTickets);
-    m.addAttribute("completed_ticket_count", completedCount);
-    
-    m.addAttribute("ongoing_tickets",  ongoingTickets);
-    m.addAttribute("ongoing_ticket_count", ongoingCount);
-    
-    return "admin.ark";
-
-}
 	
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
