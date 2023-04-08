@@ -205,9 +205,10 @@
                     <th scope="col">Ticket No.</th>
                     <th scope="col">Date Created</th>
                     <th scope="col">Title</th>
-                    <th scope="col">Description</th>
                     <th scope="col">Client Name</th>
                     <th scope="col">Status</th>
+                	<th scope="col">Amount</th>
+                    <th scope="col">Conforme No.</th>
                        <th scope="col">Action</th>
                 </tr>
             </thead>
@@ -216,13 +217,19 @@
 			    <td scope="row" th:text="${t.ticket_id}"></td>
 			     <td th:text="${t.created_on}"></td>
 			    <td th:text="${t.title}"></td>
-			    <td th:text="${t.description}"></td>
 			    <td th:text="${t.user_name}"></td>
 			    <td th:text="${t.status}"></td>
+			    <td th:text="${t.amount}"></td>
+		        <td th:text="${t.conforme_no}"></td>
+			    <td style="display:none" th:text="${t.progress}"></td>
+			    <td style="display:none" th:text="${t.conforme_date}"></td>
+			    <td style="display:none" th:text="${t.salesSignature}"></td>
+		        <td style="display:none" th:text="${t.description}"></td>
+			    
 			       <td>
-			       	 <button type="button" class="btn btn-success my-2 conforme_ongoing" 
+			 <button type="button" class="btn btn-success my-2 ongoingBtn" 
 			       	 th:href="@{/tickets/{ticketId}(ticketId=${t.ticket_id})}" 
-			       	  data-toggle="modal"  data-target="#ongoing_conforme">
+			       	  data-toggle="modal"  data-target="#ongoingModal">
 			       	  <i class="fa fa-edit" style="font-size:20px;"></i></button>
 			      
 			       </td>
@@ -424,9 +431,8 @@
  
  <!-- Ongoing Slip -->
 	
-	<div class="table-data">
 	  <form th:action="@{/tickets/update-ticket}" enctype="multipart/form-data" method="post" >
-		<div class="modal fade" id="ongoing_conforme" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal fade" id="ongoingModal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
 		  <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
         
@@ -444,13 +450,13 @@
         <div class="col-sm-6">
             <div class="form-group">
                 <label for="id" class="col-form-label">Ticket No.</label>
-                <input type="text" class="form-control" name="ticket_id" readonly>
+                <input type="text" class="form-control" id="ticket_id" name="ticket_id" readonly>
             </div>
         </div>
         <div class="col-sm-6">
             <div class="form-group">
                 <label for="conforme_no" class="col-form-label">Conforme No.</label>
-                <input type="text" class="form-control" name="conforme_no" readonly>
+                <input type="text" class="form-control"  id="conforme_no_ongoing" name="conforme_no" readonly>
             </div>
         </div>
     </div>
@@ -458,19 +464,19 @@
         <div class="col-sm-6">
     <div class="form-group">
         <label for="title" class="col-form-label">Title</label>
-        <input type="text" class="form-control" id="title" name="title" readonly>
+        <input type="text" class="form-control" id="title_ongoing" name="title" readonly>
     </div>
     </div>
           <div class="col-sm-6">
     <div class="form-group">
         <label for="title" class="col-form-label">Client name</label>
-        <input type="text" class="form-control" id="user_name" name="user_name" readonly>
+        <input type="text" class="form-control" id="user_name_ongoing" name="user_name" readonly>
     </div>
     </div>
     </div>
     <div class="form-group">
         <label for="description" class="col-form-label">Description</label>
-        <textarea class="form-control" rows="5" name="description" readonly></textarea>
+        <textarea class="form-control" rows="5" name="description" id="description_ongoing" readonly></textarea>
     </div>
      <div class="row">
         <div class="col-sm-6">
@@ -490,13 +496,13 @@
         <div class="col-sm-6">
     <div class="form-group">
         <label for="conforme_date" class="col-form-label">Conforme date</label>
-        <input type="text" class="form-control" name="conforme_date" readonly>
+        <input type="text" class="form-control" name="conforme_date" id="conforme_date"  readonly>
     </div>
     </div>
    <div class="col-sm-6">
    <div class="form-group">
         <label for="name" class="col-form-label">Amount</label>
-        <input type="text" class="form-control" id="amount" name="amount" required>
+        <input type="text" class="form-control" id="amount_ongoing" name="amount" required>
     </div>
 	</div>
 	</div>
@@ -513,8 +519,6 @@
     </div>
 		  </div>
 		  </form>
-	</div>
-	
 	<!--End Ongoing Slip -->
 	
 	
@@ -537,31 +541,43 @@
             icon: 'success',
             confirmButtonText: 'OK'
         });
+       
     </script>
 	
-	<script type="text/javascript">
-	//conforme_ongoing
-		$(document).ready(function() {
-	    $('.conforme_ongoing').on('click', function(event) {
+	<script>
+	
+
+	$(document).ready(function() {
+	    $('.ongoingBtn').on('click', function(event) {
 	        var ticketId = $(this).closest('tr').find('td:eq(0)').text();
 	        var dateCreated = $(this).closest('tr').find('td:eq(1)').text();
 	        var title = $(this).closest('tr').find('td:eq(2)').text();
-	        var description = $(this).closest('tr').find('td:eq(3)').text();
-	        var userName = $(this).closest('tr').find('td:eq(4)').text();
-	        var status = $(this).closest('tr').find('td:eq(5)').text();
+	        var userName = $(this).closest('tr').find('td:eq(3)').text();
+	        var status = $(this).closest('tr').find('td:eq(4)').text();
+	        var amount = $(this).closest('tr').find('td:eq(5)').text();
 	        var conformeNo = $(this).closest('tr').find('td:eq(6)').text(); // retrieve the conforme_no value from the button's data-conforme-no attribute
-	        $('#id').val(ticketId);
-	        $('#date').val(dateCreated);
-	        $('#title').val(title);
-	        $('#description').val(description);
-	        $('#name').val(userName);
+	        var progress = $(this).closest('tr').find('td:eq(7)').text();
+	        var conforme_date = $(this).closest('tr').find('td:eq(8)').text();
+	        var signature = $(this).closest('tr').find('td:eq(9)').text();
+	        var description = $(this).closest('tr').find('td:eq(10)').text();
+
+	        $('#ticket_id').val(ticketId);
+	        $('#conforme_date').val(conforme_date);
+	        $('#title_ongoing').val(title);
+	        $('#description_ongoing').val(description);
+	        $('#user_name_ongoing').val(userName);
 	        $('#status').val(status);
-	        $('#conforme_no').val(conformeNo); // set the conforme_no value in the #modalView modal
-	        $('#ongoing_conforme').modal();
+	        $('#amount_ongoing').val(amount);
+	       
+	        $('#conforme_no_ongoing').val(conformeNo); // set the conforme_no value in the #modalView modal
+	        $('#ongoingModal').modal();
 	    });
 	});
-	
-	
+
+	</script>
+	<script type="text/javascript">
+	//conforme_ongoing
+
 
 	
 	// Add click event listener to the button in the first modal

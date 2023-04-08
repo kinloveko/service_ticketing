@@ -19,9 +19,7 @@
 	
 	<!-- My Bootstrap CSS -->
 		<link rel="stylesheet" th:href="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'">
-<script th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
-<script th:src="'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js'"></script>
-<script th:src="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'"></script>
+
 	
 	<title>Dashboard</title>
 </head>
@@ -224,11 +222,14 @@
                                 <td  th:text="${b.title}"></td>
                                 <td style=" display: none;"  th:text="${b.description}"></td>
                                 <td th:text="${b.created_on}"></td>
+                                <td th:text="${b.progress}"></td>
                                 <td th:text="${b.status}">
                                 <td th:text="${b.conforme_no}">
+                                <td style="display:none" th:text="${b.amount}">
                                 <span class="status completed"></span></td>
                                 <td>
-                              <button type="button" class="btn btn-primary my-2 ml-2 conforme_ongoing" th:href="@{/tickets/{ticketId}(ticketId=${b.ticket_id})}" data-toggle="modal" data-target="#conformeTicket">
+                              <button type="button" class="btn btn-primary my-2 ml-2 ongoing"
+                               th:href="@{/tickets/{ticketId}(ticketId=${b.ticket_id})}" data-toggle="modal" data-target="#conformeTicket">
 							    <i data-toggle="tooltip" class="fa fa-eye" style="font-size:20px;"></i>
 							</button>
  							  </td>
@@ -290,6 +291,8 @@
 		<div class="modal fade" id="createTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		  <div class="modal-dialog" role="document">
 		    <div class="modal-content">
+		 <input type="hidden" class="form-control" name="status" value="pending">
+		   	
 		      <div class="modal-header">
 		        <h5 class="modal-title" id="exampleModalLabel">Create Ticket</h5>
 		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -374,8 +377,6 @@
     </div>
 </div>
 </form>
-	
-
 
  <!-- Conformed Slip Modal -->
 		<form>
@@ -394,51 +395,61 @@
         <div class="col-sm-6">
             <div class="form-group">
                 <label for="id" class="col-form-label">Ticket No.</label>
-                <input type="text" class="form-control" name="ticket_id" readonly>
+                <input type="text" class="form-control" id="ticket_id" name="ticket_id" readonly>
             </div>
         </div>
         <div class="col-sm-6">
             <div class="form-group">
                 <label for="date" class="col-form-label">Conforme No.</label>
-                <input type="text" class="form-control" name="created_on" readonly>
+                <input type="text" class="form-control" id="conforme_no"  name="conforme_no" readonly>
             </div>
         </div>
     </div>
+     <div class="row">
+        <div class="col-sm-6">
     <div class="form-group">
         <label for="title" class="col-form-label">Title</label>
-        <input type="text" class="form-control" id="title" name="title" readonly>
+        <input type="text" class="form-control" id="title_ongoing" name="title"  readonly>
+    </div>
+    </div>
+    <div class="col-sm-6">
+    <div class="form-group">
+        <label for="title" class="col-form-label">Client Name</label>
+        <input type="text" class="form-control"   id="user_name" name="user_name" readonly>
+    </div>
+    </div>
     </div>
     <div class="form-group">
         <label for="description" class="col-form-label">Description</label>
-        <textarea class="form-control" rows="5" name="description" readonly></textarea>
+        <textarea class="form-control" rows="4" id="description_ongoing"  name="description" readonly></textarea>
     </div>
      <div class="row">
         <div class="col-sm-6">
     <div class="form-group">
         <label for="name" class="col-form-label">Amount</label>
-        <input type="text" class="form-control" name="user_name" readonly>
+        <input type="text" class="form-control"  id="amount"  name="amount" readonly>
     </div>
     </div>
      <div class="col-sm-6">
     <div class="form-group">
         <label for="status" class="col-form-label">Progress</label>
-        <input type="text" class="form-control" name="status" readonly>
+        <input type="text" class="form-control"  id="progress"  name="progress" readonly>
     </div>
     </div>
     </div>
     <div class="mb-3">
 	  	<label for="customFile" class="form-label">Proof of Payment</label>
-	  	<input type="file" class="form-control" id="customFile" />
+	  	<input type="file" class="form-control"    id="paymentFile" required/>
 	</div>
 	<div class="mb-3">
 	  	<label for="customFile" class="form-label">Client's Signature</label>
-	  	<input type="file" class="form-control" id="customFile" />
+	  	<input type="file" class="form-control"  id="customFile" required/>
 	</div>
 	<div class="mb-1">
 	<label style="font-weight: bold;" for="formFileSm" class="form-label">Sale's Team Signature</label>
 	</div>
 	<div class="mb-5">
-	<img style="width:75px;height:75px;margin-left:30px;" src="img/sample_signature.png" class="rounded float-left">
+	<img style="width:75px;height:75px;margin-left:30px;"  id="thumbnail"  src="img/sample_signature.png" class="rounded float-left">
 	</div>
 	</div>
             <div class="modal-footer">
@@ -456,6 +467,9 @@
 	<!-- CONTENT -->
 	
 	<script src="Javascript/dashboard.js"></script>
+	<script th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
+<script th:src="'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js'"></script>
+<script th:src="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'"></script>
 	<!-- SweetAlert JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
@@ -470,6 +484,34 @@
 
 	
 		<script type="text/javascript">
+		
+		$(document).ready(function() {
+			$('.ongoing').on('click', function(event) {
+				var ticketId = $(this).closest('tr').find('td:eq(0)').text();
+				var dateCreated = $(this).closest('tr').find('td:eq(4)').text();
+				var title = $(this).closest('tr').find('td:eq(2)').text();
+				var description = $(this).closest('tr').find('td:eq(3)').text();
+				var userName = $(this).closest('tr').find('td:eq(1)').text();
+				var progress = $(this).closest('tr').find('td:eq(5)').text();
+				var status = $(this).closest('tr').find('td:eq(6)').text();
+				var conforme_no = $(this).closest('tr').find('td:eq(7)').text();
+				var amount = $(this).closest('tr').find('td:eq(8)').text();
+
+				$('#ticket_id').val(ticketId);
+				$('#date').val(dateCreated);
+				$('#title_ongoing').val(title);
+				$('#description_ongoing').val(description);
+				$('#user_name').val(userName);
+				$('#progress').val(progress);
+				$('#status').val(status);
+				$('#conforme_no').val(conforme_no);
+				$('#amount').val(amount);
+				$('#conformeTicket').modal();
+				
+				
+			});
+		});
+		
 		
 		function updateTicket() {
 			  const form = document.querySelector('#updateTicketForm');
