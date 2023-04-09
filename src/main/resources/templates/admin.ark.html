@@ -139,6 +139,27 @@
             <p>On-going Tickets</p>
         </span>
     </li>
+          <li class="menu-item " data-table="billing" onclick="handleClick(this)">
+        <i class='bx bxs-check-circle' ></i>
+        <span class="text">
+            <h3 >0</h3>
+            <p>Billing Tickets</p>
+        </span>
+    </li>
+          <li class="menu-item " data-table="collection" onclick="handleClick(this)">
+        <i class='bx bxs-check-circle' ></i>
+        <span class="text">
+            <h3 >0</h3>
+            <p>Collection</p>
+        </span>
+    </li>
+          <li class="menu-item " data-table="treasury" onclick="handleClick(this)">
+        <i class='bx bxs-check-circle' ></i>
+        <span class="text">
+            <h3 >0</h3>
+            <p>Treasury</p>
+        </span>
+    </li>
    <li class="menu-item " data-table="completed" onclick="handleClick(this)">
         <i class='bx bxs-check-circle' ></i>
         <span class="text">
@@ -222,7 +243,7 @@
 			    <td th:text="${t.amount}"></td>
 		        <td th:text="${t.conforme_no}"></td>
 			    <td style="display:none" th:text="${t.progress}"></td>
-			    <td style="display:none" th:text="${t.conforme_date}"></td>
+			    <td style="display:none"  th:text="${t.conforme_date}"></td>
 			    <td style="display:none" th:text="${t.salesSignature}"></td>
 		        <td style="display:none" th:text="${t.description}"></td>
 		        <td style="display:none" th:text="${t.client_signature}"></td>
@@ -481,39 +502,60 @@
     </div>
      <div class="row">
         <div class="col-sm-6">
+          <div class="row">
+              <div class="col-sm-6">
         <div class="mb-3">
 	  	<label for="customFile" class="form-label">Client's Signature</label>
-	  		<img style="width:75px;height:75px;margin-left:30px;"  id="client_signature"  class="rounded float-left">
+	  	</div>
+	  	</div>
+	  	  <div class="col-sm-6">
+        <div class="mb-3">
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_signature"  class="rounded float-left imageSignature">
+		</div>
+		</div>
 	</div>
     </div>
     <div class="col-sm-6">
+      <div class="row">
+              <div class="col-sm-6">
      <div class="mb-3">
-	  	<label for="customFile" class="form-label">Proof of Payment</label>
-	  		<img style="width:75px;height:75px;margin-left:30px;"  id="client_payment_proof"  class="rounded float-left">
+     	 	<label for="customFile" class="form-label">Proof of Payment</label>
+     	 	</div>
+     	 	</div>
+        <div class="col-sm-6">
+     <div class="mb-3">
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof"  class="rounded float-left imageProof">
+	</div>
+	</div>
 	</div>
 	</div>
 	</div>	
 	 <div class="row">
         <div class="col-sm-6">
     <div class="form-group">
-        <label for="conforme_date" class="col-form-label">Conforme date</label>
-        <input type="text" class="form-control" name="conforme_date" id="conforme_date"  readonly>
+        <label for="conforme_date_ongoing" class="col-form-label">Conforme date</label>
+        <input type="text" class="form-control" name="conforme_date" id="conforme_date_ongoing"  readonly>
     </div>
     </div>
    <div class="col-sm-6">
    <div class="form-group">
         <label for="name" class="col-form-label">Amount</label>
         <input type="text" class="form-control" id="amount_ongoing" name="amount" required>
+        	<label style="font-weight: bold;margin-top:20px;margin-right:30px;float:right;" for="formFileSm" class="form-label">Sale's Team Signature</label>
+	
     </div>
 	</div>
 	</div>
 	<div class="mb-3">
-	  	<label for="customFile" class="form-label">Sale's Team Signature</label>
-	  	<input type="file" class="form-control" id="customFile" name="img" required/>
+	  
+	  		<img style="width:120px;height:90px;margin-right:60px;"  id="thumbnail"  class="rounded float-right">
+	  	
+	  	<input type="hidden" class="form-control" id="customFile" name="img" required/>
+	  	
 	</div>
 	</div>
             <div class="modal-footer">
-                     <button type="submit" class="btn btn-primary" >Submit</button>
+                     <button type="submit" class="btn btn-primary" >Proceed to billing</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -521,8 +563,29 @@
 		  </div>
 		  </form>
 	<!--End Ongoing Slip -->
-	
-	
+	<!-- imageviewer -->
+<div class="modal fade" id="imageViewerModal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+       <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Image Viewer</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div> 
+      <div class="modal-body">
+   <img id="imageViewerImage" class="rounded img-fluid mx-auto my-4" 
+   	style="
+	   	display: block;
+	    margin-left: auto;
+	    margin-right: auto;max-height: 100%; max-width: 100%;">
+	  </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 	
 		</main>
 		<!-- MAIN -->
@@ -545,6 +608,30 @@
        
     </script>
 	
+	<script type="text/javascript">
+	// Get the modal and the image inside it
+	
+	$(document).ready(function() {
+    $('.imageProof').on('click', function(event) {
+        var image_proof = $("#client_payment_proof").attr("src");
+        $('#imageViewerImage').attr('src', image_proof);
+        $('#imageViewerModal').modal();
+        
+    });
+});
+
+	$(document).ready(function() {
+	    $('.imageSignature').on('click', function(event) {
+	        var image_proof = $("#client_signature").attr("src");
+	        $('#imageViewerImage').attr('src', image_proof);
+	        $('#imageViewerModal').modal();
+	        
+	    });
+	});
+
+	</script>
+	
+	
 	<script>
 	
 
@@ -558,14 +645,20 @@
 	        var amount = $(this).closest('tr').find('td:eq(5)').text();
 	        var conformeNo = $(this).closest('tr').find('td:eq(6)').text(); // retrieve the conforme_no value from the button's data-conforme-no attribute
 	        var progress = $(this).closest('tr').find('td:eq(7)').text();
-	        var conforme_date = $(this).closest('tr').find('td:eq(8)').text();
+	        var conforme_date_ongoing = $(this).closest('tr').find('td:eq(8)').text();
 	        var signature = $(this).closest('tr').find('td:eq(9)').text();
 	        var description = $(this).closest('tr').find('td:eq(10)').text();
 			var client_signature = $(this).closest('tr').find('td:eq(11)').text();
 			var client_payment_proof = $(this).closest('tr').find('td:eq(12)').text();
 			
+			
+			//images 
+			$('#thumbnail').attr('src', '/img/' + signature);
+			$('#client_payment_proof').attr('src', '/img/' + client_payment_proof);
+			$('#client_signature').attr('src', '/img/' + client_signature);
+			
 	        $('#ticket_id').val(ticketId);
-	        $('#conforme_date').val(conforme_date);
+	        $('#conforme_date_ongoing').val(conforme_date_ongoing);
 	        $('#title_ongoing').val(title);
 	        $('#description_ongoing').val(description);
 	        $('#user_name_ongoing').val(userName);

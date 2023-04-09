@@ -87,11 +87,11 @@ public class TicketController {
 		
 	@PostMapping("/tickets/update-tickets-client")
 	public String conforme_client_update(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes,
-	        @RequestParam MultipartFile client_payment_proof, 
-	        @RequestParam MultipartFile client_signature) {
+	        @RequestParam MultipartFile img1, 
+	        @RequestParam MultipartFile img2) {
 	    
-	    newTicket.setClient_payment_proof(client_payment_proof.getOriginalFilename());
-	    newTicket.setClient_signature(client_signature.getOriginalFilename());
+	    newTicket.setClient_payment_proof(img1.getOriginalFilename());
+	    newTicket.setClient_signature(img2.getOriginalFilename());
 
 	    Ticket savedTicket = ticketService.save(newTicket);
 
@@ -99,16 +99,16 @@ public class TicketController {
 	        try {
 	            // Save proof of payment file
 	            File saveFile = new ClassPathResource("static/img").getFile();
-	            Path proofPath = Paths.get(saveFile.getAbsolutePath() + File.separator + client_payment_proof.getOriginalFilename());
+	            Path proofPath = Paths.get(saveFile.getAbsolutePath() + File.separator + img1.getOriginalFilename());
 	            System.out.println(proofPath);
-				System.out.println(client_payment_proof.getOriginalFilename());
-	            Files.copy(client_payment_proof.getInputStream(), proofPath, StandardCopyOption.REPLACE_EXISTING);
+				System.out.println(img1.getOriginalFilename());
+	            Files.copy(img1.getInputStream(), proofPath, StandardCopyOption.REPLACE_EXISTING);
 
 	            // Save client signature file
-	            Path signaturePath = Paths.get(saveFile.getAbsolutePath() + File.separator + client_signature.getOriginalFilename());
+	            Path signaturePath = Paths.get(saveFile.getAbsolutePath() + File.separator + img2.getOriginalFilename());
 	            System.out.println(signaturePath);
-				System.out.println(client_signature.getOriginalFilename());
-	            Files.copy(client_signature.getInputStream(), signaturePath, StandardCopyOption.REPLACE_EXISTING);
+				System.out.println(img2.getOriginalFilename());
+	            Files.copy(img2.getInputStream(), signaturePath, StandardCopyOption.REPLACE_EXISTING);
 
 	        } catch (Exception e) {
 	            e.printStackTrace();
