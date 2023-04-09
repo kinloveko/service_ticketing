@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -73,12 +74,21 @@ public class Ticket {
 	@Column(name="amount", updatable=true)
 	private String amount;
 	
-	//Ticket
+
 		@Getter
 		@Setter
 		@Column(name="salesSignature", updatable=true)
 		private String salesSignature;
 
+		@Getter
+		@Setter
+		@Column(name="client_payment_proof", updatable=true)
+		private String client_payment_proof;
+		
+		@Getter
+		@Setter
+		@Column(name="client_signature", updatable=true)
+		private String client_signature;
 	
 	@Getter
 	@Setter

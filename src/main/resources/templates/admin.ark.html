@@ -225,14 +225,15 @@
 			    <td style="display:none" th:text="${t.conforme_date}"></td>
 			    <td style="display:none" th:text="${t.salesSignature}"></td>
 		        <td style="display:none" th:text="${t.description}"></td>
-			    
-			       <td>
-			 <button type="button" class="btn btn-success my-2 ongoingBtn" 
-			       	 th:href="@{/tickets/{ticketId}(ticketId=${t.ticket_id})}" 
-			       	  data-toggle="modal"  data-target="#ongoingModal">
-			       	  <i class="fa fa-edit" style="font-size:20px;"></i></button>
-			      
-			       </td>
+		        <td style="display:none" th:text="${t.client_signature}"></td>
+			    <td style="display:none" th:text="${t.client_payment_proof}"></td>
+			    <td>
+					 <button type="button" class="btn btn-success my-2 ongoingBtn" 
+					       	 th:href="@{/tickets/{ticketId}(ticketId=${t.ticket_id})}" 
+					       	  data-toggle="modal"  data-target="#ongoingModal">
+					       	  <i class="fa fa-edit" style="font-size:20px;"></i>
+					 </button>
+			   </td>
 				</tr>
             </tbody>
         </table>
@@ -482,13 +483,13 @@
         <div class="col-sm-6">
         <div class="mb-3">
 	  	<label for="customFile" class="form-label">Client's Signature</label>
-	  	<input type="file" class="form-control" id="customFile" disabled/>
+	  		<img style="width:75px;height:75px;margin-left:30px;"  id="client_signature"  class="rounded float-left">
 	</div>
     </div>
     <div class="col-sm-6">
      <div class="mb-3">
 	  	<label for="customFile" class="form-label">Proof of Payment</label>
-	  	<input type="file" class="form-control" id="customFile" disabled/>
+	  		<img style="width:75px;height:75px;margin-left:30px;"  id="client_payment_proof"  class="rounded float-left">
 	</div>
 	</div>
 	</div>	
@@ -560,7 +561,9 @@
 	        var conforme_date = $(this).closest('tr').find('td:eq(8)').text();
 	        var signature = $(this).closest('tr').find('td:eq(9)').text();
 	        var description = $(this).closest('tr').find('td:eq(10)').text();
-
+			var client_signature = $(this).closest('tr').find('td:eq(11)').text();
+			var client_payment_proof = $(this).closest('tr').find('td:eq(12)').text();
+			
 	        $('#ticket_id').val(ticketId);
 	        $('#conforme_date').val(conforme_date);
 	        $('#title_ongoing').val(title);
@@ -568,7 +571,8 @@
 	        $('#user_name_ongoing').val(userName);
 	        $('#status').val(status);
 	        $('#amount_ongoing').val(amount);
-	       
+	        $('#client_payment_proof').val(client_payment_proof);
+	        $('#client_signature').val(client_signature);
 	        $('#conforme_no_ongoing').val(conformeNo); // set the conforme_no value in the #modalView modal
 	        $('#ongoingModal').modal();
 	    });

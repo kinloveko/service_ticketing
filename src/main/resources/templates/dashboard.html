@@ -210,8 +210,11 @@
                                 <th>User</th>
                                  <th>Title</th>
                                 <th>Date issue</th>
+                                    <th>Progress</th>
                                 <th>Status</th>
                                   <th>Conforme no.</th>
+                                       <th>Amount</th>
+                                             <th>Signature</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -225,7 +228,8 @@
                                 <td th:text="${b.progress}"></td>
                                 <td th:text="${b.status}">
                                 <td th:text="${b.conforme_no}">
-                                <td style="display:none" th:text="${b.amount}">
+                                <td  th:text="${b.amount}">
+                                 <td  th:text="${b.salesSignature}">
                                 <span class="status completed"></span></td>
                                 <td>
                               <button type="button" class="btn btn-primary my-2 ml-2 ongoing"
@@ -379,7 +383,9 @@
 </form>
 
  <!-- Conformed Slip Modal -->
-		<form>
+			
+	  <form th:action="@{/tickets/update-tickets-client}" enctype="multipart/form-data" method="post" >
+	  
 		<div class="modal fade" id="conformeTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		  <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
@@ -437,19 +443,26 @@
     </div>
     </div>
     </div>
+     <div class="row">
+     <div class="col-sm-6">
     <div class="mb-3">
-	  	<label for="customFile" class="form-label">Proof of Payment</label>
-	  	<input type="file" class="form-control"    id="paymentFile" required/>
+	  	<label for="customFile" class="form-label" style="font-weight:bold;">Proof of Payment (Required)</label>
+	  	<input type="file" class="form-control"    id="client_payment_proof" name="client_payment_proof" required/>
 	</div>
+	</div>
+	 <div class="col-sm-6">
 	<div class="mb-3">
-	  	<label for="customFile" class="form-label">Client's Signature</label>
-	  	<input type="file" class="form-control"  id="customFile" required/>
+	  	<label for="customFile" class="form-label" style="font-weight:bold;">Client's Signature (Required)</label>
+	  	<input type="file" class="form-control"  id="client_signature" name="client_signature" required/>
+	  		<label style="font-weight: bold;margin-top:20px;margin-right:30px;float:right;" for="formFileSm" class="form-label">Sale's Team Signature</label>
+	  	
+	</div>
+	</div>
 	</div>
 	<div class="mb-1">
-	<label style="font-weight: bold;" for="formFileSm" class="form-label">Sale's Team Signature</label>
 	</div>
 	<div class="mb-5">
-	<img style="width:75px;height:75px;margin-left:30px;"  id="thumbnail"  src="img/sample_signature.png" class="rounded float-left">
+	<img style="width:75px;height:75px;margin-right:60px;"  id="thumbnail"  class="rounded float-right">
 	</div>
 	</div>
             <div class="modal-footer">
@@ -496,7 +509,8 @@
 				var status = $(this).closest('tr').find('td:eq(6)').text();
 				var conforme_no = $(this).closest('tr').find('td:eq(7)').text();
 				var amount = $(this).closest('tr').find('td:eq(8)').text();
-
+				var signature = $(this).closest('tr').find('td:eq(9)').text();
+				
 				$('#ticket_id').val(ticketId);
 				$('#date').val(dateCreated);
 				$('#title_ongoing').val(title);
@@ -506,6 +520,7 @@
 				$('#status').val(status);
 				$('#conforme_no').val(conforme_no);
 				$('#amount').val(amount);
+				$('#thumbnail').attr('src', '/img/' + signature);
 				$('#conformeTicket').modal();
 				
 				
