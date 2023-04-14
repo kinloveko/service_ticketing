@@ -143,7 +143,6 @@
             <p>On-going Tickets</p>
         </span>
     </li>
-
    <li class="menu-item " data-table="completed" onclick="handleClick(this)">
         <i class='bx bxs-check-circle' ></i>
         <span class="text">
@@ -216,7 +215,7 @@
                                 <th>Status</th>
                                   <th>Conforme no.</th>
                                        <th>Amount</th>
-                                             <th>Signature</th>
+
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -231,8 +230,10 @@
                                 <td th:text="${b.status}">
                                 <td th:text="${b.conforme_no}">
                                 <td  th:text="${b.amount}">
-                                 <td  th:text="${b.salesSignature}">
-                                  <td   th:text="${b.conforme_date}">
+                                 <td style="display:none" th:text="${b.salesSignature}">
+                                  <td style="display:none"  th:text="${b.conforme_date}">
+                                    <td  style="display:none" th:text="${b.client_signature}">
+                                      <td  style="display:none" th:text="${b.client_payment_proof}">
                                 <span class="status completed"></span></td>
                                 <td>
                               <button type="button" class="btn btn-primary my-2 ml-2 ongoing"
@@ -449,18 +450,53 @@
     </div>
     </div>
     </div>
-     <div class="row">
+    
+         <div class="row" id="ClientDataRetrieved" style="display:none">
+        <div class="col-sm-6">
+          <div class="row">
+              <div class="col-sm-6">
+        <div class="mb-3">
+	  	<label for="customFile" class="form-label">Client's Signature</label>
+	  	</div>
+	  	</div>
+	  	  <div class="col-sm-6">
+        <div class="mb-3">
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_signature"  class="rounded float-left imageSignature">
+		</div>
+		</div>
+	</div>
+    </div>
+    <div class="col-sm-6">
+      <div class="row">
+              <div class="col-sm-6">
+     <div class="mb-3">
+     	 	<label for="customFile" class="form-label">Proof of Payment</label>
+     	 	</div>
+     	 	</div>
+        <div class="col-sm-6">
+     <div class="mb-3">
+	  	
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof"  class="rounded float-left imageProof">
+	  	<label style="font-weight: bold;margin-top:20px;margin-right:30px;float:right;" for="formFileSm" class="form-label">Sale's Team Signature</label>
+	
+	</div>
+	</div>
+	</div>
+	</div>
+	</div>	
+	
+     <div class="row" id="ClientDatas" style="display:none">
      <div class="col-sm-6">
     <div class="mb-3">
 	  	<label for="customFile" class="form-label" style="font-weight:bold;">Proof of Payment (Required)</label>
-	  	<input type="file" class="form-control"    id="client_payment_proof" name="img1" required/>
+	  	<input type="file" class="form-control"    id="client_payment_proof_ongoing" name="img1" required/>
 	</div>
 	</div>
 	 <div class="col-sm-6">
 	<div class="mb-3">
 	  	<label for="customFile" class="form-label" style="font-weight:bold;">Client's Signature (Required)</label>
-	  	<input type="file" class="form-control"  id="client_signature" name="img2" required/>
-	  		<label style="font-weight: bold;margin-top:20px;margin-right:30px;float:right;" for="formFileSm" class="form-label">Sale's Team Signature</label>
+	  	<input type="file" class="form-control"  id="client_signature_ongoing" name="img2" required/>
+	  	<label style="font-weight: bold;margin-top:20px;margin-right:30px;float:right;" for="formFileSm" class="form-label">Sale's Team Signature</label>
 	  	
 	</div>
 	</div>
@@ -472,7 +508,8 @@
 	</div>
 	</div>
             <div class="modal-footer">
-                     <button type="submit" class="btn btn-primary" >Submit</button>
+                     <button type="submit" id="submit_button_ongoing" class="btn btn-primary" >Submit</button>
+                       <button type="button" id="view_status" class="btn btn-primary" >VIEW TICKET STATUS</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
             
@@ -482,6 +519,31 @@
 		  </form>
 		  <!-- Conforme Ticket End Modal -->	
 	
+	
+	
+		<!-- imageviewer -->
+<div class="modal fade" id="imageViewerModal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+       <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Image Viewer</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div> 
+      <div class="modal-body">
+   <img id="imageViewerImage" class="rounded img-fluid mx-auto my-4" 
+   	style="
+	   	display: block;
+	    margin-left: auto;
+	    margin-right: auto;max-height: 100%; max-width: 100%;">
+	  </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>	
 	</section>
 	<!-- CONTENT -->
 	
@@ -500,49 +562,86 @@
             confirmButtonText: 'OK'
         });
     </script>
+    
+    
+    
+<script type="text/javascript">
+	// Get the modal and the image inside it
+	
+	$(document).ready(function() {
+    $('.imageProof').on('click', function(event) {
+        var image_proof = $("#client_payment_proof").attr("src");
+        $('#imageViewerImage').attr('src', image_proof);
+        $('#imageViewerModal').modal();
+        
+    });
+});
 
+	$(document).ready(function() {
+	    $('.imageSignature').on('click', function(event) {
+	        var image_proof = $("#client_signature").attr("src");
+	        $('#imageViewerImage').attr('src', image_proof);
+	        $('#imageViewerModal').modal();
+	        
+	    });
+	});
+
+	</script>
 	
 		<script type="text/javascript">
-		
 		$(document).ready(function() {
-			$('.ongoing').on('click', function(event) {
-				
-				
-				//to get the data in the table row
-				var ticketId = $(this).closest('tr').find('td:eq(0)').text();
-				var dateCreated = $(this).closest('tr').find('td:eq(4)').text();
-				var title = $(this).closest('tr').find('td:eq(2)').text();
-				var description = $(this).closest('tr').find('td:eq(3)').text();
-				var userName = $(this).closest('tr').find('td:eq(1)').text();
-				var progress = $(this).closest('tr').find('td:eq(5)').text();
-				var status = $(this).closest('tr').find('td:eq(6)').text();
-				var conforme_no = $(this).closest('tr').find('td:eq(7)').text();
-				var amount = $(this).closest('tr').find('td:eq(8)').text();
-				var signature = $(this).closest('tr').find('td:eq(9)').text();
-				var conforme_date_ongoing = $(this).closest('tr').find('td:eq(10)').text();
-				
-				
-				//setting the value from the inputs
-				
-				$('#ticket_id').val(ticketId);
-				$('#date').val(dateCreated);
-				$('#title_ongoing').val(title);
-				$('#description_ongoing').val(description);
-				$('#user_name').val(userName);
-				$('#progress').val(progress);
-				$('#status_ongoing').val(status);
-				$('#conforme_no').val(conforme_no);
-				$('#amount').val(amount);
-				$('#thumbnail').attr('src', '/img/' + signature);
-				$('#conforme_date_ongoing').val(conforme_date_ongoing);
-				$('#salesSignature').val(signature);
-				
-				$('#conformeTicket').modal();
+		    $('.ongoing').on('click', function(event) {
+		        //to get the data in the table row
+		        var ticketId = $(this).closest('tr').find('td:eq(0)').text();
+		        var dateCreated = $(this).closest('tr').find('td:eq(4)').text();
+		        var title = $(this).closest('tr').find('td:eq(2)').text();
+		        var description = $(this).closest('tr').find('td:eq(3)').text();
+		        var userName = $(this).closest('tr').find('td:eq(1)').text();
+		        var progress = $(this).closest('tr').find('td:eq(5)').text();
+		        var status = $(this).closest('tr').find('td:eq(6)').text();
+		        var conforme_no = $(this).closest('tr').find('td:eq(7)').text();
+		        var amount = $(this).closest('tr').find('td:eq(8)').text();
+		        var signature = $(this).closest('tr').find('td:eq(9)').text();
+		        var conforme_date_ongoing = $(this).closest('tr').find('td:eq(10)').text();
+		        
+		        
+		        //setting the value from the inputs
+		        $('#ticket_id').val(ticketId);
+		        $('#date').val(dateCreated);
+		        $('#title_ongoing').val(title);
+		        $('#description_ongoing').val(description);
+		        $('#user_name').val(userName);
+		        $('#progress').val(progress);
+		        $('#status_ongoing').val(status);
+		        $('#conforme_no').val(conforme_no);
+		        $('#amount').val(amount);
+		        $('#thumbnail').attr('src', '/img/' + signature);
+		        $('#conforme_date_ongoing').val(conforme_date_ongoing);
+		        $('#salesSignature').val(signature);
+	
+		        var client_signature_ongoing = $(this).closest('tr').find('td:eq(11)').text();
+		        var client_payment_proof_ongoing = $(this).closest('tr').find('td:eq(12)').text();
 
-				
-			});
+		        if (client_signature_ongoing && client_payment_proof_ongoing) {
+		            // Both fields have values, hide ClientDatas and show ClientDataRetrieved
+		            $("#submit_button_ongoing").hide();
+		            $("#ClientDatas").hide();
+		            $("#view_status").show();
+		            $("#ClientDataRetrieved").show();
+		            //for images
+		            $('#client_payment_proof').attr('src', '/img/' + client_payment_proof_ongoing);
+		            $('#client_signature').attr('src', '/img/' + client_signature_ongoing);
+		        } else {
+		            // At least one field is null, show ClientDatas and hide ClientDataRetrieved
+		            $("#submit_button_ongoing").show();
+		            $("#view_status").hide();
+		            
+		            $("#ClientDatas").show();
+		            $("#ClientDataRetrieved").hide();
+		            
+		        }
+		    });
 		});
-		
 		
 		function updateTicket() {
 			  const form = document.querySelector('#updateTicketForm');

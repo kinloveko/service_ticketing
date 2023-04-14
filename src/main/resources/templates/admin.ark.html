@@ -17,7 +17,8 @@
 	  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
 	  rel="stylesheet"
 	/>
-	
+		
+
 	<!-- My Bootstrap CSS -->
 		<link rel="stylesheet" th:href="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'">
 <script th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
@@ -139,27 +140,7 @@
             <p>On-going Tickets</p>
         </span>
     </li>
-          <li class="menu-item " data-table="billing" onclick="handleClick(this)">
-        <i class='bx bxs-check-circle' ></i>
-        <span class="text">
-            <h3 >0</h3>
-            <p>Billing Tickets</p>
-        </span>
-    </li>
-          <li class="menu-item " data-table="collection" onclick="handleClick(this)">
-        <i class='bx bxs-check-circle' ></i>
-        <span class="text">
-            <h3 >0</h3>
-            <p>Collection</p>
-        </span>
-    </li>
-          <li class="menu-item " data-table="treasury" onclick="handleClick(this)">
-        <i class='bx bxs-check-circle' ></i>
-        <span class="text">
-            <h3 >0</h3>
-            <p>Treasury</p>
-        </span>
-    </li>
+ 
    <li class="menu-item " data-table="completed" onclick="handleClick(this)">
         <i class='bx bxs-check-circle' ></i>
         <span class="text">
@@ -364,7 +345,7 @@
         <div class="modal-content">
         
               <input type="hidden" class="form-control" id="status" name="status">
-               <input type="hidden" class="form-control" id="progress" name="progress">
+               <input type="hidden" class="form-control" id="progress" name="progress" value="billing_team">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Conforme Ticket</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -459,7 +440,7 @@
         <div class="modal-content">
         
               <input type="hidden" class="form-control" id="status" name="status">
-               <input type="hidden" class="form-control" id="progress" name="progress">
+               <input type="hidden" class="form-control" id="progress" name="progress" >
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Conforme Ticket</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -489,7 +470,8 @@
         <input type="text" class="form-control" id="title_ongoing" name="title" readonly>
     </div>
     </div>
-          <div class="col-sm-6">
+    
+   <div class="col-sm-6">
     <div class="form-group">
         <label for="title" class="col-form-label">Client name</label>
         <input type="text" class="form-control" id="user_name_ongoing" name="user_name" readonly>
@@ -500,7 +482,7 @@
         <label for="description" class="col-form-label">Description</label>
         <textarea class="form-control" rows="5" name="description" id="description_ongoing" readonly></textarea>
     </div>
-     <div class="row">
+     <div class="row" >
         <div class="col-sm-6">
           <div class="row">
               <div class="col-sm-6">
@@ -511,6 +493,7 @@
 	  	  <div class="col-sm-6">
         <div class="mb-3">
 	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_signature"  class="rounded float-left imageSignature">
+				<label id="waiting_signature" class="form-label" style="color:red">Waiting for client's signature*</label>	
 		</div>
 		</div>
 	</div>
@@ -524,12 +507,16 @@
      	 	</div>
         <div class="col-sm-6">
      <div class="mb-3">
+     	<label id="waiting_payment" class="form-label" style="color:red">Waiting for client's proof of payment*</label>	
+	
 	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof"  class="rounded float-left imageProof">
 	</div>
 	</div>
 	</div>
 	</div>
 	</div>	
+	
+	
 	 <div class="row">
         <div class="col-sm-6">
     <div class="form-group">
@@ -555,7 +542,7 @@
 	</div>
 	</div>
             <div class="modal-footer">
-                     <button type="submit" class="btn btn-primary" >Proceed to billing</button>
+                     <button type="submit" id="proceed_billing" class="btn btn-primary" >Proceed to billing</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -630,8 +617,7 @@
 	});
 
 	</script>
-	
-	
+
 	<script>
 	
 
@@ -651,11 +637,32 @@
 			var client_signature = $(this).closest('tr').find('td:eq(11)').text();
 			var client_payment_proof = $(this).closest('tr').find('td:eq(12)').text();
 			
+
+				$('#thumbnail').attr('src', '/img/' + signature);
 			
-			//images 
-			$('#thumbnail').attr('src', '/img/' + signature);
-			$('#client_payment_proof').attr('src', '/img/' + client_payment_proof);
-			$('#client_signature').attr('src', '/img/' + client_signature);
+			   if (client_signature && client_payment_proof) {
+				 //images 
+				   	$('#waiting_payment').hide();
+		  	        $('#waiting_signature').hide();
+		  	      $('#client_payment_proof').show();
+		  	        $('#client_signature').show();
+		  	        
+		  	  	$('#client_payment_proof').attr('src', '/img/' + client_payment_proof);
+				$('#client_signature').attr('src', '/img/' + client_signature);
+				   $('#proceed_billing').attr("disabled", false);
+					
+		        } else {
+		    	 	$('#waiting_payment').show();
+		  	        $('#waiting_signature').show();
+		  	  	 	$('#client_payment_proof').hide();
+		  	        $('#client_signature').hide();
+		  	        
+		  	      $('#proceed_billing').attr({
+		  	        "disabled": true,
+		  	      });
+		  	 
+		        }
+			
 			
 	        $('#ticket_id').val(ticketId);
 	        $('#conforme_date_ongoing').val(conforme_date_ongoing);
@@ -668,9 +675,13 @@
 	        $('#client_signature').val(client_signature);
 	        $('#conforme_no_ongoing').val(conformeNo); // set the conforme_no value in the #modalView modal
 	        $('#ongoingModal').modal();
+	        
+	        
+	        
+	        
 	    });
 	});
-
+	
 	</script>
 	<script type="text/javascript">
 	//conforme_ongoing
