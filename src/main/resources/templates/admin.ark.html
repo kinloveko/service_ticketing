@@ -42,28 +42,28 @@
 					<span class="text">Home</span>
 				</a>
 			</li>
-			<li>
+			<li class="menu-item active" data-table="pending" onclick="handleClick(this)">
 				<a href="#">
 					<i class='bx bxs-shopping-bag-alt' ></i>
 					<span class="text">Pending Tickets</span>
 				</a>
 			</li>
-			<li>
+			<li class="menu-item" data-table="ongoing" onclick="handleClick(this)">
 				<a href="#">
 					<i class='bx bxs-doughnut-chart' ></i>
 					<span class="text">On-going Tickets</span>
 				</a>
 			</li>
-			<li>
+			<li class="menu-item " data-table="completed" onclick="handleClick(this)">
 				<a href="#">
 					<i class='bx bxs-message-dots' ></i>
 					<span class="text">Completed Tickets</span>
 				</a>
 			</li>
-			<li>
+			<li class="menu-item " data-table="support" onclick="handleClick(this)">
 				<a href="#">
 					<i class='bx bxs-group' ></i>
-					<span class="text">Team</span>
+					<span class="text">Support Team</span>
 				</a>
 			</li>
 		</ul>
@@ -211,6 +211,7 @@
                     <th scope="col">Status</th>
                 	<th scope="col">Amount</th>
                     <th scope="col">Conforme No.</th>
+                    <th scope="col">Progess</th>
                        <th scope="col">Action</th>
                 </tr>
             </thead>
@@ -223,7 +224,7 @@
 			    <td th:text="${t.status}"></td>
 			    <td th:text="${t.amount}"></td>
 		        <td th:text="${t.conforme_no}"></td>
-			    <td style="display:none" th:text="${t.progress}"></td>
+			    <td  th:text="${t.progress}"></td>
 			    <td style="display:none"  th:text="${t.conforme_date}"></td>
 			    <td style="display:none" th:text="${t.salesSignature}"></td>
 		        <td style="display:none" th:text="${t.description}"></td>
@@ -280,7 +281,46 @@
         </table>
           </div>
 </div>
-    
+
+
+<!-- Support Table -->
+<div class="table-data" id="support-table" style="display:none" >    
+			    <!-- Table content here -->
+      <div class="order">
+        <div class="head">
+            <h3>Support Team</h3>
+            <i class='bx bx-search' ></i>
+            <i class='bx bx-filter' ></i>
+        </div>
+           <table>
+            <thead>
+                <tr>                                
+                    <th scope="col">Ticket No.</th>
+                    <th scope="col">Date Created</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Client Name</th>
+                    <th scope="col">Status</th>
+                       <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr th:each="t : ${completed_tickets}">
+			    <td scope="row" th:text="${t.ticket_id}"></td>
+			     <td th:text="${t.created_on}"></td>
+			    <td th:text="${t.title}"></td>
+			    <td th:text="${t.description}"></td>
+			    <td th:text="${t.user_name}"></td>
+			    <td th:text="${t.status}"></td>
+			       <td>
+			       <a class="btn btn-success btn-round-1">View</a>
+			       <a class="btn btn-danger btn-round-1">Delete</a>
+			       </td>
+				</tr>
+            </tbody>
+        </table>
+          </div>
+</div>
 			
  <div id="myForm">
 	
@@ -345,7 +385,7 @@
         <div class="modal-content">
         
               <input type="hidden" class="form-control" id="status" name="status">
-               <input type="hidden" class="form-control" id="progress" name="progress" value="billing_team">
+               <input type="hidden" class="form-control" id="progress" name="progress" >
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Conforme Ticket</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -430,17 +470,18 @@
 	</div>
  <!-- Conformed Slip End Modal -->
  
- 
- 
  <!-- Ongoing Slip -->
 	
-	  <form th:action="@{/tickets/update-ticket}" enctype="multipart/form-data" method="post" >
+	  <form th:action="@{/tickets/update-ticket-ongoing}" enctype="multipart/form-data" method="post" >
 		<div class="modal fade" id="ongoingModal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
 		  <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
         
-              <input type="hidden" class="form-control" id="status" name="status">
-               <input type="hidden" class="form-control" id="progress" name="progress" >
+              <input type="hidden" class="form-control" id="status" name="status" value="ongoing">
+               <input type="hidden" class="form-control" id="client_signatures" name="client_signature" >
+               <input type="hidden" class="form-control" id="client_payment_proofs" name="client_payment_proof" >
+                <input type="hidden" class="form-control" id="salesSignatures" name="salesSignature" >
+               <input type="hidden" class="form-control" id="progress_ongoing" name="progress"  >
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Conforme Ticket</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -492,7 +533,7 @@
 	  	</div>
 	  	  <div class="col-sm-6">
         <div class="mb-3">
-	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_signature"  class="rounded float-left imageSignature">
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_signature"   class="rounded float-left imageSignature">
 				<label id="waiting_signature" class="form-label" style="color:red">Waiting for client's signature*</label>	
 		</div>
 		</div>
@@ -509,7 +550,7 @@
      <div class="mb-3">
      	<label id="waiting_payment" class="form-label" style="color:red">Waiting for client's proof of payment*</label>	
 	
-	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof"  class="rounded float-left imageProof">
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof"   class="rounded float-left imageProof">
 	</div>
 	</div>
 	</div>
@@ -537,12 +578,13 @@
 	  
 	  		<img style="width:120px;height:90px;margin-right:60px;"  id="thumbnail"  class="rounded float-right">
 	  	
-	  	<input type="hidden" class="form-control" id="customFile" name="img" required/>
+	  	<input type="hidden" class="form-control" id="customFile" name="img" />
 	  	
 	</div>
 	</div>
             <div class="modal-footer">
-                     <button type="submit" id="proceed_billing" class="btn btn-primary" >Proceed to billing</button>
+            		   <button type="submit" id="proceed_billing" class="btn btn-success" >Send To billing</button>	
+                     <button type="submit" id="proceed_support" class="btn btn-primary" >SEND TO SUPPORT</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -576,8 +618,6 @@
 	
 		</main>
 		<!-- MAIN -->
-
-	
 	</section>
 	<!-- CONTENT -->
 	
@@ -607,6 +647,7 @@
     });
 });
 
+	
 	$(document).ready(function() {
 	    $('.imageSignature').on('click', function(event) {
 	        var image_proof = $("#client_signature").attr("src");
@@ -636,33 +677,58 @@
 	        var description = $(this).closest('tr').find('td:eq(10)').text();
 			var client_signature = $(this).closest('tr').find('td:eq(11)').text();
 			var client_payment_proof = $(this).closest('tr').find('td:eq(12)').text();
-			
+			var toBilling = "billing_team";
+			var toSupport = "support_team";
 
 				$('#thumbnail').attr('src', '/img/' + signature);
-			
+				   //this is just to check if progress is not going to billing or to support team
+		  	      if (progress === "support_team") {
+		  	 			 	 $('#progress_ongoing').val(toBilling); 	
+					  	   	 $('#proceed_billing').show();  
+					  	   	 $('#proceed_support').hide();
+						 // Do something if the progress is equal to "support_team"
+			  		} else {
+			  			
+			  			// Do something else if the progress is not equal to "support_team"
+			  		     	 $('#progress_ongoing').val(toSupport); 	
+					  		$('#proceed_billing').hide();  
+				  	  	 	$('#proceed_support').show();
+					  	
+			  		}
+		  	     
 			   if (client_signature && client_payment_proof) {
 				 //images 
+				 
+				      //so that when the admin will click the button it will rewrite the data 
+				 
 				   	$('#waiting_payment').hide();
 		  	        $('#waiting_signature').hide();
-		  	      $('#client_payment_proof').show();
+		  	        $('#client_payment_proof').show();
 		  	        $('#client_signature').show();
-		  	        
-		  	  	$('#client_payment_proof').attr('src', '/img/' + client_payment_proof);
-				$('#client_signature').attr('src', '/img/' + client_signature);
-				   $('#proceed_billing').attr("disabled", false);
-					
+		  	       
+		  	     
+			      
+			  	  	$('#client_payment_proof').attr('src', '/img/' + client_payment_proof);
+					$('#client_signature').attr('src', '/img/' + client_signature);
+				
+				   $('#client_payment_proofs').val(client_payment_proof);
+			  	   $('#client_signatures').val(client_signature);
+			  	   $('#salesSignatures').val(signature);
+			  	   
+			    
+			  	    //this is just to check if progress is not going to billing or to support team
+			  	 	$('#proceed_support').attr({
+			  	        "disabled": false});
+			  	    
 		        } else {
 		    	 	$('#waiting_payment').show();
 		  	        $('#waiting_signature').show();
 		  	  	 	$('#client_payment_proof').hide();
 		  	        $('#client_signature').hide();
-		  	        
-		  	      $('#proceed_billing').attr({
-		  	        "disabled": true,
-		  	      });
-		  	 
+		  	   
+		  	  	$('#proceed_support').attr({
+		  	        "disabled": true});  
 		        }
-			
 			
 	        $('#ticket_id').val(ticketId);
 	        $('#conforme_date_ongoing').val(conforme_date_ongoing);
@@ -671,14 +737,8 @@
 	        $('#user_name_ongoing').val(userName);
 	        $('#status').val(status);
 	        $('#amount_ongoing').val(amount);
-	        $('#client_payment_proof').val(client_payment_proof);
-	        $('#client_signature').val(client_signature);
 	        $('#conforme_no_ongoing').val(conformeNo); // set the conforme_no value in the #modalView modal
 	        $('#ongoingModal').modal();
-	        
-	        
-	        
-	        
 	    });
 	});
 	
@@ -686,7 +746,7 @@
 	<script type="text/javascript">
 	//conforme_ongoing
 
-
+	
 	
 	// Add click event listener to the button in the first modal
 	$('.conforme_btn').on('click', function(event) {

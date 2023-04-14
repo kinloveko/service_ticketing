@@ -59,13 +59,12 @@ public class UserController {
 	        	if(i.getUser_role().equals("client")) {
 	        	      return "redirect:/dashboard"; // return the name of the dashboard page
 	        	}
-	        	else if (i.getUser_role().equals("sales_team")){
+	        	else if (i.getUser_role().equals("sales_team")|| i.getUser_role().equals("support_team")){
 	        		 return "redirect:/admin.ark"; // return the name of the dashboard page
 	        	}
-	        	
-	      
 	        }
 	    }
+	    
 	    return "login"; // return the name of the login page if no matching user is found
 	}
 

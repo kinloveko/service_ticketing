@@ -60,7 +60,15 @@ public class TicketController {
 		 return "redirect:/dashboard";
 		}
 	
-
+	//HTTP POST method
+	@PostMapping("/tickets/update-ticket-ongoing")
+	public String updateOngoing(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes) {
+		ticketService.save(newTicket);
+		redirectAttributes.addFlashAttribute("successMessage", "Ticket saved successfully!");
+		
+		 return "redirect:/admin.ark";
+		}
+	
 	@PostMapping("/tickets/update-ticket")
 		public String conformeTicket(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes, @RequestParam MultipartFile img) {
 			
@@ -84,6 +92,9 @@ public class TicketController {
 			redirectAttributes.addFlashAttribute("successMessage", "Conforme slip saved successfully!");
 			 return "redirect:/admin.ark";
 			}
+	
+
+
 		
 	@PostMapping("/tickets/update-tickets-client")
 	public String conforme_client_update(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes,
@@ -117,6 +128,10 @@ public class TicketController {
 	    redirectAttributes.addFlashAttribute("successMessage", "Conforme slip saved successfully!");
 	    return "redirect:/dashboard";
 	}
+	
+	
+	
+	
 	
 	@PutMapping("/tickets/update-ticket/{ticketId}")
 	@ResponseBody
