@@ -183,7 +183,7 @@
 			    <td th:text="${t.status}"></td>
 			      <td style=" display: none;" th:text="${t.conforme_no}"></td>
 			    <td>
-	 			     	 <button type="button" class="btn btn-success my-2 eBtn" th:href="@{/tickets/{ticketId}(ticketId=${t.ticket_id})}"  data-toggle="modal"  data-target="#viewTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
+	 			     	 <button type="button" class="btn btn-success my-2 eBtn"   data-toggle="modal"  data-target="#viewTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
 	                     <button type="button" class="btn btn-danger my-2"><i class="fa fa-trash" style="font-size:20px;"></i></button>
                </td>
 				</tr>
@@ -294,28 +294,43 @@
         </div>
            <table>
             <thead>
-                <tr>                                
+				<tr>                                
                     <th scope="col">Ticket No.</th>
                     <th scope="col">Date Created</th>
                     <th scope="col">Title</th>
-                    <th scope="col">Description</th>
                     <th scope="col">Client Name</th>
                     <th scope="col">Status</th>
-                       <th scope="col">Action</th>
+                     <th scope="col">Amount</th>
+                    <th scope="col">Conforme No</th>
+                     <th scope="col">Progress</th>
+                    <th scope="col">Action</th>
+                    
                 </tr>
             </thead>
             <tbody>
-            <tr th:each="t : ${completed_tickets}">
+             <tr th:each="t : ${support_tickets}">
 			    <td scope="row" th:text="${t.ticket_id}"></td>
 			     <td th:text="${t.created_on}"></td>
 			    <td th:text="${t.title}"></td>
-			    <td th:text="${t.description}"></td>
 			    <td th:text="${t.user_name}"></td>
 			    <td th:text="${t.status}"></td>
-			       <td>
-			       <a class="btn btn-success btn-round-1">View</a>
-			       <a class="btn btn-danger btn-round-1">Delete</a>
-			       </td>
+			    <td th:text="${t.amount}"></td>
+		        <td th:text="${t.conforme_no}"></td>
+			    <td  th:text="${t.progress}"></td>
+			    <td style="display:none"  th:text="${t.conforme_date}"></td>
+			    <td style="display:none" th:text="${t.salesSignature}"></td>
+		        <td style="display:none" th:text="${t.description}"></td>
+		        <td style="display:none" th:text="${t.client_signature}"></td>
+			    <td style="display:none" th:text="${t.client_payment_proof}"></td>
+			    <td>
+		
+			 
+
+				<a class="btn btn-success my-2 " th:href="@{'/tickets/'+${t.ticket_id}  }" >
+				    <i class="fa fa-edit" style="font-size:20px;"></i>
+				</a>
+				 
+			   </td>
 				</tr>
             </tbody>
         </table>
@@ -471,7 +486,6 @@
  <!-- Conformed Slip End Modal -->
  
  <!-- Ongoing Slip -->
-	
 	  <form th:action="@{/tickets/update-ticket-ongoing}" enctype="multipart/form-data" method="post" >
 		<div class="modal fade" id="ongoingModal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
 		  <div class="modal-dialog modal-xl" role="document">
@@ -592,7 +606,15 @@
 		  </div>
 		  </form>
 	<!--End Ongoing Slip -->
-	<!-- imageviewer -->
+	
+		  
+		<!-- End of Support modal-->
+	
+
+		  
+		<!-- End of add update modal-->
+
+ <!-- imageviewer -->
 <div class="modal fade" id="imageViewerModal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
@@ -660,9 +682,50 @@
 	</script>
 
 	<script>
-	
+	//button for support
+	 
+ 
+   $('.supportBtn').on('click', function(event) {
+	    // Extract data from the input fields in the second modal
+	    var ticketId = $(this).closest('tr').find('td:eq(0)').text();
+	    var title = $(this).closest('tr').find('td:eq(2)').text();
+	    var userName = $(this).closest('tr').find('td:eq(3)').text();
+	    var conformeNo = $(this).closest('tr').find('td:eq(6)').text(); 
+	    $('#ticket_id_support').val(ticketId);
+        $('#conforme_no_support').val(conformeNo);
+        $('#title_support').val(title);
+        $('#user_name_support').val(userName);
+        $('#support_modal').modal('show');
+	 
+	});
 
+   
+ 
+	//add button
+	
+	$('.add_button_update').on('click', function(event) {
+	    // Extract data from the input fields in the second modal
+  		
+		var ticketIds = $('#ticket_id_support').val();
+		var currentDate = new Date().toLocaleString('en-US');
+		
+		$('#ticket_id_add').val(ticketIds);
+   
+	    $('#status_date_time_add').val(currentDate);
+	    $('#status_progress_add').val("ongoing");	    
+	    
+	    $('#support_add_modal').modal();
+	    
+	});
+	
+	
+	
+	
+	
+	
+	//Button for ongoing 
 	$(document).ready(function() {
+		
 	    $('.ongoingBtn').on('click', function(event) {
 	        var ticketId = $(this).closest('tr').find('td:eq(0)').text();
 	        var dateCreated = $(this).closest('tr').find('td:eq(1)').text();
@@ -681,6 +744,7 @@
 			var toSupport = "support_team";
 
 				$('#thumbnail').attr('src', '/img/' + signature);
+				
 				   //this is just to check if progress is not going to billing or to support team
 		  	      if (progress === "support_team") {
 		  	 			 	 $('#progress_ongoing').val(toBilling); 	
@@ -814,6 +878,7 @@
 	        $('#modalView').modal();
 	    });
 	});
+	
 </script>
 <script>
 

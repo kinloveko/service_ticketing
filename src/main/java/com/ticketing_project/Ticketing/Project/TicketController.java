@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -44,7 +45,8 @@ public class TicketController {
 	 * String status){ return ticketService.getTicketsByStatus(status); }
 	 */
 	
-	
+	@Autowired
+	private StatusService statusService;
 	
 	@Autowired
 	private TicketService ticketService;
@@ -60,6 +62,7 @@ public class TicketController {
 		 return "redirect:/dashboard";
 		}
 	
+	
 	//HTTP POST method
 	@PostMapping("/tickets/update-ticket-ongoing")
 	public String updateOngoing(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes) {
@@ -67,6 +70,7 @@ public class TicketController {
 		redirectAttributes.addFlashAttribute("successMessage", "Ticket saved successfully!");
 		
 		 return "redirect:/admin.ark";
+		 
 		}
 	
 	@PostMapping("/tickets/update-ticket")
@@ -93,9 +97,7 @@ public class TicketController {
 			 return "redirect:/admin.ark";
 			}
 	
-
-
-		
+	
 	@PostMapping("/tickets/update-tickets-client")
 	public String conforme_client_update(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes,
 	        @RequestParam MultipartFile img1, 
@@ -129,10 +131,6 @@ public class TicketController {
 	    return "redirect:/dashboard";
 	}
 	
-	
-	
-	
-	
 	@PutMapping("/tickets/update-ticket/{ticketId}")
 	@ResponseBody
 	public void updateTicket(@PathVariable final int ticketId, @ModelAttribute Ticket updatedTicket) {
@@ -146,11 +144,45 @@ public class TicketController {
 	public void deleteTicket(@PathVariable final int ticketId) {
 		ticketService.delete(ticketId);
 	}
+
 	
 	@GetMapping("/tickets/{ticketId}")
-	public Ticket getTicketById(int ticketId) {
-		return ticketService.getTicketById(ticketId);
+	public String displayTicketDetailsById(@PathVariable("ticketId") int ticketId, Model m) {
+	    Ticket ticket = ticketService.getTicketById(ticketId);
+	    List<Status> findStatus = statusService.getAllStatus();
+	    
+	    List<Status> filtered_status = new ArrayList<>();
+	    for(Status s:findStatus) {
+	        if(s.getTicketID() == ticketId) {
+	            filtered_status.add(s);
+	        }
+	    }
+
+	    m.addAttribute("ticket", ticket);
+	    m.addAttribute("findStatus", filtered_status);
+	    System.out.println("Status updates for ticket " + ticketId + ": " + filtered_status);
+	    return "redirect:/admin.ark.progress?ticketId=" + ticketId;
 	}
+
+	@GetMapping("/admin.ark.progress")
+	public String adminPage(Model m, @RequestParam("ticketId") int ticketId) {
+	    Ticket ticket = ticketService.getTicketById(ticketId);
+	    List<Status> findStatus = statusService.getAllStatus();
+	    
+	    List<Status> filtered_status = new ArrayList<>();
+	    for(Status s:findStatus) {
+	        if(s.getTicketID() == ticketId) {
+	            filtered_status.add(s);
+	        }
+	    }
+
+	    m.addAttribute("ticket", ticket);
+	    m.addAttribute("findStatus", filtered_status);
+	    System.out.println("Status updates for ticket " + ticketId + ": " + filtered_status);
+	    return "admin.ark.progress";
+	}
+	
+	
 	
 	@GetMapping("/tickets/assigned/{userId}")
 	@ResponseBody
@@ -170,7 +202,7 @@ public class TicketController {
         int goingPending = 0;
         List<Ticket> completedTickets = new ArrayList<>();
         int completedPending = 0;
-        
+      
         for(Ticket i:list) {
         	if(i.getStatus().equals("pending")) {
         		countPending++;
@@ -179,7 +211,7 @@ public class TicketController {
         	if(i.getStatus().equals("ongoing")) {
         		goingPending++;
         		ongoingTickets.add(i);
-        	}
+        	} 
         }
         
         ModelAndView mav = new ModelAndView("dashboard");

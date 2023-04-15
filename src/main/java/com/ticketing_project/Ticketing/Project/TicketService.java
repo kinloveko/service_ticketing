@@ -86,10 +86,13 @@ public class TicketService {
 	        int pendingCount = 0;
 	        int completedCount = 0;
 	        int ongoingCount = 0;
+	        int supportCount = 0;
 	        
 	        List<Ticket> pendingTickets = new ArrayList<>();
 	        List<Ticket> ongoingTickets = new ArrayList<>();
 	        List<Ticket> completedTickets = new ArrayList<>();
+	        List<Ticket> supportTickets = new ArrayList<>();
+	 
 	        
 	        for(Ticket t : list) {
 	            if(t.getStatus().equals("pending")) {
@@ -104,6 +107,13 @@ public class TicketService {
 	                completedTickets.add(t);
 	                completedCount++;
 	            }
+	            if(t.getProgress()!=null) {
+	            	if(t.getProgress().equals("support_team")) {
+		        		supportCount++;
+		        		supportTickets.add(t);
+		        	}	
+	            }
+	        
 	        }
 	        
 	        m.addAttribute("pending_tickets", pendingTickets);
@@ -114,6 +124,11 @@ public class TicketService {
 	        
 	        m.addAttribute("ongoing_tickets", ongoingTickets);
 	        m.addAttribute("ongoing_ticket_count", ongoingCount);
+	        
+	        m.addAttribute("support_tickets", supportTickets);
+	        m.addAttribute("support_count",supportCount);
+	        
+	        
 	    }
 	
 	

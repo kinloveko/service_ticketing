@@ -19,7 +19,7 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="Status")
+@Table(name="status")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 public class Status {
@@ -31,12 +31,16 @@ public class Status {
 	@Setter
 	private int status_id;
 	
+	@Column(name="ticketID", nullable=false)
 	@Getter
 	@Setter
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="ticket_id", referencedColumnName="ticket_id", nullable=false)
-	private Ticket ticket;
+	private int ticketID;
 	
+	
+	@Column(name="status_title", nullable=false)
+	@Getter
+	@Setter
+	private String status_title;
 	
 	@Column(name="status_message", nullable=false)
 	@Getter
@@ -44,10 +48,10 @@ public class Status {
 	private String status_message;
 	
 	
-	@Column(name="status_time", nullable=false)
+	@Column(name="status_date_time", nullable=false)
 	@Getter
 	@Setter
-	private String status_time;
+	private String status_date_time;
 	
 	
 	@Column(name="status_progress", nullable=false)

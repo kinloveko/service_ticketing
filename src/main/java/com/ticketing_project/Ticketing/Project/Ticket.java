@@ -100,5 +100,7 @@ public class Ticket {
 	@Column(name="progress",nullable=true,updatable=true)
 	private String progress;
 	
+	
+	
 }
 
