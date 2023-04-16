@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -147,7 +149,8 @@ public class TicketController {
 
 	
 	@GetMapping("/tickets/{ticketId}")
-	public String displayTicketDetailsById(@PathVariable("ticketId") int ticketId, Model m) {
+	public String displayTicketDetailsById(@PathVariable("ticketId") int ticketId,
+			HttpSession session,Model m) {
 	    Ticket ticket = ticketService.getTicketById(ticketId);
 	    List<Status> findStatus = statusService.getAllStatus();
 	    
@@ -157,15 +160,22 @@ public class TicketController {
 	            filtered_status.add(s);
 	        }
 	    }
-
+	    String userRole = (String) session.getAttribute("user_role");
+	    
+	    session.setAttribute("role", userRole);
 	    m.addAttribute("ticket", ticket);
 	    m.addAttribute("findStatus", filtered_status);
 	    System.out.println("Status updates for ticket " + ticketId + ": " + filtered_status);
+	    System.out.println("Role:" + userRole);
 	    return "redirect:/admin.ark.progress?ticketId=" + ticketId;
 	}
-
+	
+	
 	@GetMapping("/admin.ark.progress")
 	public String adminPage(Model m, @RequestParam("ticketId") int ticketId) {
+		
+		
+		
 	    Ticket ticket = ticketService.getTicketById(ticketId);
 	    List<Status> findStatus = statusService.getAllStatus();
 	    
@@ -175,15 +185,20 @@ public class TicketController {
 	            filtered_status.add(s);
 	        }
 	    }
-
+	    
+	    Collections.sort(filtered_status, new Comparator<Status>() {
+	        @Override
+	        public int compare(Status s1, Status s2) {
+	            return s2.getStatus_id() - s1.getStatus_id();
+	        }
+	    });
 	    m.addAttribute("ticket", ticket);
 	    m.addAttribute("findStatus", filtered_status);
 	    System.out.println("Status updates for ticket " + ticketId + ": " + filtered_status);
 	    return "admin.ark.progress";
 	}
 	
-	
-	
+
 	@GetMapping("/tickets/assigned/{userId}")
 	@ResponseBody
 	public List<Ticket> getTicketsByUserId(@PathVariable final int userId){
@@ -196,6 +211,7 @@ public class TicketController {
         int user_id = (int) session.getAttribute("user_id");
         List<Ticket>list=ticketService.getTicketsByUserId(user_id);
         
+
         List<Ticket> pendingTickets = new ArrayList<>();
         int countPending = 0;
         List<Ticket> ongoingTickets = new ArrayList<>();

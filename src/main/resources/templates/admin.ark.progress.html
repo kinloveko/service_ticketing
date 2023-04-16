@@ -17,8 +17,7 @@
 	  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
 	  rel="stylesheet"
 	/>
-		
-
+ 
 	<!-- My Bootstrap CSS -->
 		<link rel="stylesheet" th:href="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'">
 <script th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
@@ -26,142 +25,71 @@
 <script th:src="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'"></script>
 	
 	<title>Ticket Progress</title>
+	
+	<style>
+  .left a, .left h5 {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  .left a {
+    margin-right: 5px;
+  }
+</style>
+	
 </head>
 <body>
 
 	<!-- SIDEBAR -->
-	<section id="sidebar">
-		<a href="#" class="brand">
-		<img src="img/brandlogo.png" style="width:60px;height:60px">
-			<span class="text" style="color:gray">ARK</span>
-		</a>
-		<ul class="side-menu top">
-			<li class="active">
-				<a href="#">
-					<i class='bx bxs-dashboard' ></i>
-					<span class="text">Home</span>
-				</a>
-			</li>
-			<li class="menu-item active" data-table="pending" onclick="handleClick(this)">
-				<a href="#">
-					<i class='bx bxs-shopping-bag-alt' ></i>
-					<span class="text">Pending Tickets</span>
-				</a>
-			</li>
-			<li class="menu-item" data-table="ongoing" onclick="handleClick(this)">
-				<a href="#">
-					<i class='bx bxs-doughnut-chart' ></i>
-					<span class="text">On-going Tickets</span>
-				</a>
-			</li>
-			<li class="menu-item " data-table="completed" onclick="handleClick(this)">
-				<a href="#">
-					<i class='bx bxs-message-dots' ></i>
-					<span class="text">Completed Tickets</span>
-				</a>
-			</li>
-			<li class="menu-item " data-table="support" onclick="handleClick(this)">
-				<a href="#">
-					<i class='bx bxs-group' ></i>
-					<span class="text">Support Team</span>
-				</a>
-			</li>
-		</ul>
-		<ul class="side-menu">
-			<li>
-				<a href="#">
-					<i class='bx bxs-cog' ></i>
-					<span class="text">Settings</span>
-				</a>
-			</li>
-			<li>
-				<a href="/logout" class="logout">
-					<i class='bx bxs-log-out-circle' ></i>
-					<span class="text">Logout</span>
-				</a>
-			</li>
-		</ul>
+	<section id="sidebar" class="hide" style="width:0%;">
+		
 	</section>
 	<!-- SIDEBAR -->
 
 	<!-- CONTENT -->
 	<section id="content">
-		<!-- NAVBAR -->
-		<nav>
-			<i class='bx bx-menu' ></i>
-			<a href="#" class="nav-link">Categories</a>
-			<form action="#">
-				<div class="form-input">
-					<input type="search" placeholder="Search...">
-					<button type="submit" class="search-btn"><i class='bx bx-search' ></i></button>
-				</div>
-			</form>
-			<input type="checkbox" id="switch-mode" hidden>
-			<label for="switch-mode" class="switch-mode"></label>
-			<a href="#" class="notification">
-				<i class='bx bxs-bell' ></i>
-				<span class="num">8</span>
-			</a>
-			<a href="#" class="profile">
-				<img src="img/people.png">
-			</a>
-		</nav>
-		<!-- NAVBAR -->
-
+	
 		<!-- MAIN -->
 		<main>
 			<div class="head-title">
 				<div class="left">
-					<h1>Dashboard</h1>
-					<ul class="breadcrumb">
-						<li>
-							<a href="#">Admin Panel</a>
-						</li>
-						<li><i class='bx bx-chevron-right' ></i></li>
-						<li>
-							<a class="active" href="#">Home</a>
-						</li>
-					</ul>
-				</div>
-				<div class="right">
-			 <button type="button" class="btn btn-primary my-2 eBtn" data-toggle="modal" data-target="#support_add_modal">Add progress</button>
-  <button type="button" class="btn btn-success my-2">Complete</button>
-				</div>
-			
+  <a th:href="${session.user_role == 'client' ? 'dashboard' : 'admin.ark'}" style="background:transparent; text-decoration: none;">
+    <i class="bx bx-arrow-back" style="color:grey;font-size:25px"></i>
+    <h5 style="color:grey">Back to dashboard</h5>
+</a>
+  	
+	</div>	
 			</div>
-<!-- 	<ul class="box-info">
-   <li class="menu-item active" data-table="pending" onclick="handleClick(this)">
-        <i class='bx bxs-calendar-check' ></i>
-        <span class="text">
-            <h3 th:text="${pending_ticket_count}">0</h3>
-            <p>Pending Tickets</p>
-        </span>
-    </li>
-     <li class="menu-item " data-table="ongoing" onclick="handleClick(this)">
-        <i class='bx bxs-group' ></i>
-        <span class="text">
-            <h3 th:text="${ongoing_ticket_count}">0</h3>
-            <p>On-going Tickets</p>
-        </span>
-    </li>
+
  
-   <li class="menu-item " data-table="completed" onclick="handleClick(this)">
-        <i class='bx bxs-check-circle' ></i>
-        <span class="text">
-            <h3 th:text="${completed_ticket_count}">0</h3>
-            <p>Completed Tickets</p>
-        </span>
-    </li>
-</ul>
- -->
-
-
 
  	<!--Progress Table -->
-<div class="table-data" id="status-table">
+<div class="table-data" id="status-table" style=" 
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2);
+  border-collapse: collapse;
+  border-radius:20px;
+  background:white;
+  width: 100%;
+  margin-bottom: 1rem;">
+  
   <div class="order">
     <div class="head">
       <h3>Tickets Progress</h3>
+ <ul class="horizontal-menu" th:style="${session.user_role == 'support_team' ? '' : 'display:none;'}">
+    <li class="btn btn-primary add_button_update" data-toggle="modal" data-target="#support_add_modal">
+        <i class='bx bx-plus' style="color: white;"></i>
+        <span class="text">
+            ADD PROGRESS
+        </span>
+    </li>
+
+    <li class="btn btn-success" data-table="completed">
+        <i class='bx bxs-check-circle' style="color: white;"></i>
+        <span class="text">
+            MARKED AS COMPLETED
+        </span>
+    </li>
+</ul>
     </div>
     <table>
       <thead>
@@ -171,21 +99,25 @@
           <th>Status Message</th>
           <th>Status Date Time</th>
           <th>Status Progress</th>
+          <th>Action</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody>	
         <tr th:each="status : ${findStatus}">
           <td th:text="${status.status_id}"></td>
           <td th:text="${status.status_title}"></td>
           <td th:text="${status.status_message}"></td>
           <td th:text="${status.status_date_time}"></td>
           <td th:text="${status.status_progress}"></td>
+          <td>
+            	 <button type="button" class="btn btn-success my-2 eBtn"   data-toggle="modal"  data-target="#view_progress"><i class="fa fa-edit" style="font-size:20px;"></i></button>
+          </td>
         </tr>
       </tbody>
     </table>
-    <div th:if="${#lists.isEmpty(findStatus)}">
-      <span>No status updates found.</span>
-    </div>
+   <div th:if="${#lists.isEmpty(findStatus)}" style="text-align:center;margin-top:20px">
+  <span style="color:red">No status updates found.</span>
+</div>
   </div>
 </div>
  
@@ -209,7 +141,7 @@
   		 
 		      	<div class="form-group">
 				  <!--  hidden attributes  --> 
-     			   <input type="text" class="form-control" id="ticket_id_add" name="ticketID"  >
+     			   <input type="hidden" class="form-control" id="ticket_id_add" name="ticketID" th:value="${ticket.ticket_id}" >
      			   <input type="hidden" class="form-control" id="status_date_time_add" name="status_date_time">
      			   <input type="hidden" class="form-control"  id="status_progress_add" name="status_progress"> 
         
@@ -224,16 +156,60 @@
 				  			
 				</div>
 		      </div>
- 
+	
+         <div class="modal-footer text-right">
+  <button type="submit" class="btn btn-primary add_button_comment">ADD UPDATE</button>
+  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+</div>
         </div>
     </div>
 		  </div>
 		  </form>
 		  
 		<!-- End of add update modal-->
+	<!-- Modal for viewing -->
 	
-
-	
+ <!-- imageviewer -->
+<div class="modal fade" id="view_progress" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+       <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Progress Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div> 
+      <div class="modal-body">
+ 		    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="id" class="col-form-label">Date of progress</label>
+                <input type="text" class="form-control" id="date" readonly>
+            </div>
+        </div>
+        <div class="col-sm-6">
+        <div class="form-group">
+                <label for="conforme_no" class="col-form-label">Progress status</label>
+                <input type="text" class="form-control"  id="status" readonly>
+            </div>
+        </div>
+  	  </div>
+ 		 <div class="form-group">
+                <label for="conforme_no" class="col-form-label">Progress Title</label>
+                <input type="text" class="form-control"  id="title" readonly>
+            </div>
+              <div class="form-group">
+                <label for="id" class="col-form-label">Progress comments</label>
+                <textarea class="form-control" rows="5" id="comments" readonly></textarea>
+            </div>
+	  </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+ 
 		</main>
 		<!-- MAIN -->
 	</section>
@@ -257,20 +233,32 @@
  
 	$('.add_button_update').on('click', function(event) {
 	    // Extract data from the input fields in the second modal
-  		
-		var ticketIds = $('#ticket_id_support').val();
+  
 		var currentDate = new Date().toLocaleString('en-US');
-		
-		$('#ticket_id_add').val(ticketIds);
-   
+
 	    $('#status_date_time_add').val(currentDate);
 	    $('#status_progress_add').val("ongoing");	    
 	    
 	    $('#support_add_modal').modal();
 	    
 	});
-	
-	
+	$('.eBtn').on('click', function(event) {
+	    // Extract data from the input fields in the second modal
+	    
+   		   var _title = $(this).closest('tr').find('td:eq(1)').text();
+   		   var _comments = $(this).closest('tr').find('td:eq(2)').text();
+   	    
+	       var dateCreated = $(this).closest('tr').find('td:eq(3)').text();
+	       var _progress = $(this).closest('tr').find('td:eq(4)').text();
+		   
+	    $('#title').val(_title);
+	    $('#comments').val(_comments);
+	    $('#date').val(dateCreated);
+	    $('#status').val(_progress);	    
+	    
+	    $('#view_progress').modal();
+	    
+	});
 	
 	
 </script>

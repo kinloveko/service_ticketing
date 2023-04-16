@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.com">
 <head>
+
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -36,13 +37,13 @@
 			<span class="text" style="color:gray">ARK</span>
 		</a>
 		<ul class="side-menu top">
-			<li class="active">
+			<li class="menu-itme active">
 				<a href="#">
 					<i class='bx bxs-dashboard' ></i>
 					<span class="text">Home</span>
 				</a>
 			</li>
-			<li class="menu-item active" data-table="pending" onclick="handleClick(this)">
+			<li class="menu-item " data-table="pending" onclick="handleClick(this)">
 				<a href="#">
 					<i class='bx bxs-shopping-bag-alt' ></i>
 					<span class="text">Pending Tickets</span>
@@ -113,6 +114,7 @@
 			<div class="head-title">
 				<div class="left">
 					<h1>Dashboard</h1>
+					
 					<ul class="breadcrumb">
 						<li>
 							<a href="#">Admin Panel</a>
@@ -126,7 +128,8 @@
 				
 			</div>
 	<ul class="box-info">
-   <li class="menu-item active" data-table="pending" onclick="handleClick(this)">
+	
+   <li class="menu-item " data-table="pending" onclick="handleClick(this)">
         <i class='bx bxs-calendar-check' ></i>
         <span class="text">
             <h3 th:text="${pending_ticket_count}">0</h3>
@@ -170,7 +173,7 @@
                     <th scope="col">Description</th>
                     <th scope="col">Client Name</th>
                     <th scope="col">Status</th>
-                       <th scope="col">Action</th>
+                       <th scope="col"    th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -182,7 +185,7 @@
 			    <td th:text="${t.user_name}"></td>
 			    <td th:text="${t.status}"></td>
 			      <td style=" display: none;" th:text="${t.conforme_no}"></td>
-			    <td>
+			    <td    th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}">
 	 			     	 <button type="button" class="btn btn-success my-2 eBtn"   data-toggle="modal"  data-target="#viewTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
 	                     <button type="button" class="btn btn-danger my-2"><i class="fa fa-trash" style="font-size:20px;"></i></button>
                </td>
@@ -198,8 +201,24 @@
       <div class="order">
         <div class="head">
             <h3>On going tickets</h3>
-            <i class='bx bx-search' ></i>
-            <i class='bx bx-filter' ></i>
+            
+         <ul class="horizontal-menu">
+         
+			    <li class="btn btn-danger waiting_button" data-toggle="modal" data-target="#support_add_modal" >
+			    <i class='bx bxs-hourglass' style="color: white;"></i>
+			    <span class="text">
+			      WAITING LIST
+			    </span>
+			  </li>
+			
+			  <li class=" btn btn-success ready_to_proceed" data-table="completed"  >
+			    <i class='bx bxs-check-circle' style="color: white;"></i>
+			    <span class="text">
+			      READY TO PROCEED
+			    </span>
+			  </li>
+		</ul>
+	
         </div>
            <table>
             <thead>
@@ -212,7 +231,7 @@
                 	<th scope="col">Amount</th>
                     <th scope="col">Conforme No.</th>
                     <th scope="col">Progess</th>
-                       <th scope="col">Action</th>
+                       <th scope="col"    th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -230,7 +249,7 @@
 		        <td style="display:none" th:text="${t.description}"></td>
 		        <td style="display:none" th:text="${t.client_signature}"></td>
 			    <td style="display:none" th:text="${t.client_payment_proof}"></td>
-			    <td>
+			    <td    th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}">
 					 <button type="button" class="btn btn-success my-2 ongoingBtn" 
 					       	 th:href="@{/tickets/{ticketId}(ticketId=${t.ticket_id})}" 
 					       	  data-toggle="modal"  data-target="#ongoingModal">
@@ -240,6 +259,10 @@
 				</tr>
             </tbody>
         </table>
+           <div th:if="${#lists.isEmpty(ongoing_tickets
+           )}" style="text-align:center;margin-top:20px">
+ 			 <span style="color:red">No data is found.</span>
+		</div>
         </div>
 </div>
 
@@ -279,6 +302,9 @@
 				</tr>
             </tbody>
         </table>
+           <div th:if="${#lists.isEmpty(completed_tickets)}" style="text-align:center;margin-top:20px">
+ 			 <span style="color:red">No data is found.</span>
+		</div>
           </div>
 </div>
 
@@ -303,7 +329,7 @@
                      <th scope="col">Amount</th>
                     <th scope="col">Conforme No</th>
                      <th scope="col">Progress</th>
-                    <th scope="col">Action</th>
+                    <th scope="col"    th:style="${session.user_role == 'support_team' ? '' : 'display:none;'}">Action</th>
                     
                 </tr>
             </thead>
@@ -322,11 +348,9 @@
 		        <td style="display:none" th:text="${t.description}"></td>
 		        <td style="display:none" th:text="${t.client_signature}"></td>
 			    <td style="display:none" th:text="${t.client_payment_proof}"></td>
-			    <td>
-		
-			 
-
-				<a class="btn btn-success my-2 " th:href="@{'/tickets/'+${t.ticket_id}  }" >
+			    <td    th:style="${session.user_role == 'support_team' ? '' : 'display:none;'}">
+ 
+				<a class="btn btn-success my-2 " th:href="@{'/tickets/'+${t.ticket_id}}" >
 				    <i class="fa fa-edit" style="font-size:20px;"></i>
 				</a>
 				 
@@ -334,6 +358,9 @@
 				</tr>
             </tbody>
         </table>
+         <div th:if="${#lists.isEmpty(support_tickets)}" style="text-align:center;margin-top:20px">
+ 				 <span style="color:red">No data is found.</span>
+		</div>
           </div>
 </div>
 			
@@ -341,7 +368,10 @@
 	
 		<div class="modal fade" id="viewTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		    <div class="modal-dialog" role="document">
-		        <div class="modal-content">
+		 
+		 
+		 
+	<div class="modal-content">
 		            <div class="modal-header">
 		                <h5 class="modal-title" id="exampleModalLabel">View Ticket</h5>
 		                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -383,17 +413,19 @@
 		     <input type="hidden" class="form-control" id="conforme_no" name="conforme_no">
 		</div>
 		            <div class="modal-footer">
-		                     <button type="submit" class="btn btn-primary conforme_btn" >Conforme Slip</button>
+		                     <button type="button" class="btn btn-primary button_conforme"   data-toggle="modal"  data-target="#create_conforme" 
+		                     th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}"
+		                     >Conforme Slip</button>
 		                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 		            </div>
 		            
-		        </div>
+		        </div>	
 		    </div>
 		</div>
 	</div>	
 	
 <!-- Conformed Slip Modal -->
-	<div class="table-data">
+
 	  <form th:action="@{/tickets/update-ticket}" enctype="multipart/form-data" method="post" >
 		<div class="modal fade" id="create_conforme" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		  <div class="modal-dialog modal-xl" role="document">
@@ -482,7 +514,7 @@
     </div>
 		  </div>
 		  </form>
-	</div>
+
  <!-- Conformed Slip End Modal -->
  
  <!-- Ongoing Slip -->
@@ -582,7 +614,7 @@
    <div class="col-sm-6">
    <div class="form-group">
         <label for="name" class="col-form-label">Amount</label>
-        <input type="text" class="form-control" id="amount_ongoing" name="amount" required>
+        <input type="text" class="form-control" id="amount_ongoing" name="amount" readonly>
         	<label style="font-weight: bold;margin-top:20px;margin-right:30px;float:right;" for="formFileSm" class="form-label">Sale's Team Signature</label>
 	
     </div>
@@ -596,11 +628,15 @@
 	  	
 	</div>
 	</div>
-            <div class="modal-footer">
-            		   <button type="submit" id="proceed_billing" class="btn btn-success" >Send To billing</button>	
-                     <button type="submit" id="proceed_support" class="btn btn-primary" >SEND TO SUPPORT</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
+ <div class="modal-footer d-flex justify-content-between">
+    <button type="button"  id="ticket_status" class="btn btn-info">View Ticket Status</button>
+   	<div> 
+   	 <button type="submit" id="proceed_billing" class="btn btn-success">Send To billing</button>
+        <button type="submit" id="proceed_support" class="btn btn-primary">SEND TO SUPPORT</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+   	</div>
+     
+</div>
         </div>
     </div>
 		  </div>
@@ -678,13 +714,20 @@
 	        
 	    });
 	});
+	
+	$(document).ready(function() {
+	    $('#ticket_status').on('click', function(event) {
+	        var ticketId = $('#ticket_id').val(); // replace with the ticket ID that you want to use
+	        var url = '/tickets/' + ticketId; // replace with the URL pattern that you want to use
+	        window.location.href = url; // redirect to the new URL
+	    });
+	});
 
 	</script>
 
 	<script>
 	//button for support
-	 
- 
+
    $('.supportBtn').on('click', function(event) {
 	    // Extract data from the input fields in the second modal
 	    var ticketId = $(this).closest('tr').find('td:eq(0)').text();
@@ -699,27 +742,7 @@
 	 
 	});
 
-   
- 
-	//add button
-	
-	$('.add_button_update').on('click', function(event) {
-	    // Extract data from the input fields in the second modal
-  		
-		var ticketIds = $('#ticket_id_support').val();
-		var currentDate = new Date().toLocaleString('en-US');
-		
-		$('#ticket_id_add').val(ticketIds);
-   
-	    $('#status_date_time_add').val(currentDate);
-	    $('#status_progress_add').val("ongoing");	    
-	    
-	    $('#support_add_modal').modal();
-	    
-	});
-	
-	
-	
+  
 	
 	
 	
@@ -750,6 +773,7 @@
 		  	 			 	 $('#progress_ongoing').val(toBilling); 	
 					  	   	 $('#proceed_billing').show();  
 					  	   	 $('#proceed_support').hide();
+					  	   $('#ticket_status').show();
 						 // Do something if the progress is equal to "support_team"
 			  		} else {
 			  			
@@ -757,6 +781,7 @@
 			  		     	 $('#progress_ongoing').val(toSupport); 	
 					  		$('#proceed_billing').hide();  
 				  	  	 	$('#proceed_support').show();
+				  	        $('#ticket_status').hide();
 					  	
 			  		}
 		  	     
@@ -770,6 +795,7 @@
 		  	        $('#client_payment_proof').show();
 		  	        $('#client_signature').show();
 		  	       
+		  	      
 		  	     
 			      
 			  	  	$('#client_payment_proof').attr('src', '/img/' + client_payment_proof);
@@ -807,20 +833,52 @@
 	});
 	
 	</script>
-	<script type="text/javascript">
-	//conforme_ongoing
+	
+	
+	<script>
+	
+	// Event listener for Waiting List button
+	$('.waiting_button').on('click', function() {
+	  // Loop through each table row
+	  $('#ongoing-table tbody tr').each(function() {
+	    var signature = $(this).find('td:nth-child(11)').text();
+	    var paymentProof = $(this).find('td:nth-child(12)').text();
+	    // If either signature or payment proof is null, hide the row
+	    if (signature && paymentProof) {
+        $(this).hide();
+      } else {
+        $(this).show();
+      }
+	  });
+	});
 
+	// Event listener for Ready to proceed button
+	$('.ready_to_proceed').on('click', function() {
+	  // Loop through each table row
+	  $('#ongoing-table tbody tr').each(function() {
+	    var signature = $(this).find('td:nth-child(11)').text();
+	    var paymentProof = $(this).find('td:nth-child(12)').text();
+	    // If either signature or payment proof is null, hide the row
+	    if (!signature || !paymentProof) {
+	      $(this).hide();
+	    } else {
+	      $(this).show();
+	    }
+	  });
+	});
+	
 	
 	
 	// Add click event listener to the button in the first modal
-	$('.conforme_btn').on('click', function(event) {
+	$(document).ready(function() {
+	$('.button_conforme').on('click', function(event) {
 	    // Extract data from the input fields in the second modal
-	    var ticketId = $('input[name="ticket_id"]').val();
-	    var dateCreated = $('input[name="created_on"]').val();
-	    var title = $('input[name="title"]').val();
-	    var description = $('textarea[name="description"]').val();
-	    var userName = $('input[name="user_name"]').val();
-	    var conforme_no = $('input[name="conforme_no"').val();
+	    var ticketId = $('#id').val();
+	    var dateCreated = $('#date').val();
+	    var title = $('#title').val();
+	    var description = $('#description').val();
+	    var userName = $('#name').val();
+	    var conforme_no = $('#conforme_no').val();
 	    var currentDate = new Date().toLocaleDateString('en-US');
 	    // Pass the data to the corresponding input fields in the third modal
 	    $('#create_conforme input[name="ticket_id"]').val(ticketId);
@@ -833,12 +891,15 @@
 	    $('#create_conforme input[name="conforme_no"]').val(conforme_no);
 	    $('#create_conforme input[name="conforme_date"]').val(currentDate);
 	    // Show the third modal
-	
+
 	    $('#create_conforme').modal();
 	});
-	
-	
-	
+	});
+	</script>
+	<script type="text/javascript">
+	//conforme_ongoing
+
+
 	function updateTicket() {
 		  const form = document.querySelector('#updateTicketForm');
 		  const formData = new FormData(form);

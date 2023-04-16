@@ -23,6 +23,7 @@ public class StatusController {
 			statusService.save(newStatus);
 			
 	        redirectAttributes.addFlashAttribute("successMessage", "Ticket saved successfully!");
-	        return "redirect:/admin.ark";
+	        return "redirect:/admin.ark.progress?ticketId="+newStatus.getTicketID();
 			}
+		
 }

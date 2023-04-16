@@ -32,8 +32,16 @@ li {
 	--light-orange: #FFE0D3;
 }
 
+
+
+/* Hide scrollbar for Webkit browsers */
+::-webkit-scrollbar {
+  display: none;
+  
+}
 html {
 	overflow-x: hidden;
+	  scrollbar-width: none;
 }
 
 body.dark {
@@ -45,11 +53,13 @@ body.dark {
 body {
 	background: var(--grey);
 	overflow-x: hidden;
+	 overflow-y: hidden; /* hide vertical scrollbar */
 }
 
 
 /* SIDEBAR */
 #sidebar {
+	
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -163,10 +173,9 @@ body {
 
 
 
-
-
 /* CONTENT */
 #content {
+	
 	position: relative;
 	width: calc(100% - 280px);
 	left: 280px;
@@ -308,11 +317,9 @@ body {
 /* NAVBAR */
 
 
-
-
-
 /* MAIN */
 #content main {
+ 
 	width: 100%;
 	padding: 36px 24px;
 	font-family: var(--poppins);
@@ -363,6 +370,29 @@ body {
 
 
 
+#content main .box-infos {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+	grid-gap: 24px;
+	margin-top: 36px;
+}
+
+#content main .box-infos li {
+	padding: 15px;
+	background: var(--light);
+	border-radius: 20px;
+	display: flex;
+	align-items: center;
+	grid-gap: 24px;
+}
+
+.horizontal-menu li {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 10px,0,0,10px;
+  border-radius: 10px;
+  font-size:12px;
+}
 
 
 #content main .box-info {

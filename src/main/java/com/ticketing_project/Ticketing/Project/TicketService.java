@@ -1,6 +1,8 @@
 package com.ticketing_project.Ticketing.Project;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,56 +82,46 @@ public class TicketService {
 	}
 	
 	
-	  public void populateTicketModel(Model m) {
-	        List<Ticket> list = getAllTickets();
-	        
-	        int pendingCount = 0;
-	        int completedCount = 0;
-	        int ongoingCount = 0;
-	        int supportCount = 0;
-	        
-	        List<Ticket> pendingTickets = new ArrayList<>();
-	        List<Ticket> ongoingTickets = new ArrayList<>();
-	        List<Ticket> completedTickets = new ArrayList<>();
-	        List<Ticket> supportTickets = new ArrayList<>();
-	 
-	        
-	        for(Ticket t : list) {
-	            if(t.getStatus().equals("pending")) {
-	                pendingTickets.add(t);
-	                pendingCount++;
-	            }
-	            else if(t.getStatus().equals("ongoing")) {
-	                ongoingTickets.add(t);
-	                ongoingCount++;
-	            }
-	            else if(t.getStatus().equals("completed")) {
-	                completedTickets.add(t);
-	                completedCount++;
-	            }
-	            if(t.getProgress()!=null) {
-	            	if(t.getProgress().equals("support_team")) {
-		        		supportCount++;
-		        		supportTickets.add(t);
-		        	}	
-	            }
-	        
+	public void populateTicketModel(Model m) {
+	    List<Ticket> tickets = getAllTickets();
+	    List<Ticket> pendingTickets = new ArrayList<>();
+	    List<Ticket> ongoingTickets = new ArrayList<>();
+	    List<Ticket> completedTickets = new ArrayList<>();
+	    List<Ticket> supportTickets = new ArrayList<>();
+
+	    for (Ticket ticket : tickets) {
+	        switch (ticket.getStatus()) {
+	            case "pending":
+	                pendingTickets.add(ticket);
+	                break;
+	            case "ongoing":
+	                ongoingTickets.add(ticket);
+	                break;
+	            case "completed":
+	                completedTickets.add(ticket);
+	                break;
 	        }
-	        
-	        m.addAttribute("pending_tickets", pendingTickets);
-	        m.addAttribute("pending_ticket_count", pendingCount);
-	        
-	        m.addAttribute("completed_tickets", completedTickets);
-	        m.addAttribute("completed_ticket_count", completedCount);
-	        
-	        m.addAttribute("ongoing_tickets", ongoingTickets);
-	        m.addAttribute("ongoing_ticket_count", ongoingCount);
-	        
-	        m.addAttribute("support_tickets", supportTickets);
-	        m.addAttribute("support_count",supportCount);
-	        
-	        
+
+	        if (ticket.getProgress() != null && ticket.getProgress().equals("support_team")) {
+	            supportTickets.add(ticket);
+	        }
 	    }
-	
-	
+
+	    Collections.sort(pendingTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
+	    Collections.sort(ongoingTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
+	    Collections.sort(completedTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
+	    Collections.sort(supportTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
+
+	    m.addAttribute("pending_tickets", pendingTickets);
+	    m.addAttribute("pending_ticket_count", pendingTickets.size());
+
+	    m.addAttribute("ongoing_tickets", ongoingTickets);
+	    m.addAttribute("ongoing_ticket_count", ongoingTickets.size());
+
+	    m.addAttribute("completed_tickets", completedTickets);
+	    m.addAttribute("completed_ticket_count", completedTickets.size());
+
+	    m.addAttribute("support_tickets", supportTickets);
+	    m.addAttribute("support_count", supportTickets.size());
+	}
 }

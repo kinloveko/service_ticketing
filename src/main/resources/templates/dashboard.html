@@ -586,6 +586,15 @@
 	        
 	    });
 	});
+	
+	
+	$(document).ready(function() {
+	    $('#view_status').on('click', function(event) {
+	        var ticketId = $('#ticket_id').val(); // replace with the ticket ID that you want to use
+	        var url = '/tickets/' + ticketId; // replace with the URL pattern that you want to use
+	        window.location.href = url; // redirect to the new URL
+	    });
+	});
 
 	</script>
 	
