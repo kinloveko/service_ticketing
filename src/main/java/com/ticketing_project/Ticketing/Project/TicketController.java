@@ -133,11 +133,19 @@ public class TicketController {
 	    return "redirect:/dashboard";
 	}
 	
+	
 	@PutMapping("/tickets/update-ticket/{ticketId}")
 	@ResponseBody
-	public void updateTicket(@PathVariable final int ticketId, @ModelAttribute Ticket updatedTicket) {
-		ticketService.update(ticketId, updatedTicket);
+	public void updateTicket(@PathVariable final int ticketId) {
+	  // Find the ticket to update using the ticketId path variable
+	  Ticket ticketToUpdate = ticketService.getTicketById(ticketId);
+
+	  // Set the progress field of the ticket to "resolved"
+	  ticketToUpdate.setStatus("closed");
+	  // Save the updated ticket
+	  ticketService.update(ticketId, ticketToUpdate);
 	}
+	
 	
 	
 	//HTTP DELETE method
@@ -167,15 +175,13 @@ public class TicketController {
 	    m.addAttribute("findStatus", filtered_status);
 	    System.out.println("Status updates for ticket " + ticketId + ": " + filtered_status);
 	    System.out.println("Role:" + userRole);
-	    return "redirect:/admin.ark.progress?ticketId=" + ticketId;
+	    return "redirect:/ticket_progress?ticketId=" + ticketId;
 	}
 	
 	
-	@GetMapping("/admin.ark.progress")
-	public String adminPage(Model m, @RequestParam("ticketId") int ticketId) {
-		
-		
-		
+	@GetMapping("/ticket_progress")
+	public String adminPage(Model m, @RequestParam("ticketId") int ticketId,HttpSession session) {
+ 
 	    Ticket ticket = ticketService.getTicketById(ticketId);
 	    List<Status> findStatus = statusService.getAllStatus();
 	    
@@ -192,10 +198,13 @@ public class TicketController {
 	            return s2.getStatus_id() - s1.getStatus_id();
 	        }
 	    });
+	   
+	    String userRole = (String) session.getAttribute("user_role");
+	    session.setAttribute("role", userRole);
 	    m.addAttribute("ticket", ticket);
 	    m.addAttribute("findStatus", filtered_status);
 	    System.out.println("Status updates for ticket " + ticketId + ": " + filtered_status);
-	    return "admin.ark.progress";
+	    return "ticket_progress";
 	}
 	
 

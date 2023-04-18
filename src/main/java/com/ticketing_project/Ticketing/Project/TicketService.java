@@ -97,6 +97,8 @@ public class TicketService {
 	            case "ongoing":
 	                ongoingTickets.add(ticket);
 	                break;
+	            case "closed":
+	            	ongoingTickets.add(ticket);
 	            case "completed":
 	                completedTickets.add(ticket);
 	                break;

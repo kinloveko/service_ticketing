@@ -16,14 +16,13 @@ public class StatusController {
 
 	   @Autowired
 	    private StatusService statusService;
-		
-		//HTTP POST method
+ 
 		@PostMapping("/status/add")
 		public String addNewTicket(@ModelAttribute Status newStatus, RedirectAttributes redirectAttributes) {
 			statusService.save(newStatus);
 			
 	        redirectAttributes.addFlashAttribute("successMessage", "Ticket saved successfully!");
-	        return "redirect:/admin.ark.progress?ticketId="+newStatus.getTicketID();
+	        return "redirect:/ticket_progress?ticketId="+newStatus.getTicketID();
 			}
 		
 }

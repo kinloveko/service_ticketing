@@ -18,7 +18,36 @@
 	  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
 	  rel="stylesheet"
 	/>
+		<style>
 		
+.alert {
+	padding: 20px;
+	background-color: #F9D949 ;
+	color:  #8A6D3B;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.closebtn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: white;
+  font-size: 30px;
+  margin-right:10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.closebtn:hover {
+  color: black;
+  
+}
+
+.alert span strong {
+  font-weight: bold;
+}
+		</style>
 
 	<!-- My Bootstrap CSS -->
 		<link rel="stylesheet" th:href="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'">
@@ -204,17 +233,23 @@
             
          <ul class="horizontal-menu">
          
-			    <li class="btn btn-danger waiting_button" data-toggle="modal" data-target="#support_add_modal" >
+			    <li class="btn btn-danger waiting_button"  >
 			    <i class='bx bxs-hourglass' style="color: white;"></i>
 			    <span class="text">
 			      WAITING LIST
 			    </span>
 			  </li>
 			
-			  <li class=" btn btn-success ready_to_proceed" data-table="completed"  >
-			    <i class='bx bxs-check-circle' style="color: white;"></i>
+			  <li class=" btn btn btn-info ready_to_proceed"   >
+			   <i class="bx bx-send" style="color: white;"></i>
 			    <span class="text">
 			      READY TO PROCEED
+			    </span>
+			  </li>
+			    <li class=" btn btn-success ready_to_resolved"  >
+			    <i class='bx bxs-check-circle' style="color: white;"></i>
+			    <span class="text">
+			     	RESOLVED
 			    </span>
 			  </li>
 		</ul>
@@ -231,7 +266,7 @@
                 	<th scope="col">Amount</th>
                     <th scope="col">Conforme No.</th>
                     <th scope="col">Progess</th>
-                       <th scope="col"    th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}">Action</th>
+                       <th scope="col"  >Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -249,7 +284,7 @@
 		        <td style="display:none" th:text="${t.description}"></td>
 		        <td style="display:none" th:text="${t.client_signature}"></td>
 			    <td style="display:none" th:text="${t.client_payment_proof}"></td>
-			    <td    th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}">
+			    <td  >
 					 <button type="button" class="btn btn-success my-2 ongoingBtn" 
 					       	 th:href="@{/tickets/{ticketId}(ticketId=${t.ticket_id})}" 
 					       	  data-toggle="modal"  data-target="#ongoingModal">
@@ -506,7 +541,7 @@
 	  	<input type="file" class="form-control" id="customFile" name="img" required/>
 	</div>
 	</div>
-            <div class="modal-footer">
+      <div class="modal-footer">
                      <button type="submit" class="btn btn-primary" >Submit</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
@@ -597,9 +632,11 @@
      	<label id="waiting_payment" class="form-label" style="color:red">Waiting for client's proof of payment*</label>	
 	
 	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof"   class="rounded float-left imageProof">
+	  
 	</div>
 	</div>
 	</div>
+	
 	</div>
 	</div>	
 	
@@ -625,17 +662,33 @@
 	  		<img style="width:120px;height:90px;margin-right:60px;"  id="thumbnail"  class="rounded float-right">
 	  	
 	  	<input type="hidden" class="form-control" id="customFile" name="img" />
-	  	
+	  		
 	</div>
 	</div>
- <div class="modal-footer d-flex justify-content-between">
-    <button type="button"  id="ticket_status" class="btn btn-info">View Ticket Status</button>
-   	<div> 
-   	 <button type="submit" id="proceed_billing" class="btn btn-success">Send To billing</button>
-        <button type="submit" id="proceed_support" class="btn btn-primary">SEND TO SUPPORT</button>
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-   	</div>
-     
+	 <div  th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}">
+		 <div   id="span_warning_support" class="alert" style="text-align:center;" >
+		  <span  class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+		  <strong>Warning:</strong> You cannot proceed to Support team until the client complies with the requirements
+		</div>	
+	 </div>	
+ 
+	<div  th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}">
+		 <div id="span_warning"  class="alert" style="text-align:center;" >
+		  <span  class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+		  <strong>Warning:</strong> You cannot proceed to billing until the issue is resolved.
+		</div>	
+	 </div>	
+
+ <div id="buttonDiv" class="modal-footer d-flex justify-content-between">
+    <button type="button"  id="ticket_status" class="btn btn-primary" >View Ticket Status</button>
+
+   	<div class="d-flex justify-content-between"> 
+   	<div  th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}"  > 
+   	 	<button type="submit" id="proceed_billing" class="btn btn-success"   >Send To billing</button>
+        <button type="submit" id="proceed_support" class="btn btn-primary"   >SEND TO SUPPORT</button>
+   	</div>  
+   		<button type="button" class="btn" style="margin-left:10px;background-color:grey;color:white" data-dismiss="modal">Close</button> 
+  	</div>  
 </div>
         </div>
     </div>
@@ -742,9 +795,7 @@
 	 
 	});
 
-  
-	
-	
+
 	
 	//Button for ongoing 
 	$(document).ready(function() {
@@ -765,60 +816,84 @@
 			var client_payment_proof = $(this).closest('tr').find('td:eq(12)').text();
 			var toBilling = "billing_team";
 			var toSupport = "support_team";
+		 
 
 				$('#thumbnail').attr('src', '/img/' + signature);
 				
-				   //this is just to check if progress is not going to billing or to support team
-		  	      if (progress === "support_team") {
-		  	 			 	 $('#progress_ongoing').val(toBilling); 	
-					  	   	 $('#proceed_billing').show();  
-					  	   	 $('#proceed_support').hide();
-					  	   $('#ticket_status').show();
-						 // Do something if the progress is equal to "support_team"
-			  		} else {
-			  			
-			  			// Do something else if the progress is not equal to "support_team"
-			  		     	 $('#progress_ongoing').val(toSupport); 	
-					  		$('#proceed_billing').hide();  
-				  	  	 	$('#proceed_support').show();
-				  	        $('#ticket_status').hide();
-					  	
-			  		}
-		  	     
-			   if (client_signature && client_payment_proof) {
-				 //images 
+			
+					if (progress === "support_team" || progress ==="resolved") {
+
+						
+						  $('#progress_ongoing').val(toBilling); 	
+						  $('#proceed_billing').show();  
+						  
+						  if(status === "closed"){
+							  $('#span_warning').hide();
+							  
+								$('#proceed_billing').attr({
+						  	        "disabled": false});
+						  }
+						  else{
+							  $('#proceed_billing').attr({
+						  	        "disabled": true});
+							  $('#span_warning').show();
+						  }
+						 
+						  
+						  $('#proceed_support').hide();
+						  $('#ticket_status').show();
+						  
+						  // Add the justify-content-between class
+						  $('#buttonDiv').addClass('justify-content-between');
+						} else {
+						  $('#span_warning').hide();
+						  $('#progress_ongoing').val(toSupport); 	
+						  $('#proceed_billing').hide();  
+						  $('#proceed_support').show();
+						  $('#ticket_status').hide();
+						  // Remove the justify-content-between class
+						    $('#buttonDiv').removeClass('justify-content-between');
+						
+						}
+			  	     
 				 
-				      //so that when the admin will click the button it will rewrite the data 
-				 
-				   	$('#waiting_payment').hide();
-		  	        $('#waiting_signature').hide();
-		  	        $('#client_payment_proof').show();
-		  	        $('#client_signature').show();
-		  	       
-		  	      
-		  	     
-			      
-			  	  	$('#client_payment_proof').attr('src', '/img/' + client_payment_proof);
-					$('#client_signature').attr('src', '/img/' + client_signature);
 				
-				   $('#client_payment_proofs').val(client_payment_proof);
-			  	   $('#client_signatures').val(client_signature);
-			  	   $('#salesSignatures').val(signature);
-			  	   
-			    
-			  	    //this is just to check if progress is not going to billing or to support team
-			  	 	$('#proceed_support').attr({
-			  	        "disabled": false});
-			  	    
-		        } else {
-		    	 	$('#waiting_payment').show();
-		  	        $('#waiting_signature').show();
-		  	  	 	$('#client_payment_proof').hide();
-		  	        $('#client_signature').hide();
-		  	   
-		  	  	$('#proceed_support').attr({
-		  	        "disabled": true});  
-		        }
+			
+				
+				  if (client_signature && client_payment_proof) {
+						 //images 
+						 
+						       //so that when the admin will click the button it will rewrite the data 
+						
+						   	$('#waiting_payment').hide();
+				  	        $('#waiting_signature').hide();
+				  	        $('#client_payment_proof').show();
+				  	        $('#client_signature').show();
+				  	       
+				  	      $('#span_warning_support').hide(); 
+				  	     
+					      
+					  	  	$('#client_payment_proof').attr('src', '/img/' + client_payment_proof);
+							$('#client_signature').attr('src', '/img/' + client_signature);
+						
+						   $('#client_payment_proofs').val(client_payment_proof);
+					  	   $('#client_signatures').val(client_signature);
+					  	   $('#salesSignatures').val(signature);
+					  	   
+					    
+					  	    //this is just to check if progress is not going to billing or to support team
+					  	 	$('#proceed_support').attr({
+					  	        "disabled": false});
+					  	    
+				        } else {
+				    	 	$('#waiting_payment').show();
+				  	        $('#waiting_signature').show();
+				  	  	 	$('#client_payment_proof').hide();
+				  	        $('#client_signature').hide();
+				  	      $('#span_warning_support').show(); 	
+				  	  	$('#proceed_support').attr({
+				  	        "disabled": true});  
+				        }
 			
 	        $('#ticket_id').val(ticketId);
 	        $('#conforme_date_ongoing').val(conforme_date_ongoing);
@@ -836,6 +911,18 @@
 	
 	
 	<script>
+	
+	
+	// Event listener for On-going Tickets button
+	$('.menu-item[data-table="ongoing"]').on('click', function() {
+	  // Show all rows
+	  $('#ongoing-table tbody tr').show();
+	  
+	  // Remove filters from other buttons
+	  $('.waiting_button').removeClass('active');
+	  $('.ready_to_proceed').removeClass('active');
+	  $('.ready_to_resolved').removeClass('active');
+	});
 	
 	// Event listener for Waiting List button
 	$('.waiting_button').on('click', function() {
@@ -856,16 +943,33 @@
 	$('.ready_to_proceed').on('click', function() {
 	  // Loop through each table row
 	  $('#ongoing-table tbody tr').each(function() {
+		var _status = $(this).find('td:nth-child(5)').text();
 	    var signature = $(this).find('td:nth-child(11)').text();
 	    var paymentProof = $(this).find('td:nth-child(12)').text();
-	    // If either signature or payment proof is null, hide the row
-	    if (!signature || !paymentProof) {
-	      $(this).hide();
-	    } else {
-	      $(this).show();
-	    }
+	    console.log(_status);
+	    if ((!signature || !paymentProof) || (_status === 'closed')) {
+	    	  $(this).hide();
+	    	} else {
+	    	  $(this).show();
+	    	}
 	  });
 	});
+	
+	// Event listener for Ready to proceed button
+	$('.ready_to_resolved').on('click', function() {
+	  // Loop through each table row
+	  $('#ongoing-table tbody tr').each(function() {
+		var _status = $(this).find('td:nth-child(5)').text();
+	    var signature = $(this).find('td:nth-child(11)').text();
+	    var paymentProof = $(this).find('td:nth-child(12)').text();
+	    console.log(_status);
+	    if ((!signature || !paymentProof) || !(_status === 'closed')) {
+	    	  $(this).hide();
+	    	} else {
+	    	  $(this).show();
+	    	}
+	  });
+	});	
 	
 	
 	
@@ -918,8 +1022,7 @@
 		  .catch(error => console.error(error));
 		}
 	
-	
-	
+ 
 	$(document).ready(function() {
 	    $('.eBtn').on('click', function(event) {
 	        var ticketId = $(this).closest('tr').find('td:eq(0)').text();
