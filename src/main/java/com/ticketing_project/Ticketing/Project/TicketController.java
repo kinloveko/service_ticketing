@@ -47,6 +47,18 @@ public class TicketController {
 	 * String status){ return ticketService.getTicketsByStatus(status); }
 	 */
 	
+
+	/*
+	 * @GetMapping("/tickets/assigned/{userId}")
+	 * 
+	 * @ResponseBody public List<Ticket> getTicketsByUserId(@PathVariable final int
+	 * userId){ return ticketService.getTicketsByUserId(userId); }
+	 * 
+	 */
+	
+	
+	
+	
 	@Autowired
 	private StatusService statusService;
 	
@@ -141,7 +153,7 @@ public class TicketController {
 	  Ticket ticketToUpdate = ticketService.getTicketById(ticketId);
 
 	  // Set the progress field of the ticket to "resolved"
-	  ticketToUpdate.setStatus("closed");
+	  ticketToUpdate.setStatus("completed");
 	  // Save the updated ticket
 	  ticketService.update(ticketId, ticketToUpdate);
 	}
@@ -207,12 +219,7 @@ public class TicketController {
 	    return "ticket_progress";
 	}
 	
-
-	@GetMapping("/tickets/assigned/{userId}")
-	@ResponseBody
-	public List<Ticket> getTicketsByUserId(@PathVariable final int userId){
-		return ticketService.getTicketsByUserId(userId);
-	}
+	
 	
 
     @GetMapping("/dashboard")
@@ -236,6 +243,10 @@ public class TicketController {
         	if(i.getStatus().equals("ongoing")) {
         		goingPending++;
         		ongoingTickets.add(i);
+        	} 
+        	if(i.getStatus().equals("completed")) {
+        		completedPending++;
+        		completedTickets.add(i);
         	} 
         }
         

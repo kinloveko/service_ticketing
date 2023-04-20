@@ -214,7 +214,7 @@
                                     <th>Progress</th>
                                 <th>Status</th>
                                   <th>Conforme no.</th>
-                                       <th>Amount</th>
+                              <th>Amount</th>
 
                                 <th>Action</th>
                             </tr>
@@ -237,7 +237,7 @@
                                 <span class="status completed"></span></td>
                                 <td>
                               <button type="button" class="btn btn-primary my-2 ml-2 ongoing"
-                               th:href="@{/tickets/{ticketId}(ticketId=${b.ticket_id})}" data-toggle="modal" data-target="#conformeTicket">
+                                 data-toggle="modal" data-target="#conformeTicket">
 							    <i data-toggle="tooltip" class="fa fa-eye" style="font-size:20px;"></i>
 							</button>
  							  </td>
@@ -257,45 +257,49 @@
         </div>
        <table>
                         <thead>
-                            <tr>
-                                <th>Ticket #</th>
-                                <th>User</th>
-                                 <th>Title</th>
-                                <th>Description</th>
-                                <th>Date issue</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
+                           <tr>                                
+                    <th scope="col">Ticket No.</th>
+                    <th scope="col">Date Created</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Client Name</th>
+                    <th scope="col">Status</th>
+                	<th scope="col">Amount</th>
+                    <th scope="col">Conforme No.</th>
+                    <th scope="col">Progess</th>
+                       <th scope="col"  >Action</th>
+                </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="b, i :${completed_tickets}">
-                                 <td th:text="${b.ticket_id}"></td>    
-                                          <td th:text="${b.user_name}"></td>
-                                <td  th:text="${b.title}"></td>
-                                  <td th:text="${b.description}"></td>
-                                <td th:text="${b.created_on}"></td>
-                                <td th:text="${b.status}">
-                                <td th:text="${b.conforme_no}">
-                                <span class="status completed"></span></td>
-                                <td>
-                              <button type="button" class="btn btn-primary my-2 ml-2 "  data-toggle="modal" data-target="#viewTicket">
+                            <tr th:each="t : ${completed_tickets}">
+								    <td scope="row" th:text="${t.ticket_id}"></td>
+								     <td th:text="${t.created_on}"></td>
+								    <td th:text="${t.title}"></td>
+								    <td th:text="${t.user_name}"></td>
+								    <td th:text="${t.status}"></td>
+								    <td th:text="${t.amount}"></td>
+							        <td th:text="${t.conforme_no}"></td>
+								    <td  th:text="${t.progress}"></td>
+								    <td style="display:none"  th:text="${t.conforme_date}"></td>
+								    <td style="display:none" th:text="${t.salesSignature}"></td>
+							        <td style="display:none" th:text="${t.description}"></td>
+							        <td style="display:none" th:text="${t.client_signature}"></td>
+								    <td style="display:none" th:text="${t.client_payment_proof}"></td>
+								    <td  >
+                              <button type="button" class="btn btn-primary my-2 ml-2 completed_modal"  data-toggle="modal" data-target="#completedModal">
 							    <i data-toggle="tooltip" class="fa fa-eye" style="font-size:20px;"></i>
 							</button>
-
- 							 <button type="button" class="btn btn-success my-2 " data-toggle="modal" data-target="#editTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
-                                <button type="button" class="btn btn-danger my-2"><i class="fa fa-trash" style="font-size:20px;"></i></button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
     </div>
     </div>
-  
-    
 		</main>
-		<!-- MAIN -->
+		<!-- MAIN -->		
+		
+		
 		<!-- Create Ticket Modal -->
-		<form method="post" th:action="@{/tickets/post-ticket}">
+ <form method="post" th:action="@{/tickets/post-ticket}">
 		<div class="modal fade" id="createTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		  <div class="modal-dialog" role="document">
 		    <div class="modal-content">
@@ -332,13 +336,74 @@
 	  </form>
  	<!-- Create Ticket End Modal -->
 	  <!-- View Ticket Modal -->
-  <form method="post" th:action="@{/tickets/post-ticket}">
-	
-<div class="modal fade" id="viewTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<form method="post" th:action="@{/tickets/post-ticket}">
+	<div class="modal fade" id="viewTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	    <div class="modal-dialog" role="document">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="exampleModalLabel">View Ticket</h5>
+	                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	                    <span aria-hidden="true">&times;</span>
+	                </button>
+	            </div>
+	            
+	            <div class="modal-body">
+	    <div class="row">
+	        <div class="col-sm-6">
+	            <div class="form-group">
+	                <label for="id" class="col-form-label">Ticket No</label>
+	                <input type="text" class="form-control" id="id" name="ticket_id" readonly>
+	            </div>
+	        </div>
+	        <div class="col-sm-6">
+	            <div class="form-group">
+	                <label for="date" class="col-form-label">Date Created</label>
+	                <input type="text" class="form-control" id="date" name="created_on" readonly>
+	            </div>
+	        </div>
+	    </div>
+	    <div class="form-group">
+	        <label for="title" class="col-form-label">Title</label>
+	        <input type="text" class="form-control" id="title" name="title" readonly>
+	    </div>
+	    <div class="form-group">
+	        <label for="description" class="col-form-label">Description</label>
+	        <textarea class="form-control" id="description" name="description" required></textarea>
+	    </div>
+	    <div class="form-group">
+	        <label for="name" class="col-form-label">Client Name</label>
+	        <input type="text" class="form-control" id="name" name="user_name" readonly>
+	    </div>
+	    <div class="form-group">
+	        <label for="status" class="col-form-label">Status</label>
+	        <input type="text" class="form-control" id="status" name="status" readonly>
+	    </div>
+	</div>
+	            <div class="modal-footer">
+	                     <button type="submit" class="btn btn-primary" >Update</button>
+	                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	            </div>
+	            
+	        </div>
+	    </div>
+	</div>
+</form>
+<!-- end of View Ticket Modal -->
+
+
+ <!-- Completed Modal -->
+
+		<div class="modal fade" id="completedModal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
+		  <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
+        
+              <input type="hidden" class="form-control" id="status_" name="status" >
+             <!--   <input type="hidden" class="form-control" id="client_signatures" name="client_signature" >
+               <input type="hidden" class="form-control" id="client_payment_proofs" name="client_payment_proof" >
+                <input type="hidden" class="form-control" id="salesSignatures" name="salesSignature" > -->
+               <input type="hidden" class="form-control" id="progress_ongoing" name="progress"  >
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">View Ticket</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Conforme Ticket</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -348,48 +413,107 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">
-                <label for="id" class="col-form-label">Ticket No</label>
-                <input type="text" class="form-control" id="id" name="ticket_id" readonly>
+                <label for="id" class="col-form-label">Ticket No.</label>
+                <input type="text" class="form-control" id="ticket_id" name="ticket_id" readonly>
             </div>
         </div>
         <div class="col-sm-6">
             <div class="form-group">
-                <label for="date" class="col-form-label">Date Created</label>
-                <input type="text" class="form-control" id="date" name="created_on" readonly>
+                <label for="conforme_no" class="col-form-label">Conforme No.</label>
+                <input type="text" class="form-control"  id="conforme_no_ongoing" name="conforme_no" readonly>
             </div>
         </div>
     </div>
+     <div class="row">
+        <div class="col-sm-6">
     <div class="form-group">
         <label for="title" class="col-form-label">Title</label>
-        <input type="text" class="form-control" id="title" name="title" readonly>
+        <input type="text" class="form-control" id="title_ongoing" name="title" readonly>
+    </div>
+    </div>
+    
+   <div class="col-sm-6">
+    <div class="form-group">
+        <label for="title" class="col-form-label">Client name</label>
+        <input type="text" class="form-control" id="user_name_ongoing" name="user_name" readonly>
+    </div>
+    </div>
     </div>
     <div class="form-group">
         <label for="description" class="col-form-label">Description</label>
-        <textarea class="form-control" id="description" name="description"></textarea>
+        <textarea class="form-control" rows="5" name="description" id="description_ongoing" readonly></textarea>
     </div>
+     <div class="row" >
+        <div class="col-sm-6">
+          <div class="row">
+              <div class="col-sm-6">
+        <div class="mb-3">
+	  	<label for="customFile" class="form-label">Client's Signature</label>
+	  	</div>
+	  	</div>
+	  	  <div class="col-sm-6">
+        <div class="mb-3">
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_signature"   class="rounded float-left imageSignature">
+			
+		</div>
+		</div>
+	</div>
+    </div>
+    <div class="col-sm-6">
+      <div class="row">
+              <div class="col-sm-6">
+     <div class="mb-3">
+     	 	<label for="customFile" class="form-label">Proof of Payment</label>
+     	 	</div>
+     	 	</div>
+        <div class="col-sm-6">
+     <div class="mb-3">
+     
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof"   class="rounded float-left imageProof">
+	  
+	</div>
+	</div>
+	</div>
+	
+	</div>
+	</div>	
+	
+	
+	 <div class="row">
+        <div class="col-sm-6">
     <div class="form-group">
-        <label for="name" class="col-form-label">Client Name</label>
-        <input type="text" class="form-control" id="name" name="user_name" readonly>
+        <label for="conforme_date_ongoing" class="col-form-label">Conforme date</label>
+        <input type="text" class="form-control" name="conforme_date" id="conforme_date_ongoing"  readonly>
     </div>
-    <div class="form-group">
-        <label for="status" class="col-form-label">Status</label>
-        <input type="text" class="form-control" id="status" name="status" readonly>
     </div>
+   <div class="col-sm-6">
+   <div class="form-group">
+        <label for="name" class="col-form-label">Amount</label>
+        <input type="text" class="form-control" id="amount_ongoing" name="amount" readonly>
+        	<label style="font-weight: bold;margin-top:20px;margin-right:30px;float:right;" for="formFileSm" class="form-label">Sale's Team Signature</label>
+	
+    </div>
+	</div>
+	</div>
+	<div class="mb-3">
+	  
+	  		<img style="width:120px;height:90px;margin-right:60px;"  id="thumbnail"  class="rounded float-right">
+	  	
+	  	<input type="hidden" class="form-control" id="customFile" name="img" />
+	  		
+	</div>
+	</div>
+ <div id="buttonDiv" class="modal-footer">
+    <button type="button"  id="ticket_status" class="btn btn-danger">Issue not resolved</button>
+	<button type="button" class="btn btn-secondary"  data-dismiss="modal">Close</button> 
 </div>
-            <div class="modal-footer">
-                     <button type="submit" class="btn btn-primary" >Update</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-            
-        </div>
+  </div>
     </div>
-</div>
-</form>
-
+	   </div>
 
  <!-- Conformed Slip Modal -->
 			
-	  <form th:action="@{/tickets/update-tickets-client}" enctype="multipart/form-data" method="post" >
+ <form th:action="@{/tickets/update-tickets-client}" enctype="multipart/form-data" method="post" >
 	  
 		<div class="modal fade" id="conformeTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		  <div class="modal-dialog modal-xl" role="document">
@@ -402,14 +526,14 @@
             </div>
             
             <div class="modal-body">
-            	<input type="hidden" class="form-control"  id="salesSignature" name="salesSignature"/>
-             <input type="hidden" class="form-control"  id="status_ongoing"  name="status" readonly>
-             <input type="hidden" class="form-control"  id="conforme_date_ongoing"  name="conforme_date" readonly>
+             <input type="hidden" class="form-control"  id="salesSignature" name="salesSignature"/>
+             <input type="hidden" class="form-control"  id="status_ongoing"  name="status" >
+             <input type="hidden" class="form-control"  id="conforme_date_ongoing"  name="conforme_date" >
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">
                 <label for="id" class="col-form-label">Ticket No.</label>
-                <input type="text" class="form-control" id="ticket_id" name="ticket_id" readonly>
+                <input type="text" class="form-control" id="ticket_id_ongoing" name="ticket_id" readonly>
             </div>
         </div>
         <div class="col-sm-6">
@@ -423,7 +547,7 @@
         <div class="col-sm-6">
     <div class="form-group">
         <label for="title" class="col-form-label">Title</label>
-        <input type="text" class="form-control" id="title_ongoing" name="title"  readonly>
+        <input type="text" class="form-control" id="title_ongoing_" name="title"  readonly>
     </div>
     </div>
     <div class="col-sm-6">
@@ -435,7 +559,7 @@
     </div>
     <div class="form-group">
         <label for="description" class="col-form-label">Description</label>
-        <textarea class="form-control" rows="4" id="description_ongoing"  name="description" readonly></textarea>
+        <textarea class="form-control" rows="4" id="description_ongoing_"  name="description" readonly></textarea>
     </div>
      <div class="row">
         <div class="col-sm-6">
@@ -462,7 +586,7 @@
 	  	</div>
 	  	  <div class="col-sm-6">
         <div class="mb-3">
-	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_signature"  class="rounded float-left imageSignature">
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_signature_ongoing"  class="rounded float-left imageSignature">
 		</div>
 		</div>
 	</div>
@@ -477,7 +601,7 @@
         <div class="col-sm-6">
      <div class="mb-3">
 	  	
-	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof"  class="rounded float-left imageProof">
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof_ongoing"  class="rounded float-left imageProof">
 	  	<label style="font-weight: bold;margin-top:20px;margin-right:30px;float:right;" for="formFileSm" class="form-label">Sale's Team Signature</label>
 	
 	</div>
@@ -505,12 +629,12 @@
 	<div class="mb-1">
 	</div>
 	<div class="mb-5">
-	<img style="width:75px;height:75px;margin-right:60px;"  id="thumbnail"  class="rounded float-right">
+	<img style="width:75px;height:75px;margin-right:60px;"  id="thumbnail_ongoing"  class="rounded float-right">
 	</div>
 	</div>
             <div class="modal-footer">
                      <button type="submit" id="submit_button_ongoing" class="btn btn-primary" >Submit</button>
-                       <button type="button" id="view_status" class="btn btn-primary" >VIEW TICKET STATUS</button>
+                       <button type="button" id="view_status" class="btn btn-primary"  >VIEW TICKET STATUS</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
             
@@ -519,8 +643,7 @@
 		  </div>
 		  </form>
 		  <!-- Conforme Ticket End Modal -->	
-	
-	
+
 	
 		<!-- imageviewer -->
 <div class="modal fade" id="imageViewerModal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
@@ -546,6 +669,7 @@
   </div>
 </div>	
 	</section>
+	
 	<!-- CONTENT -->
 	
 	<script src="Javascript/dashboard.js"></script>
@@ -590,7 +714,7 @@
 	
 	$(document).ready(function() {
 	    $('#view_status').on('click', function(event) {
-	        var ticketId = $('#ticket_id').val(); // replace with the ticket ID that you want to use
+	        var ticketId = $('#ticket_id_ongoing').val(); // replace with the ticket ID that you want to use
 	        var url = '/tickets/' + ticketId; // replace with the URL pattern that you want to use
 	        window.location.href = url; // redirect to the new URL
 	    });
@@ -599,6 +723,67 @@
 	</script>
 	
 		<script type="text/javascript">
+		
+		
+		
+		//Button for ongoing 
+		$(document).ready(function() {
+			
+		    $('.completed_modal').on('click', function(event) {
+		        var ticketId = $(this).closest('tr').find('td:eq(0)').text();
+		        var dateCreated = $(this).closest('tr').find('td:eq(1)').text();
+		        var title = $(this).closest('tr').find('td:eq(2)').text();
+		        var userName = $(this).closest('tr').find('td:eq(3)').text();
+		        var status = $(this).closest('tr').find('td:eq(4)').text();
+		        var amount = $(this).closest('tr').find('td:eq(5)').text();
+		        var conformeNo = $(this).closest('tr').find('td:eq(6)').text(); // retrieve the conforme_no value from the button's data-conforme-no attribute
+		        var progress = $(this).closest('tr').find('td:eq(7)').text();
+		        var conforme_date_ongoing = $(this).closest('tr').find('td:eq(8)').text();
+		        var signature = $(this).closest('tr').find('td:eq(9)').text();
+		        var description = $(this).closest('tr').find('td:eq(10)').text();
+				var client_signature = $(this).closest('tr').find('td:eq(11)').text();
+				var client_payment_proof = $(this).closest('tr').find('td:eq(12)').text();
+				var toBilling = "billing_team";
+				var toSupport = "support_team";
+			 
+					console.log(status);
+					console.log(progress);
+					$('#thumbnail').attr('src', '/img/' + signature);
+					 
+			  	  	$('#client_payment_proof').attr('src', '/img/' + client_payment_proof);
+					$('#client_signature').attr('src', '/img/' + client_signature);
+				
+				   $('#client_payment_proofs').val(client_payment_proof);
+			  	   $('#client_signatures').val(client_signature);
+			  	   $('#salesSignatures').val(signature);
+			  	   
+				
+						
+				
+		        $('#ticket_id').val(ticketId);
+		        $('#conforme_date_ongoing').val(conforme_date_ongoing);
+		        $('#title_ongoing').val(title);
+		        $('#description_ongoing').val(description);
+		        $('#user_name_ongoing').val(userName);
+		        $('#status_').val(status);	
+		        $('#amount_ongoing').val(amount);
+		        $('#conforme_no_ongoing').val(conformeNo); // set the conforme_no value in the #modalView modal
+		        $('#completedModal').modal();
+		    });
+		});
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
 		$(document).ready(function() {
 		    $('.ongoing').on('click', function(event) {
 		        //to get the data in the table row
@@ -616,16 +801,16 @@
 		        
 		        
 		        //setting the value from the inputs
-		        $('#ticket_id').val(ticketId);
+		        $('#ticket_id_ongoing').val(ticketId);
 		        $('#date').val(dateCreated);
-		        $('#title_ongoing').val(title);
-		        $('#description_ongoing').val(description);
+		        $('#title_ongoing_').val(title);
+		        $('#description_ongoing_').val(description);
 		        $('#user_name').val(userName);
 		        $('#progress').val(progress);
 		        $('#status_ongoing').val(status);
 		        $('#conforme_no').val(conforme_no);
 		        $('#amount').val(amount);
-		        $('#thumbnail').attr('src', '/img/' + signature);
+		        $('#thumbnail_ongoing').attr('src', '/img/' + signature);
 		        $('#conforme_date_ongoing').val(conforme_date_ongoing);
 		        $('#salesSignature').val(signature);
 	
@@ -639,8 +824,8 @@
 		            $("#view_status").show();
 		            $("#ClientDataRetrieved").show();
 		            //for images
-		            $('#client_payment_proof').attr('src', '/img/' + client_payment_proof_ongoing);
-		            $('#client_signature').attr('src', '/img/' + client_signature_ongoing);
+		            $('#client_payment_proof_ongoing').attr('src', '/img/' + client_payment_proof_ongoing);
+		            $('#client_signature_ongoing').attr('src', '/img/' + client_signature_ongoing);
 		        } else {
 		            // At least one field is null, show ClientDatas and hide ClientDataRetrieved
 		            $("#submit_button_ongoing").show();
@@ -652,25 +837,7 @@
 		        }
 		    });
 		});
-		
-		function updateTicket() {
-			  const form = document.querySelector('#updateTicketForm');
-			  const formData = new FormData(form);
 
-			  fetch(form.action, {
-			    method: 'PUT',
-			    body: formData
-			  })
-			  .then(response => {
-			    if (response.ok) {
-			      location.reload();
-			    } else {
-			      console.error('Failed to update ticket');
-			    }
-			  })
-			  .catch(error => console.error(error));
-			}
-		
 		
 			
 		$(document).ready(function() {
@@ -697,6 +864,7 @@
 				
 			});
 		});
+		
 	$(document).ready(function() {
 		$('.eBtn').on('click', function(event) {
 			

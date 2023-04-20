@@ -60,14 +60,14 @@
 <body>
 
 	<!-- SIDEBAR -->
-	<section id="sidebar">
-		<a href="#" class="brand">
+	<section id="sidebar" class="hide">
+		<a href="admin.ark"  class="brand">
 		<img src="img/brandlogo.png" style="width:60px;height:60px">
 			<span class="text" style="color:gray">ARK</span>
 		</a>
 		<ul class="side-menu top">
 			<li class="menu-itme active">
-				<a href="#">
+				<a href="admin.ark" >
 					<i class='bx bxs-dashboard' ></i>
 					<span class="text">Home</span>
 				</a>
@@ -119,7 +119,7 @@
 		<!-- NAVBAR -->
 		<nav>
 			<i class='bx bx-menu' ></i>
-			<a href="#" class="nav-link">Categories</a>
+			<a href="#" class="nav-link"><strong>Admin panel</strong></a>
 			<form action="#">
 				<div class="form-input">
 					<input type="search" placeholder="Search...">
@@ -140,22 +140,7 @@
 
 		<!-- MAIN -->
 		<main>
-			<div class="head-title">
-				<div class="left">
-					<h1>Dashboard</h1>
-					
-					<ul class="breadcrumb">
-						<li>
-							<a href="#">Admin Panel</a>
-						</li>
-						<li><i class='bx bx-chevron-right' ></i></li>
-						<li>
-							<a class="active" href="#">Home</a>
-						</li>
-					</ul>
-				</div>
-				
-			</div>
+			
 	<ul class="box-info">
 	
    <li class="menu-item " data-table="pending" onclick="handleClick(this)">
@@ -166,7 +151,7 @@
         </span>
     </li>
      <li class="menu-item " data-table="ongoing" onclick="handleClick(this)">
-        <i class='bx bxs-group' ></i>
+        <i class='bx bxs-hourglass' ></i>
         <span class="text">
             <h3 th:text="${ongoing_ticket_count}">0</h3>
             <p>On-going Tickets</p>
@@ -181,8 +166,6 @@
         </span>
     </li>
 </ul>
-
-
 
 			
 <!-- Pending Table -->
@@ -202,7 +185,7 @@
                     <th scope="col">Description</th>
                     <th scope="col">Client Name</th>
                     <th scope="col">Status</th>
-                       <th scope="col"    th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}">Action</th>
+                       <th scope="col"  >Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -214,9 +197,9 @@
 			    <td th:text="${t.user_name}"></td>
 			    <td th:text="${t.status}"></td>
 			      <td style=" display: none;" th:text="${t.conforme_no}"></td>
-			    <td    th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}">
+			    <td >
 	 			     	 <button type="button" class="btn btn-success my-2 eBtn"   data-toggle="modal"  data-target="#viewTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
-	                     <button type="button" class="btn btn-danger my-2"><i class="fa fa-trash" style="font-size:20px;"></i></button>
+	                     <button type="button" class="btn btn-danger my-2"   th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}"><i class="fa fa-trash" style="font-size:20px;"></i></button>
                </td>
 				</tr>
             </tbody>
@@ -246,12 +229,7 @@
 			      READY TO PROCEED
 			    </span>
 			  </li>
-			    <li class=" btn btn-success ready_to_resolved"  >
-			    <i class='bx bxs-check-circle' style="color: white;"></i>
-			    <span class="text">
-			     	RESOLVED
-			    </span>
-			  </li>
+			  
 		</ul>
 	
         </div>
@@ -284,9 +262,10 @@
 		        <td style="display:none" th:text="${t.description}"></td>
 		        <td style="display:none" th:text="${t.client_signature}"></td>
 			    <td style="display:none" th:text="${t.client_payment_proof}"></td>
+	
 			    <td  >
 					 <button type="button" class="btn btn-success my-2 ongoingBtn" 
-					       	 th:href="@{/tickets/{ticketId}(ticketId=${t.ticket_id})}" 
+					        
 					       	  data-toggle="modal"  data-target="#ongoingModal">
 					       	  <i class="fa fa-edit" style="font-size:20px;"></i>
 					 </button>
@@ -306,33 +285,76 @@
     <!-- Table content here -->
       <div class="order">
         <div class="head">
-            <h3>completed tickets</h3>
-            <i class='bx bx-search' ></i>
-            <i class='bx bx-filter' ></i>
+            <h3>Completed tickets</h3>
+         <ul class="horizontal-menu">
+         
+			    <li class="btn btn-danger sales_team_button" >
+			    <i class='bx bx-send' style="color: white;"></i>
+			    <span style="color:white">
+			      Sales Team
+			    </span>
+			  </li>
+			
+			  <li class=" btn btn btn-info billing_team_button"   >
+			   <i class="bx bx-send" style="color: white;"></i>
+			    <span class="text">
+			     Billing
+			    </span>
+			  </li>
+			  
+			 <li class=" btn btn-primary collection_team_button"   >
+			   <i class="bx bx-send" style="color: white;"></i>
+			    <span class="text">
+			     Collection
+			    </span>
+			  </li>
+			 			  
+			 <li class=" btn btn btn-success treasury_team_button"   >
+			   <i class="bx bx-send" style="color: white;"></i>
+			    <span class="text">
+			    Treasury		    
+				</span>
+			  </li> 
+			  
+		</ul>
         </div>
            <table>
             <thead>
                 <tr>                                
-                    <th scope="col">Ticket No.</th>
+                   <th scope="col">Ticket No.</th>
                     <th scope="col">Date Created</th>
                     <th scope="col">Title</th>
-                    <th scope="col">Description</th>
                     <th scope="col">Client Name</th>
                     <th scope="col">Status</th>
-                       <th scope="col">Action</th>
+                	<th scope="col">Amount</th>
+                    <th scope="col">Conforme No.</th>
+                    <th scope="col">Progess</th>
+                    <th scope="col"  >Action</th>
                 </tr>
             </thead>
             <tbody>
             <tr th:each="t : ${completed_tickets}">
-			    <td scope="row" th:text="${t.ticket_id}"></td>
+			     <td scope="row" th:text="${t.ticket_id}"></td>
 			     <td th:text="${t.created_on}"></td>
 			    <td th:text="${t.title}"></td>
-			    <td th:text="${t.description}"></td>
 			    <td th:text="${t.user_name}"></td>
 			    <td th:text="${t.status}"></td>
+			    <td th:text="${t.amount}"></td>
+		        <td th:text="${t.conforme_no}"></td>
+			    <td  th:text="${t.progress}"></td>
+			    <td style="display:none"  th:text="${t.conforme_date}"></td>
+			    <td style="display:none" th:text="${t.salesSignature}"></td>
+		        <td style="display:none" th:text="${t.description}"></td>
+		        <td style="display:none" th:text="${t.client_signature}"></td>
+			    <td style="display:none" th:text="${t.client_payment_proof}"></td>
+		        <td style="display:none" th:text="${t.user_id}"></td>
 			       <td>
-			       <a class="btn btn-success btn-round-1">View</a>
-			       <a class="btn btn-danger btn-round-1">Delete</a>
+			        <button type="button" class="btn btn-success my-2 ongoingBtn" 
+				
+					       	  data-toggle="modal"  data-target="#ongoingModal">
+					       	  <i class="fa fa-edit" style="font-size:20px;"></i>
+					 </button>
+				 
 			       </td>
 				</tr>
             </tbody>
@@ -364,7 +386,7 @@
                      <th scope="col">Amount</th>
                     <th scope="col">Conforme No</th>
                      <th scope="col">Progress</th>
-                    <th scope="col"    th:style="${session.user_role == 'support_team' ? '' : 'display:none;'}">Action</th>
+                    <th scope="col"    >Action</th>
                     
                 </tr>
             </thead>
@@ -383,7 +405,7 @@
 		        <td style="display:none" th:text="${t.description}"></td>
 		        <td style="display:none" th:text="${t.client_signature}"></td>
 			    <td style="display:none" th:text="${t.client_payment_proof}"></td>
-			    <td    th:style="${session.user_role == 'support_team' ? '' : 'display:none;'}">
+			    <td  >
  
 				<a class="btn btn-success my-2 " th:href="@{'/tickets/'+${t.ticket_id}}" >
 				    <i class="fa fa-edit" style="font-size:20px;"></i>
@@ -398,7 +420,10 @@
 		</div>
           </div>
 </div>
-			
+			  
+	 <!-- End of Support Table-->
+ 
+		 <!-- View Ticket -->	
  <div id="myForm">
 	
 		<div class="modal fade" id="viewTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -458,7 +483,7 @@
 		    </div>
 		</div>
 	</div>	
-	
+	 <!-- End of  View Ticket -->
 <!-- Conformed Slip Modal -->
 
 	  <form th:action="@{/tickets/update-ticket}" enctype="multipart/form-data" method="post" >
@@ -557,14 +582,14 @@
 		<div class="modal fade" id="ongoingModal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
 		  <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
-        
-              <input type="hidden" class="form-control" id="status" name="status" value="ongoing">
+ 			  <input type="hidden" class="form-control" id="user_id" name="user_id">
+              <input type="hidden" class="form-control" id="status_" name="status" >
                <input type="hidden" class="form-control" id="client_signatures" name="client_signature" >
                <input type="hidden" class="form-control" id="client_payment_proofs" name="client_payment_proof" >
                 <input type="hidden" class="form-control" id="salesSignatures" name="salesSignature" >
                <input type="hidden" class="form-control" id="progress_ongoing" name="progress"  >
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Conforme Ticket</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Ticket Details</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -672,17 +697,16 @@
 		</div>	
 	 </div>	
  
-	<div  th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}">
-		 <div id="span_warning"  class="alert" style="text-align:center;" >
-		  <span  class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-		  <strong>Warning:</strong> You cannot proceed to billing until the issue is resolved.
-		</div>	
-	 </div>	
+	
 
  <div id="buttonDiv" class="modal-footer d-flex justify-content-between">
-    <button type="button"  id="ticket_status" class="btn btn-primary" >View Ticket Status</button>
+    <button type="button"  id="ticket_status" class="btn btn-primary"  >View Ticket Status</button>
 
    	<div class="d-flex justify-content-between"> 
+   	
+   	<div  th:style="${session.user_role == 'billing_team' ? '' : 'display:none;'}"  >
+   	<button type="button" id="proceed_collection" class="btn btn-success create_invoce_modal">Create Invoice</button>
+   	</div>
    	<div  th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}"  > 
    	 	<button type="submit" id="proceed_billing" class="btn btn-success"   >Send To billing</button>
         <button type="submit" id="proceed_support" class="btn btn-primary"   >SEND TO SUPPORT</button>
@@ -696,13 +720,116 @@
 		  </form>
 	<!--End Ongoing Slip -->
 	
-		  
-		<!-- End of Support modal-->
+	<!-- Create Invoice Modal -->
+		<div class="modal fade" id="invoice_modal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
+		  <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+ 
+ 				<!-- Hiiden -->
+               <input type="hidden" class="form-control" id="client_signatures_hidden" name="client_signature" >
+               <input type="hidden" class="form-control" id="client_payment_proofs_hidden" name="client_payment_proof" >
+               
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Invoice</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="id" class="col-form-label">Ticket No.</label>
+                <input type="text" class="form-control" id="ticket_id_invoice" name="ticketID" readonly>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="conforme_no" class="col-form-label">Invoice date created</label>
+                <input type="text" class="form-control"  id="invoice_date_now" name="invoice_date" readonly>
+            </div>
+        </div>
+    </div>
+     <div class="row">
+        <div class="col-sm-6">
+    <div class="form-group">
+      <label for="title" class="col-form-label">Client name</label>
+        <input type="text" class="form-control" id="client_name_invoice" name="client_name" readonly>
+      
+    </div>
+    </div>
+    
+   <div class="col-sm-6">
+    <div class="form-group">
+     <label for="description" class="col-form-label">Client email</label>
+        <input type="text" class="form-control"  id="client_email_invoice" name=client_email readonly>
+      
+    </div>
+    </div>
+    </div>
+  	
+	 <div class="row">
+        <div class="col-sm-6">
+    <div class="form-group">
+      <label for="title" class="col-form-label">Ticket issue</label>
+        <input type="text" class="form-control" id="ticket_title_invoice" name="ticket_issue_title" readonly>
+       
+    </div>
+    </div>
+      <div class="col-sm-6">
+   <div class="form-group">
+        <label for="name" class="col-form-label">Amount</label>
+        <input type="text" class="form-control" id="amount_invoice" name="invoice_amount" readonly>	
+    </div>
+    </div>
+	</div>
+      <div class="row" >
+        <div class="col-sm-6">
+          <div class="row">
+              <div class="col-sm-6">
+        <div class="mb-3">
+	  	<label for="customFile" class="form-label">Client's Signature</label>
+	  	</div>
+	  	</div>
+	  	  <div class="col-sm-6">
+        <div class="mb-3">
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_signature_invoice"   class="rounded float-left imageSignature">
+			</div>
+		</div>
+	</div>
+    </div>
+    <div class="col-sm-6">
+      <div class="row">
+              <div class="col-sm-6">
+     <div class="mb-3">
+     	 	<label for="customFile" class="form-label">Proof of Payment</label>
+     	 	</div>
+     	 	</div>
+        <div class="col-sm-6">
+     <div class="mb-3">
+     	
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof_invoice"   class="rounded float-left imageProof">
+	  
+	</div>
+	</div>
+	</div>
 	
+	</div>
+	</div>	
+	</div>
+	<div  class="modal-footer ">
+ 	<button type="submit" id="proceed_collection" class="btn btn-success create_invoice">Create Invoice</button>
+    <button type="button" class="btn" style="margin-left:10px;background-color:grey;color:white" data-dismiss="modal">Close</button> 
+ 
+	</div>
+	 </div>	
+ 		</div>
+    		</div>
 
-		  
-		<!-- End of add update modal-->
-
+	
+	
+	<!-- End of Create Invoice Modal -->
  <!-- imageviewer -->
 <div class="modal fade" id="imageViewerModal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
   <div class="modal-dialog modal-xl" role="document">
@@ -758,6 +885,7 @@
     });
 });
 
+
 	
 	$(document).ready(function() {
 	    $('.imageSignature').on('click', function(event) {
@@ -778,6 +906,90 @@
 
 	</script>
 
+<script type="text/javascript">
+
+//Retrieved User using ajax before opening the invoice
+
+
+$('.create_invoice').on('click', function(event) {   
+    var currentDate = new Date().toLocaleString('en-US');
+	var clientSignature = $('#client_signatures').val();
+	var clientPaymentProof = $('#client_payment_proofs').val();
+	var ticketId = $('#ticket_id').val();
+	var titleInvoice = $('#title_ongoing').val();
+	var clientName = $('#user_name_ongoing').val();
+	var amount_invoice = $('#amount_ongoing').val();
+	var userId = $('#user_id').val();
+	console.log(userId);
+	$('#invoice_date_now').val(currentDate);
+	$('#ticket_id_invoice').val(ticketId);
+	$('#ticket_title_invoice').val(titleInvoice);
+
+	$('#client_name_invoice').val(clientName);
+	$('#amount_invoice').val(amount_invoice);
+	
+	//for image display
+	$('#client_signature_invoice').attr('src', '/img/' + clientSignature);
+	$('#client_payment_proof_invoice').attr('src', '/img/' + clientPaymentProof);
+	//for inputs hiiden to be saved
+	$('#client_signatures_hidden').val(clientSignature);
+	$('#client_payment_proofs_hidden').val(clientPaymentProof);
+
+	
+	$('#invoice_modal').modal();
+	$('#ongoingModal').modal('hide');
+});
+
+
+
+
+
+
+
+$('.create_invoce_modal').on('click', function(event) {   
+	    var currentDate = new Date().toLocaleString('en-US');
+		var clientSignature = $('#client_signatures').val();
+		var clientPaymentProof = $('#client_payment_proofs').val();
+		var ticketId = $('#ticket_id').val();
+		var titleInvoice = $('#title_ongoing').val();
+		var clientName = $('#user_name_ongoing').val();
+		var amount_invoice = $('#amount_ongoing').val();
+		var userId = $('#user_id').val();
+		console.log(userId);
+		$('#invoice_date_now').val(currentDate);
+		$('#ticket_id_invoice').val(ticketId);
+		$('#ticket_title_invoice').val(titleInvoice);
+
+		$('#client_name_invoice').val(clientName);
+		$('#amount_invoice').val(amount_invoice);
+		
+		//for image display
+		$('#client_signature_invoice').attr('src', '/img/' + clientSignature);
+		$('#client_payment_proof_invoice').attr('src', '/img/' + clientPaymentProof);
+		//for inputs hiiden to be saved
+		$('#client_signatures_hidden').val(clientSignature);
+		$('#client_payment_proofs_hidden').val(clientPaymentProof);
+
+		 $.ajax({
+		        type: "GET",
+		        url: "/userDetails?userId=" + userId,
+		        success: function(email) {
+		            var user_email = $('#client_email_invoice');
+		            user_email.empty(); // clear existing content
+		            user_email.val(email);
+		             
+		        },
+		        error: function(jqXHR, textStatus, errorThrown) {
+		            // handle the error here
+		            console.log(textStatus);
+		        }
+ 		});
+		$('#invoice_modal').modal();
+		$('#ongoingModal').modal('hide');
+});
+
+</script>
+
 	<script>
 	//button for support
 
@@ -795,12 +1007,14 @@
 	 
 	});
 
-
+	
+	
 	
 	//Button for ongoing 
 	$(document).ready(function() {
 		
 	    $('.ongoingBtn').on('click', function(event) {
+	    	
 	        var ticketId = $(this).closest('tr').find('td:eq(0)').text();
 	        var dateCreated = $(this).closest('tr').find('td:eq(1)').text();
 	        var title = $(this).closest('tr').find('td:eq(2)').text();
@@ -814,38 +1028,48 @@
 	        var description = $(this).closest('tr').find('td:eq(10)').text();
 			var client_signature = $(this).closest('tr').find('td:eq(11)').text();
 			var client_payment_proof = $(this).closest('tr').find('td:eq(12)').text();
+			var userID = $(this).closest('tr').find('td:eq(13)').text();
+			
 			var toBilling = "billing_team";
 			var toSupport = "support_team";
 		 
-
+				console.log(status);
+				console.log(progress);
 				$('#thumbnail').attr('src', '/img/' + signature);
 				
 			
-					if (progress === "support_team" || progress ==="resolved") {
-
-						
-						  $('#progress_ongoing').val(toBilling); 	
-						  $('#proceed_billing').show();  
-						  
-						  if(status === "closed"){
-							  $('#span_warning').hide();
-							  
-								$('#proceed_billing').attr({
-						  	        "disabled": false});
+					if (progress === "support_team" || progress === "billing_team" || progress ===  "collection_team" || progress === "treasury_team" ) {
+			  
+						if(status === "completed"){
+							
+							  if(progress === "billing_team"){
+								  $('#proceed_billing').hide();
+								  $('#proceed_collection').show();
+								  
+							  }
+							  else{
+								  $('#proceed_collection').hide();
+								  $('#progress_ongoing').val(toBilling); 	
+								  $('#proceed_billing').show();  
+								  $('#span_warning').hide();
+							  }
 						  }
 						  else{
-							  $('#proceed_billing').attr({
-						  	        "disabled": true});
+							  $('#proceed_collection').hide();
+							  $('#proceed_billing').hide();
 							  $('#span_warning').show();
 						  }
-						 
+						
 						  
 						  $('#proceed_support').hide();
 						  $('#ticket_status').show();
 						  
 						  // Add the justify-content-between class
 						  $('#buttonDiv').addClass('justify-content-between');
-						} else {
+						} 
+						else {
+							console.log(progress);
+						
 						  $('#span_warning').hide();
 						  $('#progress_ongoing').val(toSupport); 	
 						  $('#proceed_billing').hide();  
@@ -886,6 +1110,7 @@
 					  	        "disabled": false});
 					  	    
 				        } else {
+				        
 				    	 	$('#waiting_payment').show();
 				  	        $('#waiting_signature').show();
 				  	  	 	$('#client_payment_proof').hide();
@@ -894,13 +1119,15 @@
 				  	  	$('#proceed_support').attr({
 				  	        "disabled": true});  
 				        }
-			
+				  
+				  
+			$('#user_id').val(userID);
 	        $('#ticket_id').val(ticketId);
 	        $('#conforme_date_ongoing').val(conforme_date_ongoing);
 	        $('#title_ongoing').val(title);
 	        $('#description_ongoing').val(description);
 	        $('#user_name_ongoing').val(userName);
-	        $('#status').val(status);
+	        $('#status_').val(status);	
 	        $('#amount_ongoing').val(amount);
 	        $('#conforme_no_ongoing').val(conformeNo); // set the conforme_no value in the #modalView modal
 	        $('#ongoingModal').modal();
@@ -911,6 +1138,9 @@
 	
 	
 	<script>
+	
+	
+	
 	
 	
 	// Event listener for On-going Tickets button
@@ -955,23 +1185,82 @@
 	  });
 	});
 	
-	// Event listener for Ready to proceed button
-	$('.ready_to_resolved').on('click', function() {
+	
+	
+	// Event listener for On-going Tickets button
+	$('.menu-item[data-table="completed"]').on('click', function() {
+	  // Show all rows
+	  $('#completed-table tbody tr').show();
+	  
+	  // Remove filters from other buttons
+	  $('.sales_team_button').removeClass('active');
+	  $('.billing_team_button').removeClass('active');
+	  $('.collection_team_button').removeClass('active');
+	  $('.treasury_team_button').removeClass('active');
+	});
+	
+	
+	// Event listener for Ready sales_team button
+	$('.sales_team_button').on('click', function() {
 	  // Loop through each table row
-	  $('#ongoing-table tbody tr').each(function() {
+	  $('#completed-table tbody tr').each(function() {
 		var _status = $(this).find('td:nth-child(5)').text();
-	    var signature = $(this).find('td:nth-child(11)').text();
-	    var paymentProof = $(this).find('td:nth-child(12)').text();
+		var _progress = $(this).find('td:nth-child(8)').text();
 	    console.log(_status);
-	    if ((!signature || !paymentProof) || !(_status === 'closed')) {
+	    
+	    if (!_status === 'completed' || !(_progress === 'support_team')) {
 	    	  $(this).hide();
 	    	} else {
 	    	  $(this).show();
 	    	}
 	  });
-	});	
+	});
 	
+	// Event listener for Ready billing team button
+	$('.billing_team_button').on('click', function() {
+	  // Loop through each table row
+	  $('#completed-table tbody tr').each(function() {
+		var _status = $(this).find('td:nth-child(5)').text();
+		var _progress = $(this).find('td:nth-child(8)').text();
+	    console.log(_status);
+	    console.log(_progress);
+	    if (!(_status === 'completed')  || !(_progress === 'billing_team')) {
+	    	  $(this).hide();
+	    	} else {
+	    	  $(this).show();
+	    	}
+	  });
+	});
 	
+	$('.collection_team_button').on('click', function() {
+	  // Loop through each table row
+	  $('#completed-table tbody tr').each(function() {
+		var _status = $(this).find('td:nth-child(5)').text();
+		var _progress = $(this).find('td:nth-child(8)').text();
+	    console.log(_status);
+	    if (!(_status === 'completed')  || !(_progress === 'collection_team')) {
+	    	  $(this).hide();
+	    	} else {
+	    	  $(this).show();
+	    	}
+	  });
+	});
+
+	// Event listener for Ready treasury team button
+	$('.treasury_team_button').on('click', function() {
+		  // Loop through each table row
+		  $('#completed-table tbody tr').each(function() {
+			var _status = $(this).find('td:nth-child(5)').text();
+			var _progress = $(this).find('td:nth-child(8)').text();
+		    console.log(_status);
+		    if (!(_status === 'completed')  || !(_progress === 'treasury_team')) {
+		    	  $(this).hide();
+		    	} else {
+		    	  $(this).show();
+		    	}
+		  });
+		});
+		
 	
 	// Add click event listener to the button in the first modal
 	$(document).ready(function() {
@@ -1000,27 +1289,11 @@
 	});
 	});
 	</script>
+	
+	
+	
 	<script type="text/javascript">
 	//conforme_ongoing
-
-
-	function updateTicket() {
-		  const form = document.querySelector('#updateTicketForm');
-		  const formData = new FormData(form);
-
-		  fetch(form.action, {
-		    method: 'PUT',
-		    body: formData
-		  })
-		  .then(response => {
-		    if (response.ok) {
-		      location.reload();
-		    } else {
-		      console.error('Failed to update ticket');
-		    }
-		  })
-		  .catch(error => console.error(error));
-		}
 	
  
 	$(document).ready(function() {
@@ -1031,14 +1304,14 @@
 	        var description = $(this).closest('tr').find('td:eq(3)').text();
 	        var userName = $(this).closest('tr').find('td:eq(4)').text();
 	        var status = $(this).closest('tr').find('td:eq(5)').text();
-	        var conformeNo = $(this).closest('tr').find('td:eq(6)').text(); // retrieve the conforme_no value from the button's data-conforme-no attribute
+	        var conformeNo = $(this).closest('tr').find('td:eq(6)').text(); 
 	        $('#id').val(ticketId);
 	        $('#date').val(dateCreated);
 	        $('#title').val(title);
 	        $('#description').val(description);
 	        $('#name').val(userName);
 	        $('#status').val(status);
-	        $('#conforme_no').val(conformeNo); // set the conforme_no value in the #modalView modal
+	        $('#conforme_no').val(conformeNo);
 	        $('#modalView').modal();
 	    });
 	});

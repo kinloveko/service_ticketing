@@ -1,6 +1,7 @@
 package com.ticketing_project.Ticketing.Project;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -11,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
@@ -59,7 +62,9 @@ public class UserController {
 	        	if(i.getUser_role().equals("client")) {
 	        	      return "redirect:/dashboard"; // return the name of the dashboard page
 	        	}
-	        	else if (i.getUser_role().equals("sales_team")|| i.getUser_role().equals("support_team")){
+	        	else if (i.getUser_role().equals("sales_team")
+	        			|| i.getUser_role().equals("support_team")
+	        			|| i.getUser_role().equals("billing_team")){
 	        		 return "redirect:/admin.ark"; // return the name of the dashboard page
 	        	}
 	        }
@@ -67,7 +72,16 @@ public class UserController {
 	    
 	    return "login"; // return the name of the login page if no matching user is found
 	}
-
+	
+	@GetMapping("/userDetails")
+	@ResponseBody
+	public String getFeedbacksByStatusId(@RequestParam int userId) {
+	    Optional<User> userDetails = userService.findUserById(userId);
+	    String email =userDetails.get().getUser_email();
+	    return email;
+	}
+	
+	
     //GET mapping method for /admin.ark
     @GetMapping("/admin.ark")
     public String adminPage(Model m) {

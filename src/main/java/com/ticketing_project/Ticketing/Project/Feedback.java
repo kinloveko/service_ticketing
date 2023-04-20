@@ -45,7 +45,5 @@ public class Feedback {
 	@Getter
 	@Setter
 	private String feedback_date_time;
-	
-	
-	
+
 }
