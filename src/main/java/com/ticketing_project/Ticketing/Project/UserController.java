@@ -64,7 +64,8 @@ public class UserController {
 	        	}
 	        	else if (i.getUser_role().equals("sales_team")
 	        			|| i.getUser_role().equals("support_team")
-	        			|| i.getUser_role().equals("billing_team")){
+	        			|| i.getUser_role().equals("billing_team")
+	        			|| i.getUser_role().equals("collection_team")){
 	        		 return "redirect:/admin.ark"; // return the name of the dashboard page
 	        	}
 	        }
@@ -87,6 +88,13 @@ public class UserController {
     public String adminPage(Model m) {
         ticketService.populateTicketModel(m);
         return "admin.ark";
+    }
+    
+    
+    @GetMapping("/getUpdateTicket")
+    public String adminPages(Model m) {
+        ticketService.populateTicketModel(m);
+        return "admin.ark :: #completed-table";
     }
     
 	

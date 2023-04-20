@@ -126,7 +126,7 @@
    
   <div style="display: inline-block; ">
       <h3 style="display: inline-block; ">Tickets Progress</h3>   
-     
+     <span style="display:none" id="span_status"  th:text="${ticket.progress}" ></span>
 	
      <span    style="  color:grey; font-size:15px;">
      	(<span id="span_value" th:text="${ticket.ticket_id}" 
@@ -137,7 +137,8 @@
      </span>
   </div>
     <h3></h3>   
-  
+  <div th:style="${ticket.status == 'ongoing' ? ''  : 'display:none;'}">
+ 
         <ul class="horizontal-menu" 
        th:style="${session.user_role == 'support_team' ? '' : 'display:none;'}">
     <li class="btn btn-primary add_button_update" data-toggle="modal" data-target="#support_add_modal">
@@ -154,6 +155,7 @@
         </span>
     </li>
 </ul>
+ </div>
     </div>
     <table>
       <thead>
@@ -395,46 +397,51 @@
 		
 		//for completed button
 		//if the completed button is clicked it will change the status to completed 
-	function showConfirmation() {
-		var ticketId = $('#span_value').text();
-	  Swal.fire({
-	    title: 'Are you sure?',
-	    text: "You won't be able to revert this!",
-	    icon: 'warning',
-	    showCancelButton: true,
-	    confirmButtonColor: '#3085d6',
-	    cancelButtonColor: '#d33',
-	    confirmButtonText: 'Yes, mark it as completed!'
-	  }).then((result) => {
-	    if (result.isConfirmed) {
-	      // Make an AJAX call to update the ticket
-	    	$.ajax({
-	    		  type: "PUT",
-	    		  url: '/tickets/update-ticket/'+ticketId,
-	    		  data: {
-	    			  "progress": "resolved" 
-	    		  },
-	    		  success: function() {
-	    		    // Show a success message
-	    		    Swal.fire(
-	    		      'Marked as completed!',
-	    		      'The ticket has been marked as completed.',
-	    		      'success'
-	    		    );
-	    		  },
-	    		  error: function() {
-	    		    // Show an error message
-	    		    Swal.fire(
-	    		      'Oops...',
-	    		      'Something went wrong!',
-	    		      'error'
-	    		    );
-	    		  }
-	    		});
-	    }
-	  });
-	}
-		
+function showConfirmation() {
+  var ticketId = $('#span_value').text();
+
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, mark it as completed!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Make an AJAX call to update the ticket
+      $.ajax({
+        type: "PUT",
+        url: "/tickets/update-ticket/" + ticketId,
+        data: {
+          "progress": "support_team",
+          "status": "completed"
+        },
+        success: function() {
+          // Show a success message
+          Swal.fire(
+            'Marked as completed!',
+            'The ticket has been marked as completed.',
+            'success'
+          ).then((result) => {
+            if (result.isConfirmed) {
+              location.reload();
+            }
+          });
+        },
+        error: function() {
+          // Show an error message
+          Swal.fire(
+            'Oops...',
+            'Something went wrong!',
+            'error'
+          );
+        }
+      });
+    }
+  });
+}
 		//for viewing all the feedbacks
 	 
 		

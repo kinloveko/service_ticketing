@@ -81,9 +81,10 @@ public class TicketController {
 	@PostMapping("/tickets/update-ticket-ongoing")
 	public String updateOngoing(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes) {
 		ticketService.save(newTicket);
-		redirectAttributes.addFlashAttribute("successMessage", "Ticket saved successfully!");
 		
-		 return "redirect:/admin.ark";
+		redirectAttributes.addFlashAttribute("successMessage", "Ticket updated successfully!");
+		
+	    return "redirect:/admin.ark";
 		 
 		}
 	
@@ -148,16 +149,20 @@ public class TicketController {
 	
 	@PutMapping("/tickets/update-ticket/{ticketId}")
 	@ResponseBody
-	public void updateTicket(@PathVariable final int ticketId) {
+	public void updateTicket(@PathVariable final int ticketId,
+	                          @RequestParam(value = "progress") String progress,
+	                          @RequestParam(value = "status") String status,
+	                          RedirectAttributes redirectAttributes) {
 	  // Find the ticket to update using the ticketId path variable
 	  Ticket ticketToUpdate = ticketService.getTicketById(ticketId);
 
-	  // Set the progress field of the ticket to "resolved"
-	  ticketToUpdate.setStatus("completed");
+	  ticketToUpdate.setStatus(status);
+	  ticketToUpdate.setProgress(progress);
+	 
 	  // Save the updated ticket
 	  ticketService.update(ticketId, ticketToUpdate);
+
 	}
-	
 	
 	
 	//HTTP DELETE method

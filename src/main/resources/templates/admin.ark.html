@@ -158,7 +158,7 @@
         </span>
     </li>
  
-   <li class="menu-item " data-table="completed" onclick="handleClick(this)">
+	<li class="menu-item" data-table="completed" onclick="handleClick(this)">
         <i class='bx bxs-check-circle' ></i>
         <span class="text">
             <h3 th:text="${completed_ticket_count}">0</h3>
@@ -590,6 +590,7 @@
                <input type="hidden" class="form-control" id="progress_ongoing" name="progress"  >
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Ticket Details</h5>
+                
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -707,6 +708,9 @@
    	<div  th:style="${session.user_role == 'billing_team' ? '' : 'display:none;'}"  >
    	<button type="button" id="proceed_collection" class="btn btn-success create_invoce_modal">Create Invoice</button>
    	</div>
+   	 <div  th:style="${session.user_role == 'collection_team' ? '' : 'display:none;'}"  >
+   	<button type="button" id="proceed_treasury" class="btn btn-success create_invoce_modal">Send to Treasury</button>
+   	</div>
    	<div  th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}"  > 
    	 	<button type="submit" id="proceed_billing" class="btn btn-success"   >Send To billing</button>
         <button type="submit" id="proceed_support" class="btn btn-primary"   >SEND TO SUPPORT</button>
@@ -721,6 +725,7 @@
 	<!--End Ongoing Slip -->
 	
 	<!-- Create Invoice Modal -->
+	<form id="invoice-form">
 		<div class="modal fade" id="invoice_modal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
 		  <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
@@ -780,7 +785,7 @@
       <div class="col-sm-6">
    <div class="form-group">
         <label for="name" class="col-form-label">Amount</label>
-        <input type="text" class="form-control" id="amount_invoice" name="invoice_amount" readonly>	
+        <input type="text" class="form-control" id="amount_invoice" name="invoice_amount" >	
     </div>
     </div>
 	</div>
@@ -826,7 +831,7 @@
 	 </div>	
  		</div>
     		</div>
-
+	</form>
 	
 	
 	<!-- End of Create Invoice Modal -->
@@ -908,10 +913,22 @@
 
 <script type="text/javascript">
 
-//Retrieved User using ajax before opening the invoice
+
+//creating invoice using ajax
+//purpose to prevent to refresh the page while inserting a new record
+
+
+
+
+
+
+
 
 
 $('.create_invoice').on('click', function(event) {   
+	
+	 event.preventDefault();
+
     var currentDate = new Date().toLocaleString('en-US');
 	var clientSignature = $('#client_signatures').val();
 	var clientPaymentProof = $('#client_payment_proofs').val();
@@ -920,6 +937,7 @@ $('.create_invoice').on('click', function(event) {
 	var clientName = $('#user_name_ongoing').val();
 	var amount_invoice = $('#amount_ongoing').val();
 	var userId = $('#user_id').val();
+	
 	console.log(userId);
 	$('#invoice_date_now').val(currentDate);
 	$('#ticket_id_invoice').val(ticketId);
@@ -934,18 +952,74 @@ $('.create_invoice').on('click', function(event) {
 	//for inputs hiiden to be saved
 	$('#client_signatures_hidden').val(clientSignature);
 	$('#client_payment_proofs_hidden').val(clientPaymentProof);
+	
+	  var formData = $('#invoice-form').serialize();
 
+	  $.ajax({
+		  type: "PUT",
+		  url: "/tickets/update-ticket/" + ticketId,
+		  data: {
+			   "progress": "collection_team",
+		          "status": "completed"
+		  },
+		  success: function() {
+		    // Show a success message
+		    console.log("Ticket updated successfully");
+		    
+		 
+		    
+		    // Call the function to update another repository
+		    updateRepository();
+		  }
+		});
+
+	  function updateRepository() {
+		  var xhr = new XMLHttpRequest();
+		  xhr.open('POST', '/invoice/save');
+		  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		  xhr.onload = function() {
+		    if (xhr.status === 200) {
+		      // Show success message with SweetAlert
+ 
+		      Swal.fire({
+		        icon: 'success',
+		        title: 'Success',
+		        text: 'The invoice has been created successfully!',
+		      }).then((result) => {
+		        if (result.isConfirmed) {
+		          $('#invoice_modal').modal('hide');
+		          // Update the content using JavaScript here
+		          // For example, if you have a div with id "completed-table" that displays the completed tickets, you can update it like this:
+		          $('#completed-table').load('/getUpdateTicket #completed-table > *', function() {
+		              // Success callback
+		          });
+		        }
+		      });
+		    } else {
+		      // Show error message with SweetAlert
+		      Swal.fire({
+		        icon: 'error',
+		        title: 'Error',
+		        text: 'There was an error while saving the invoice: ' + xhr.statusText,
+		      });
+		    }
+		  };
+		  xhr.onerror = function() {
+		    // Show error message with SweetAlert
+		    Swal.fire({
+		      icon: 'error',
+		      title: 'Error',
+		      text: 'There was an error while saving the invoice: ' + xhr.statusText,
+		    });
+		  };
+		  xhr.send(formData);
+		}
 	
 	$('#invoice_modal').modal();
 	$('#ongoingModal').modal('hide');
 });
 
-
-
-
-
-
-
+//for opening the modal and setting the attributes to modal inputs and img
 $('.create_invoce_modal').on('click', function(event) {   
 	    var currentDate = new Date().toLocaleString('en-US');
 		var clientSignature = $('#client_signatures').val();
@@ -969,7 +1043,9 @@ $('.create_invoce_modal').on('click', function(event) {
 		//for inputs hiiden to be saved
 		$('#client_signatures_hidden').val(clientSignature);
 		$('#client_payment_proofs_hidden').val(clientPaymentProof);
-
+		
+		
+		//Retrieved User using ajax before opening the invoice
 		 $.ajax({
 		        type: "GET",
 		        url: "/userDetails?userId=" + userId,
@@ -1047,11 +1123,22 @@ $('.create_invoce_modal').on('click', function(event) {
 								  $('#proceed_collection').show();
 								  
 							  }
+							  else
+							  if(progress === "collection_team"){
+								  $('#proceed_collection').hide();
+								  $('#proceed_treasury').show();
+							  }
+							  else
+							  if(progress === "treasury_team"){
+								  
+								  $('#proceed_treasury').hide();
+							  }
 							  else{
 								  $('#proceed_collection').hide();
 								  $('#progress_ongoing').val(toBilling); 	
 								  $('#proceed_billing').show();  
 								  $('#span_warning').hide();
+								  $('#proceed_treasury').hide();
 							  }
 						  }
 						  else{
@@ -1198,8 +1285,7 @@ $('.create_invoce_modal').on('click', function(event) {
 	  $('.collection_team_button').removeClass('active');
 	  $('.treasury_team_button').removeClass('active');
 	});
-	
-	
+ 
 	// Event listener for Ready sales_team button
 	$('.sales_team_button').on('click', function() {
 	  // Loop through each table row
@@ -1219,18 +1305,25 @@ $('.create_invoce_modal').on('click', function(event) {
 	// Event listener for Ready billing team button
 	$('.billing_team_button').on('click', function() {
 	  // Loop through each table row
-	  $('#completed-table tbody tr').each(function() {
-		var _status = $(this).find('td:nth-child(5)').text();
-		var _progress = $(this).find('td:nth-child(8)').text();
-	    console.log(_status);
-	    console.log(_progress);
-	    if (!(_status === 'completed')  || !(_progress === 'billing_team')) {
-	    	  $(this).hide();
-	    	} else {
-	    	  $(this).show();
-	    	}
-	  });
+		applyBillingFilter();
 	});
+	
+	function applyBillingFilter() {
+		  // Loop through each table row
+		  $('#completed-table tbody tr').each(function() {
+		    var _status = $(this).find('td:nth-child(5)').text();
+		    var _progress = $(this).find('td:nth-child(8)').text();
+		    console.log(_status);
+		    console.log(_progress);
+		    if (!(_status === 'completed')  || !(_progress === 'billing_team')) {
+		      $(this).hide();
+		    } else {
+		      $(this).show();
+		    }
+		  });
+		}
+	
+	
 	
 	$('.collection_team_button').on('click', function() {
 	  // Loop through each table row
@@ -1320,17 +1413,18 @@ $('.create_invoce_modal').on('click', function(event) {
 <script>
 
 function handleClick(menuItem) {
-	  // Get selected menu item and corresponding table ID
-	  var selectedTableId = $(menuItem).data('table');
+    // Get selected menu item and corresponding table ID
+    var selectedTableId = $(menuItem).data('table');
 
-	  // Remove active class from all menu items and add to selected item
-	  $('.menu-item').removeClass('active');
-	  $(menuItem).addClass('active');
+    // Remove active class from all menu items and add to selected item
+    $('.menu-item').removeClass('active');
+    $(menuItem).addClass('active');
 
-	  // Hide all tables and show selected table
-	  $('.table-data').hide();
-	  $('#' + selectedTableId + '-table').show();
-	}
+    // Hide all tables and show selected table
+    $('.table-data').hide();
+    $('#' + selectedTableId + '-table').show();
+}
+
 </script>
 
 	

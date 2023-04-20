@@ -17,9 +17,10 @@ public class InvoiceController {
 	
 	
 	@PostMapping("/invoice/save")
-	public String addNewTicket(@ModelAttribute Invoice newInvoice, RedirectAttributes redirectAttributes, HttpSession session){
+	public String addNewTicket(@ModelAttribute Invoice newInvoice,HttpSession session){
 	    invoiceService.save(newInvoice);
-	    redirectAttributes.addFlashAttribute("successMessage", "Invoice is successfully created!");
+	 
 	    return "redirect:/admin.ark";
 	}	
+	
 }

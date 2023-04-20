@@ -44,7 +44,7 @@ public class Invoice {
 	@Column(name="ticket_issue_title", nullable=false)
 	@Getter
 	@Setter
-	private String service_issue;
+	private String ticket_issue_title;
 	
 	
 	@Column(name="ticketID", nullable=false)
