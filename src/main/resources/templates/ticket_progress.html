@@ -132,8 +132,10 @@
      	(<span id="span_value" th:text="${ticket.ticket_id}" 
      style="  color:grey; font-size:15px;"></span>)
      </span>
+     <span th:text="${ticketId}" ></span>
+     
   <span  style="font-size:15px;">
-     	<strong><span class="ticket-status"  th:text="${ticket.status}" ></span></strong>	
+     	<strong><span class="ticket-status" id="status_id" th:text="${ticket.status}" ></span></strong>	
      </span>
   </div>
     <h3></h3>   
@@ -246,7 +248,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div> 
-        <input type="hidden" class="form-control" id="status_id" >
+        <input type="text" class="form-control" id="status_id_"  >
       <div class="modal-body">
  		    <div class="row">
         <div class="col-sm-6">
@@ -304,7 +306,7 @@
   		 
 		      	<div class="form-group">
 				  <!--  hidden attributes  --> 
-     			   <input type="hidden" class="form-control" id="status_id_feedback" name="statusId">
+     			   <input type="text" class="form-control" id="status_id_feedback_" name="statusId">
         			<input type="hidden" class="form-control" id="feedback_date" name="feedback_date_time">
 				</div>
 				<div class="form-group">
@@ -340,7 +342,7 @@
   		 <div class="modal-body" >
 		      	<div class="form-group">
 				  <!--  hidden attributes  --> 
-     			   <input type="hidden" class="form-control" id="status_id_feedback" name="statusId">
+     			   <input type="hidden" class="form-control" id="status_id_feedback_" name="statusId">
         			<input type="hidden" class="form-control" id="feedback_date" name="feedback_date_time">
 				</div>
 				<div class="form-group">
@@ -447,8 +449,9 @@ function showConfirmation() {
 		
 	$('.view_feedback_modal').on('click', function(event) {   
 	    var currentDate = new Date().toLocaleString('en-US');
-	    var statusId = $('#status_id').val();
-	    $('#status_id_feedback').val(status_id);
+	    
+	    var statusId = $('#status_id_').val();
+	    $('#status_id_feedback').val(statusId);
 	    $('#feedback_date').val(currentDate);
 	    $('#view_feedback_modal').modal();
 	    $('#view_progress').modal('hide');
@@ -489,9 +492,9 @@ function showConfirmation() {
 	$('.feedback_modal').on('click', function(event) {
 	  
 	    var currentDate = new Date().toLocaleString('en-US');
-	    var status_id = $('#status_id').val();
+	    var status_id_ = $('#status_id_').val();
 	  
-	    $('#status_id_feedback').val(status_id);
+	    $('#status_id_feedback_').val(status_id_);
 	    $('#feedback_date').val(currentDate);
 	    $('#add_feedback_modal').modal();
 	    $('#view_progress').modal('hide');
@@ -521,7 +524,7 @@ function showConfirmation() {
 	       var dateCreated = $(this).closest('tr').find('td:eq(3)').text();
 	       var _progress = $(this).closest('tr').find('td:eq(4)').text();
 	        
-	    $('#status_id').val(status_id_);
+	    $('#status_id_').val(status_id_);
 	    $('#title').val(_title);
 	    $('#comments').val(_comments);
 	    $('#date').val(dateCreated);

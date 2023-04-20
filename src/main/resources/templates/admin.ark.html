@@ -991,7 +991,86 @@ $('.create_invoice').on('click', function(event) {
 		          // Update the content using JavaScript here
 		          // For example, if you have a div with id "completed-table" that displays the completed tickets, you can update it like this:
 		          $('#completed-table').load('/getUpdateTicket #completed-table > *', function() {
-		              // Success callback
+		        	// Event listener for On-going Tickets button
+		        		$('.menu-item[data-table="completed"]').on('click', function() {
+		        		  // Show all rows
+		        		  $('#completed-table tbody tr').show();
+		        		  
+		        		  // Remove filters from other buttons
+		        		  $('.sales_team_button').removeClass('active');
+		        		  $('.billing_team_button').removeClass('active');
+		        		  $('.collection_team_button').removeClass('active');
+		        		  $('.treasury_team_button').removeClass('active');
+		        		});
+		        	 
+		        		// Event listener for Ready sales_team button
+		        		$('.sales_team_button').on('click', function() {
+		        		  // Loop through each table row
+		        		  $('#completed-table tbody tr').each(function() {
+		        			var _status = $(this).find('td:nth-child(5)').text();
+		        			var _progress = $(this).find('td:nth-child(8)').text();
+		        		    console.log(_status);
+		        		    
+		        		    if (!_status === 'completed' || !(_progress === 'support_team')) {
+		        		    	  $(this).hide();
+		        		    	} else {
+		        		    	  $(this).show();
+		        		    	}
+		        		  });
+		        		});
+		        		
+		        		// Event listener for Ready billing team button
+		        		$('.billing_team_button').on('click', function() {
+		        		  // Loop through each table row
+		        			applyBillingFilter();
+		        		});
+		        		
+		        		function applyBillingFilter() {
+		        			  // Loop through each table row
+		        			  $('#completed-table tbody tr').each(function() {
+		        			    var _status = $(this).find('td:nth-child(5)').text();
+		        			    var _progress = $(this).find('td:nth-child(8)').text();
+		        			    console.log(_status);
+		        			    console.log(_progress);
+		        			    if (!(_status === 'completed')  || !(_progress === 'billing_team')) {
+		        			      $(this).hide();
+		        			    } else {
+		        			      $(this).show();
+		        			    }
+		        			  });
+		        			}
+		        		
+		        		
+		        		
+		        		$('.collection_team_button').on('click', function() {
+		        		  // Loop through each table row
+		        		  $('#completed-table tbody tr').each(function() {
+		        			var _status = $(this).find('td:nth-child(5)').text();
+		        			var _progress = $(this).find('td:nth-child(8)').text();
+		        		    console.log(_status);
+		        		    if (!(_status === 'completed')  || !(_progress === 'collection_team')) {
+		        		    	  $(this).hide();
+		        		    	} else {
+		        		    	  $(this).show();
+		        		    	}
+		        		  });
+		        		});
+
+		        		// Event listener for Ready treasury team button
+		        		$('.treasury_team_button').on('click', function() {
+		        			  // Loop through each table row
+		        			  $('#completed-table tbody tr').each(function() {
+		        				var _status = $(this).find('td:nth-child(5)').text();
+		        				var _progress = $(this).find('td:nth-child(8)').text();
+		        			    console.log(_status);
+		        			    if (!(_status === 'completed')  || !(_progress === 'treasury_team')) {
+		        			    	  $(this).hide();
+		        			    	} else {
+		        			    	  $(this).show();
+		        			    	}
+		        			  });
+		        			});
+		        			
 		          });
 		        }
 		      });
@@ -1121,7 +1200,7 @@ $('.create_invoce_modal').on('click', function(event) {
 							  if(progress === "billing_team"){
 								  $('#proceed_billing').hide();
 								  $('#proceed_collection').show();
-								  
+								  $('#proceed_treasury').hide();
 							  }
 							  else
 							  if(progress === "collection_team"){
@@ -1130,7 +1209,7 @@ $('.create_invoce_modal').on('click', function(event) {
 							  }
 							  else
 							  if(progress === "treasury_team"){
-								  
+								
 								  $('#proceed_treasury').hide();
 							  }
 							  else{
@@ -1142,6 +1221,7 @@ $('.create_invoce_modal').on('click', function(event) {
 							  }
 						  }
 						  else{
+							  $('#proceed_treasury').hide();
 							  $('#proceed_collection').hide();
 							  $('#proceed_billing').hide();
 							  $('#span_warning').show();

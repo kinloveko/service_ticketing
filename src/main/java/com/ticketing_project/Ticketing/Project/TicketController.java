@@ -189,6 +189,7 @@ public class TicketController {
 	    
 	    session.setAttribute("role", userRole);
 	    m.addAttribute("ticket", ticket);
+	    session.setAttribute("ticketId", ticketId);
 	    m.addAttribute("findStatus", filtered_status);
 	    System.out.println("Status updates for ticket " + ticketId + ": " + filtered_status);
 	    System.out.println("Role:" + userRole);
@@ -218,6 +219,7 @@ public class TicketController {
 	   
 	    String userRole = (String) session.getAttribute("user_role");
 	    session.setAttribute("role", userRole);
+	    session.setAttribute("ticketId", ticketId);
 	    m.addAttribute("ticket", ticket);
 	    m.addAttribute("findStatus", filtered_status);
 	    System.out.println("Status updates for ticket " + ticketId + ": " + filtered_status);
