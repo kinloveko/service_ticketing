@@ -67,14 +67,35 @@ public class TicketController {
 	//ticketController
 	
 	
-	//HTTP POST method
 	@PostMapping("/tickets/post-ticket")
-	public String addNewTicket(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes) {
-		ticketService.save(newTicket);
-		redirectAttributes.addFlashAttribute("successMessage", "Ticket saved successfully!");
-		
-		 return "redirect:/dashboard";
-		}
+		public String addNewTicket(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes, HttpSession session) {
+			ticketService.save(newTicket);
+			// Construct email message with data from new ticket
+			 String userEmail = (String) session.getAttribute("user_email");
+			    
+		    String emailBody = "Dear Sales Team,\n\n" +
+		    		"A new ticket has been created with the following details:\n\n"
+		            + "Ticket ID: " + newTicket.getTicket_id() + "\n"
+		            + "Client Name: " + newTicket.getUser_name() + "\n"
+		            + "Email Address: " + userEmail + "\n"
+		            + "Title: " + newTicket.getTitle() + "\n"
+		            + "Description: " + newTicket.getDescription() + "\n\n"
+		            + "Please take a moment to review the ticket and assign it to the appropriate team member. Let me know if you have any questions or concerns.\n\n"
+		            + "Best regards, \n"
+		            + "Ark Alliance Company";
+		    String emailSubject = "New Ticket Created: Ticket ID #" + newTicket.getTicket_id();
+		    
+		    // Send email to sales team
+		    List<String> salesTeamEmails = ticketService.getEmailsOfSalesTeam();
+		    for (String email : salesTeamEmails) {
+		    	ticketService.sendEmail(email, emailBody, emailSubject);
+		    }
+		    
+			redirectAttributes.addFlashAttribute("successMessage", "Ticket saved successfully!");
+			
+			 return "redirect:/dashboard";
+			}
+
 	
 	
 	//HTTP POST method

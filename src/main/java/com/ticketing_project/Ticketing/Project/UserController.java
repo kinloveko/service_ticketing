@@ -1,5 +1,6 @@
 package com.ticketing_project.Ticketing.Project;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 
@@ -35,37 +37,54 @@ public class UserController {
 	
 	
 	@PostMapping("/save")
-	public String addUser(@ModelAttribute User user) {
+	public String addUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
 		userService.save(user);
-		
+		redirectAttributes.addFlashAttribute("successMessage", "Account registered successfully!");
 		return "redirect:/";	
 		
 	}
 	
+	@PostMapping("/user/update")
+	public String updateUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
+		
+		userService.save(user);
+		redirectAttributes.addFlashAttribute("updateMessage", "User updated successfully!");
+		return "redirect:/admin.ark";	
+		
+	}
+	
+	
+	
 	@PostMapping("/login")
-	public String login(HttpServletRequest request, HttpSession session) {
+	public String login(HttpServletRequest request, HttpSession session,Model m) {
 	    String user_email = request.getParameter("user_email");
 	    String user_password = request.getParameter("user_password");
 	    List<User> users = userService.getAllUsers();
+	    List<User> accounts = new ArrayList<>();	
 	    // Find the user with the matching email and password
 	    for(User i:users) {
-	    	 System.out.print(i.getUser_email()+" "+i.getUser_password());
+	    	 
 	    	 
 	        if(i.getUser_email().equals(user_email) && i.getUser_password().equals(user_password)) {
-	        		       
+	        	       
 	        	session.setAttribute("user_email", user_email);
 	        	session.setAttribute("user_password", user_password);
 	        	session.setAttribute("user_id", i.getUser_id());
 	        	session.setAttribute("user_name", i.getUser_name());
-	        	session.setAttribute("user_role", i.getUser_role());
-	        
-	        	if(i.getUser_role().equals("client")) {
+	        	session.setAttribute("userRole", i.getUserRole());
+	        	
+	        	
+	        	if(i.getUserRole().equals("client")) {
 	        	      return "redirect:/dashboard"; // return the name of the dashboard page
 	        	}
-	        	else if (i.getUser_role().equals("sales_team")
-	        			|| i.getUser_role().equals("support_team")
-	        			|| i.getUser_role().equals("billing_team")
-	        			|| i.getUser_role().equals("collection_team")){
+	        	else if (i.getUserRole().equals("sales_team")
+	        			|| i.getUserRole().equals("support_team")
+	        			|| i.getUserRole().equals("billing_team")
+	        			|| i.getUserRole().equals("collection_team")
+	        			|| i.getUserRole().equals("treasury_team")
+	        			|| i.getUserRole().equals("super_admin")){
+	        			
+	        		   m.addAttribute("users", users);
 	        		 return "redirect:/admin.ark"; // return the name of the dashboard page
 	        	}
 	        }
@@ -85,10 +104,21 @@ public class UserController {
 	
     //GET mapping method for /admin.ark
     @GetMapping("/admin.ark")
-    public String adminPage(Model m) {
+    public String adminPage(Model m,HttpSession session) {
+    	 List<User> users = userService.getAllUsers();
         ticketService.populateTicketModel(m);
+        m.addAttribute("users", users);
         return "admin.ark";
     }
+    
+
+    //GET mapping method for /admin.ark
+    @GetMapping("/admin.register")
+    public String adminRegistration(Model m) {
+       
+        return "admin.register";
+    }
+    
     
     
     @GetMapping("/getUpdateTicket")
@@ -104,7 +134,7 @@ public class UserController {
 		session.removeAttribute("user_password");
 		session.removeAttribute("user_id");
 		session.removeAttribute("user_name");
-		session.removeAttribute("user_role");
+		session.removeAttribute("userRole");
 		return "login";
 	}
 }

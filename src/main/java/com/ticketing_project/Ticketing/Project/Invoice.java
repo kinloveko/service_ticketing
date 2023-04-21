@@ -74,4 +74,11 @@ public class Invoice {
 	@Setter
 	private String client_email;
 	
+	
+	@Column(name="payment_confirmation", nullable=false)
+	@Getter
+	@Setter
+	private String paymentConfirmation;
+	
+	
 }

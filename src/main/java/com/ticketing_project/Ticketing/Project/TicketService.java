@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -15,7 +17,8 @@ public class TicketService {
 	@Autowired
 	private TicketRepository repo;
 		
-	
+	@Autowired
+	private UserRepository userRepo;
 	
 	public Ticket save(Ticket ticket) {
 		return repo.save(ticket);
@@ -123,5 +126,35 @@ public class TicketService {
 
 	    m.addAttribute("support_tickets", supportTickets);
 	    m.addAttribute("support_count", supportTickets.size());
+ 
+	    
 	}
+	
+	//TicketService
+	@Autowired
+		private JavaMailSender mailSender;
+		
+		public void sendEmail(String toEmail, String body, String subject) {
+			SimpleMailMessage message = new SimpleMailMessage();
+			message.setFrom("ark.alliance2023@gmail.com");
+			message.setTo(toEmail);
+			message.setText(body);
+			message.setSubject(subject);
+			
+			mailSender.send(message);
+		}
+		
+		public List<String> getEmailsOfSalesTeam() {
+		    List<User> salesTeamUsers = userRepo.findByUserRole("sales_team_leader");
+		    List<String> emails = new ArrayList<>();
+		    for (User user : salesTeamUsers) {
+		        emails.add(user.getUser_email());
+		    }
+		    return emails;
+		}
+
+
+	
+	
+	
 }

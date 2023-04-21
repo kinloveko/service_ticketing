@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="https://www.thymeleaf.com">
 <head>
 <meta charset="UTF-8">
-<title>Login page</title>
+<title>Registration</title>
 	<link rel="stylesheet" href="sweetalert2.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" type="text/css">
@@ -18,48 +18,13 @@
       <div class="mid">
 
     
-    <div class="container">
+    <div class="container active">
         <div class="forms">
-            <div class="form login">
-                <span class="title">Login</span>
-			<form th:action="@{/login}" method="post">
-                    <div class="input-field">
-                        <input type="text" placeholder="Enter your email" name="user_email" required>
-                        <i class="uil uil-envelope icon"></i>
-                    </div>
-                    <div class="input-field">
-                        <input type="password" class="password" placeholder="Enter your password" name="user_password"  required>
-                        <i class="uil uil-lock icon"></i>
-                        <i class="uil uil-eye-slash showHidePw"></i>
-                    </div>
-
-                    <div class="checkbox-text">
-                        <div class="checkbox-content">
-                            <input type="checkbox" id="logCheck">
-                            <label for="logCheck" class="text">Remember me</label>
-                        </div>
-                        
-                        <a href="#" class="text">Forgot password?</a>
-                    </div>
-
-                    <div class="input-field button">
-                        <input type="submit" value="Login">
-                    </div>
-                </form>
-
-                <div class="login-signup">
-                    <span class="text">Not a member?
-                        <a href="#" class="text signup-link">Signup Now</a>
-                    </span>
-                </div>
-            </div>
-
-            <!-- Registration Form -->
+        
             <div class="form signup">
-                <span class="title">Registration</span>
-
- 	 <form id="registrationForm" th:action="@{/save}" method="post" >
- 		  <input type="hidden"  required name="status" value="verified">
+             <span class="title">Admin Registration</span>
+          	<form th:action="@{/save}" method="post">
+                  <input type="hidden"  required name="status" value="pending">
 		    <div class="input-field">
 		        <input type="text" placeholder="Enter your name" required name="user_name">
 		        <i class="uil uil-user"></i>
@@ -77,12 +42,20 @@
 		        <i class="uil uil-lock icon"></i>
 		        <i class="uil uil-eye-slash showHidePw"></i>
 		    </div>
-		      <div class="input-field">
-		
-		   <input type="text" value="client" name="userRole" disabled>
-		   
-		        <i class="uil uil-user"></i>
-		    </div>
+			<div class="input-field">
+			  <div class="form-select-icon">
+			    <i class="uil uil-user icon"></i>
+			  </div>
+			  <select class="form-select" id="dropdownRole" name="user_role" style="color:grey">
+			    <option value="Role" selected disabled>Role</option>
+			    <option value="sales_team">Sales Team</option>
+			    <option value="support_team">Support Team</option>
+			    <option value="billing_team">Billing Team</option>
+			    <option value="collection_team">Collection Team</option>
+			    <option value="treasury_team">Treasury Team</option>
+			     <option value="treasury_team">Super admin</option>
+			  </select>
+			</div>
 		
 		    <div class="checkbox-text">
 		        <div class="checkbox-content">
@@ -94,13 +67,14 @@
 		    <div class="input-field button">
 		        <input type="submit" id="signupButton" value="Signup">
 		    </div>
-	</form>
-                <div class="login-signup">
+                </form>
+                	 <div class="login-signup">
                     <span class="text">Already a member?
-                        <a href="#" class="text login-link">Login Now</a>
+                        <a th:href="@{/}" class="text login-link">Login Now</a>
                     </span>
                 </div>
             </div>
+ 
         </div>
     </div>
 

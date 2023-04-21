@@ -49,7 +49,14 @@ public class User {
 	@Getter
 	@Setter
 	@Column(name="user_role", nullable=false)
-	private String user_role = "client";
+	private String userRole ;
+	
+	
+	@Getter
+	@Setter
+	@Column(name="status", nullable=false)
+	private String status;
+	
 }
 
 

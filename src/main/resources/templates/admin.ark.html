@@ -92,10 +92,17 @@
 			</li>
 			<li class="menu-item " data-table="support" onclick="handleClick(this)">
 				<a href="#">
-					<i class='bx bxs-group' ></i>
+			<i class="bx bxs-wrench"></i>
 					<span class="text">Support Team</span>
 				</a>
 			</li>
+			<li class="menu-item" data-table="account" onclick="handleClick(this)">
+				<a href="#">
+			<i class="bx bxs-group"></i>
+					<span class="text">Accounts</span>
+				</a>
+			</li>
+			
 		</ul>
 		<ul class="side-menu">
 			<li>
@@ -167,8 +174,100 @@
     </li>
 </ul>
 
-			
-<!-- Pending Table -->
+
+
+	<!-- Account Table -->
+	<div class="table-data" id="account-table" style="display:none" >
+    <div class="order">
+        <div class="head">
+            <h3>Accounts</h3>
+            <i class='bx bx-search' ></i>
+            <i class='bx bx-filter' ></i>
+        </div>
+        <table>
+            <thead>
+                <tr>                                
+                    <th scope="col" >User #</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Status</th>
+                   <th scope="col"  >Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="t : ${users}">
+                
+			    <td scope="row"  th:text="${t.user_id}"></td>
+			     <td th:text="${t.user_name}"></td>
+			    <td th:text="${t.user_email}"></td>
+			    <td th:text="${t.userRole}"></td>
+			    <td th:text="${t.status}"></td>
+			   <td style="display:none" th:text="${t.user_password}"></td>
+			    <td >
+	 			     	 <button type="button" class="btn btn-success my-2 account_modal"   data-toggle="modal"  data-target="#accountModal"><i class="fa fa-edit" style="font-size:20px;"></i></button>
+	                 </td>
+				</tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+
+
+<!-- account modal-->	<!-- Create Ticket Modal -->
+ <form th:action="@{/user/update}" method="post">
+		<div class="modal fade" id="accountModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		 <input type="hidden" class="form-control" name="status" value="pending">
+		   	
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalLabel">Create Ticket</h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		   <input type="hidden" class="form-control" id="user_id_" name="user_id" >
+		      <input type="hidden" class="form-control" id="user_password_" name="user_password" >
+				<div class="form-group">
+				  <label for="title"></label>
+				  	  <label for="issue">Name</label>
+				 <input type="text" class="form-control" id="user_name_" name="user_name" readonly>
+				   
+				</div>
+				<div class="form-group">
+				  <label for="issue">Email</label>
+				   <input type="text" class="form-control" id="user_email_" name="user_email"  readonly>
+				</div>
+			    <div class="form-group">
+				  <label for="issue">Role</label>
+				  <input type="text" class="form-control" id="role" name="userRole" readonly>
+				</div>
+			 <div class="input-field">
+			  <div class="form-select-icon">
+			    <i class="uil uil-user icon"></i>
+			  </div>
+			  <select class="form-select" id="dropdownRole" name="status" style="color:grey">
+			   
+			     <option value="pending">pending</option>
+			      <option value="verify">verify</option>
+			     <option value="delete">delete</option>
+			  </select>
+			</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		        <button type="submit" class="btn btn-primary" id="accountModalButton">Update</button>
+		      </div>
+		    </div>
+		  </div>
+	  </div>
+	  </form>
+	
+<!--  end of account modal -->
+	<!-- Pending Table -->
 		<div class="table-data" id="pending-table">
     <div class="order">
         <div class="head">
@@ -199,13 +298,15 @@
 			      <td style=" display: none;" th:text="${t.conforme_no}"></td>
 			    <td >
 	 			     	 <button type="button" class="btn btn-success my-2 eBtn"   data-toggle="modal"  data-target="#viewTicket"><i class="fa fa-edit" style="font-size:20px;"></i></button>
-	                     <button type="button" class="btn btn-danger my-2"   th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}"><i class="fa fa-trash" style="font-size:20px;"></i></button>
+	                     <button type="button" class="btn btn-danger my-2"   th:style="${session.userRole == 'sales_team' ? '' : 'display:none;'}"><i class="fa fa-trash" style="font-size:20px;"></i></button>
                </td>
 				</tr>
             </tbody>
         </table>
     </div>
     </div>
+    
+    
     
 <!-- Ongoing Table -->
 <div class="table-data" id="ongoing-table"  style="display:none" >
@@ -371,7 +472,7 @@
 			    <!-- Table content here -->
       <div class="order">
         <div class="head">
-            <h3>Support Team</h3>
+            <h3>Support Team <i class="bx bxs-wrench"></i></h3>
             <i class='bx bx-search' ></i>
             <i class='bx bx-filter' ></i>
         </div>
@@ -428,9 +529,7 @@
 	
 		<div class="modal fade" id="viewTicket" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		    <div class="modal-dialog" role="document">
-		 
-		 
-		 
+ 
 	<div class="modal-content">
 		            <div class="modal-header">
 		                <h5 class="modal-title" id="exampleModalLabel">View Ticket</h5>
@@ -474,7 +573,7 @@
 		</div>
 		            <div class="modal-footer">
 		                     <button type="button" class="btn btn-primary button_conforme"   data-toggle="modal"  data-target="#create_conforme" 
-		                     th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}"
+		                     th:style="${session.userRole == 'sales_team' ? '' : 'display:none;'}"
 		                     >Conforme Slip</button>
 		                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 		            </div>
@@ -485,7 +584,6 @@
 	</div>	
 	 <!-- End of  View Ticket -->
 <!-- Conformed Slip Modal -->
-
 	  <form th:action="@{/tickets/update-ticket}" enctype="multipart/form-data" method="post" >
 		<div class="modal fade" id="create_conforme" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		  <div class="modal-dialog modal-xl" role="document">
@@ -691,27 +789,33 @@
 	  		
 	</div>
 	</div>
-	 <div  th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}">
+	 <div  th:style="${session.userRole == 'sales_team' ? '' : 'display:none;'}">
 		 <div   id="span_warning_support" class="alert" style="text-align:center;" >
 		  <span  class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
 		  <strong>Warning:</strong> You cannot proceed to Support team until the client complies with the requirements
 		</div>	
-	 </div>	
- 
-	
-
+	 </div>	 
+	 
  <div id="buttonDiv" class="modal-footer d-flex justify-content-between">
-    <button type="button"  id="ticket_status" class="btn btn-primary"  >View Ticket Status</button>
-
+   <div style="display:flex">
+    <button type="button"  style="display: inline-block; margin-right:10px" id="ticket_status" class="btn btn-primary"  >View Ticket Status</button>
+    
+   
+    
+  	<div  th:style="${session.userRole  == 'collection_team' ||session.userRole  == 'treasury_team'  ? '' : 'display:none;'}"  >
+   	<button type="button" id="invoice_modal_details" class="btn btn-primary view_invoice_modal">View Invoice</button>
+   	</div>
+   	</div>
    	<div class="d-flex justify-content-between"> 
-   	
-   	<div  th:style="${session.user_role == 'billing_team' ? '' : 'display:none;'}"  >
+  
+   	<div  th:style="${session.userRole == 'billing_team' ? '' : 'display:none;'}"  >
    	<button type="button" id="proceed_collection" class="btn btn-success create_invoce_modal">Create Invoice</button>
    	</div>
-   	 <div  th:style="${session.user_role == 'collection_team' ? '' : 'display:none;'}"  >
-   	<button type="button" id="proceed_treasury" class="btn btn-success create_invoce_modal">Send to Treasury</button>
+   	 <div  th:style="${session.userRole == 'collection_team' ? '' : 'display:none;'}"  >
+   	<button type="button" id="proceed_treasury" class="btn btn-success procceed_treasury">Send to Treasury</button>
    	</div>
-   	<div  th:style="${session.user_role == 'sales_team' ? '' : 'display:none;'}"  > 
+   	<div  th:style="${session.userRole == 'sales_team' ? '' : 'display:none;'}"  > 
+   		
    	 	<button type="submit" id="proceed_billing" class="btn btn-success"   >Send To billing</button>
         <button type="submit" id="proceed_support" class="btn btn-primary"   >SEND TO SUPPORT</button>
    	</div>  
@@ -834,6 +938,120 @@
 	</form>
 	
 	
+<!-- View Invoice -->
+
+		<form >
+		<div class="modal fade" id="view_invoice_modal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
+		  <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+ 
+ 				
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Invoice details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="id" class="col-form-label">Ticket No.</label>
+                <input type="text" class="form-control" id="ticket_id_view" name="ticketID" readonly>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label for="conforme_no" class="col-form-label">Invoice date created</label>
+                <input type="text" class="form-control"  id="invoice_date_now_view" name="invoice_date" readonly>
+            </div>
+        </div>
+    </div>
+     <div class="row">
+        <div class="col-sm-6">
+    <div class="form-group">
+      <label for="title" class="col-form-label">Client name</label>
+        <input type="text" class="form-control" id="client_name_invoice_view" name="client_name" readonly>
+      
+    </div>
+    </div>
+    
+   <div class="col-sm-6">
+    <div class="form-group">
+     <label for="description" class="col-form-label">Client email</label>
+        <input type="text" class="form-control"  id="client_email_invoice_view" name=client_email readonly>
+      
+    </div>
+    </div>
+    </div>
+  	
+	 <div class="row">
+        <div class="col-sm-6">
+    <div class="form-group">
+      <label for="title" class="col-form-label">Ticket issue</label>
+        <input type="text" class="form-control" id="ticket_title_invoice_view" name="ticket_issue_title" readonly>
+       
+    </div>
+    </div>
+      <div class="col-sm-6">
+   <div class="form-group">
+        <label for="name" class="col-form-label">Amount</label>
+        <input type="text" class="form-control" id="amount_invoice_view" name="invoice_amount" >	
+    </div>
+    </div>
+	</div>
+      <div class="row" >
+        <div class="col-sm-6">
+          <div class="row">
+              <div class="col-sm-6">
+        <div class="mb-3">
+	  	<label for="customFile" class="form-label">Client's Signature</label>
+	  	</div>
+	  	</div>
+	  	  <div class="col-sm-6">
+        <div class="mb-3">
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_signature_invoice_view"   class="rounded float-left imageSignature">
+			</div>
+		</div>
+	</div>
+    </div>
+    <div class="col-sm-6">
+      <div class="row">
+              <div class="col-sm-6">
+     <div class="mb-3">
+     	 	<label for="customFile" class="form-label">Proof of Payment</label>
+     	 	</div>
+     	 	</div>
+        <div class="col-sm-6">
+     <div class="mb-3">
+     	
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof_invoice_view"   class="rounded float-left imageProof">
+	</div>
+	</div>
+	</div>
+	</div>
+	</div>	
+	</div>
+	<div  class="modal-footer d-flex justify-content-between">
+		<div >
+		<label for="customFile" class="form-label" style="font-weight:bold;">Proof of confirmation</label>
+	  	<input type="file" class="form-control"  name="img5" required/>		
+		</div>
+	 <div class="d-flex justify-content-between" style="margin-top:35px">
+	 <div  th:style="${session.userRole == 'treasury_team' ? '' : 'display:none;'}"  >
+   	 <button type="button" id="send_to_collection" class="btn btn-primary send_to_collection">Send to Collection</button>
+   	</div>
+    <button type="button" class="btn" style="margin-left:10px;background-color:grey;color:white" data-dismiss="modal">Close</button> 
+     </div>	
+    
+	</div>
+	 </div>	
+ 		</div>
+    		</div>
+</form>
+	
+	
 	<!-- End of Create Invoice Modal -->
  <!-- imageviewer -->
 <div class="modal fade" id="imageViewerModal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
@@ -877,28 +1095,39 @@
         });
        
     </script>
-	
+	 <script th:if="${updateMessage}">
+        Swal.fire({
+            title: 'Success',
+            text: 'User updated successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+       
+    </script>
 	<script type="text/javascript">
 	// Get the modal and the image inside it
 	
 	$(document).ready(function() {
+		
     $('.imageProof').on('click', function(event) {
         var image_proof = $("#client_payment_proof").attr("src");
         $('#imageViewerImage').attr('src', image_proof);
         $('#imageViewerModal').modal();
         
-    });
-});
+   	 });
+    
+	});
 
 
 	
 	$(document).ready(function() {
+		
 	    $('.imageSignature').on('click', function(event) {
 	        var image_proof = $("#client_signature").attr("src");
 	        $('#imageViewerImage').attr('src', image_proof);
 	        $('#imageViewerModal').modal();
-	        
 	    });
+	    
 	});
 	
 	$(document).ready(function() {
@@ -922,6 +1151,183 @@
 
 
 
+
+
+
+
+
+$('.account_modal').on('click', function(event) {
+    // Extract data from the input fields in the second modal
+    var _userid = $(this).closest('tr').find('td:eq(0)').text();
+    var _username = $(this).closest('tr').find('td:eq(1)').text();
+    var _useremail = $(this).closest('tr').find('td:eq(2)').text();
+    var _role = $(this).closest('tr').find('td:eq(3)').text(); 
+    var _status = $(this).closest('tr').find('td:eq(4)').text(); 
+	  
+    $('#user_id_').val(_userid);
+    $('#user_name_').val(_username);
+	    $('#user_email_').val(_useremail);
+	    $('#role').val(_role);
+	    $('#user_status').val(_status);
+	    $('#accountModal').modal();
+ 
+});
+
+
+$('.procceed_treasury').on('click', function(event) {   
+	
+	 event.preventDefault();
+
+   var currentDate = new Date().toLocaleString('en-US');
+	var clientSignature = $('#client_signatures').val();
+	var clientPaymentProof = $('#client_payment_proofs').val();
+	var ticketId = $('#ticket_id').val();
+	var titleInvoice = $('#title_ongoing').val();
+	var clientName = $('#user_name_ongoing').val();
+	var amount_invoice = $('#amount_ongoing').val();
+	var userId = $('#user_id').val();
+	
+	
+	$('#invoice_date_now').val(currentDate);
+	$('#ticket_id_invoice').val(ticketId);
+	$('#ticket_title_invoice').val(titleInvoice);
+
+	$('#client_name_invoice').val(clientName);
+	$('#amount_invoice').val(amount_invoice);
+	
+	//for image display
+	$('#client_signature_invoice').attr('src', '/img/' + clientSignature);
+	$('#client_payment_proof_invoice').attr('src', '/img/' + clientPaymentProof);
+	//for inputs hiiden to be saved
+	$('#client_signatures_hidden').val(clientSignature);
+	$('#client_payment_proofs_hidden').val(clientPaymentProof);
+	
+	 
+	  updateTicket();
+	  function updateTicket() {
+		  var xhr = new XMLHttpRequest();
+		  xhr.open('PUT', '/tickets/update-ticket/' + ticketId);
+		  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		  xhr.onload = function() {
+		    if (xhr.status === 200) {
+		      // Show a success message
+		      console.log("Ticket updated successfully");
+
+		      Swal.fire({
+		        icon: 'success',
+		        title: 'Success',
+		        text: 'Ticket updated successfully!',
+		      }).then((result) => {
+		        if (result.isConfirmed) {
+		     
+		          $('#ongoingModal').modal('hide');
+		          $('#proceed_treasury').hide();
+		          // Update the content using JavaScript here
+		          // For example, if you have a div with id "completed-table" that displays the completed tickets, you can update it like this:
+		          $('#completed-table').load('/getUpdateTicket #completed-table > *', function() {
+		        	// Event listener for On-going Tickets button
+		        	  
+		        		$('.menu-item[data-table="completed"]').on('click', function() {
+		        		  // Show all rows
+		        		  $('#completed-table tbody tr').show();
+		        		
+		        		  
+		        		  // Remove filters from other buttons
+		        		  $('.sales_team_button').removeClass('active');
+		        		  $('.billing_team_button').removeClass('active');
+		        		  $('.collection_team_button').removeClass('active');
+		        		  $('.treasury_team_button').removeClass('active');
+		        		});
+		        	 
+		        		// Event listener for Ready sales_team button
+		        		$('.sales_team_button').on('click', function() {
+		        		  // Loop through each table row
+		        		  $('#completed-table tbody tr').each(function() {
+		        			var _status = $(this).find('td:nth-child(5)').text();
+		        			var _progress = $(this).find('td:nth-child(8)').text();
+		        		    console.log(_status);
+		        		    
+		        		    if (!_status === 'completed' || !(_progress === 'support_team')) {
+		        		    	  $(this).hide();
+		        		    	} else {
+		        		    	  $(this).show();
+		        		    	}
+		        		  });
+		        		});
+		        		
+		        		// Event listener for Ready billing team button
+		        		$('.billing_team_button').on('click', function() {
+		        		  // Loop through each table row
+		        			applyBillingFilter();
+		        		});
+		        		
+		        		function applyBillingFilter() {
+		        			  // Loop through each table row
+		        			  $('#completed-table tbody tr').each(function() {
+		        			    var _status = $(this).find('td:nth-child(5)').text();
+		        			    var _progress = $(this).find('td:nth-child(8)').text();
+		        			    console.log(_status);
+		        			    console.log(_progress);
+		        			    if (!(_status === 'completed')  || !(_progress === 'billing_team')) {
+		        			      $(this).hide();
+		        			    } else {
+		        			      $(this).show();
+		        			    }
+		        			  });
+		        			}
+		        		
+		        		
+		        		
+		        		$('.collection_team_button').on('click', function() {
+		        		  // Loop through each table row
+		        		  $('#completed-table tbody tr').each(function() {
+		        			var _status = $(this).find('td:nth-child(5)').text();
+		        			var _progress = $(this).find('td:nth-child(8)').text();
+		        		    console.log(_status);
+		        		    if (!(_status === 'completed')  || !(_progress === 'collection_team')) {
+		        		    	  $(this).hide();
+		        		    	} else {
+		        		    	  $(this).show();
+		        		    	}
+		        		  });
+		        		});
+
+		        		// Event listener for Ready treasury team button
+		        		$('.treasury_team_button').on('click', function() {
+		        			  // Loop through each table row
+		        			  $('#completed-table tbody tr').each(function() {
+		        				var _status = $(this).find('td:nth-child(5)').text();
+		        				var _progress = $(this).find('td:nth-child(8)').text();
+		        			    console.log(_status);
+		        			    if (!(_status === 'completed')  || !(_progress === 'treasury_team')) {
+		        			    	  $(this).hide();
+		        			    	} else {
+		        			    	  $(this).show();
+		        			    	}
+		        			  });
+		        			});
+		        			
+		          });
+		        } else {
+				      // Show error message with SweetAlert
+				      Swal.fire({
+				        icon: 'error',
+				        title: 'Error',
+				        text: 'There was an error while saving the invoice: ' + xhr.statusText,
+				      });
+				    }
+		      });
+		    
+		    } else {
+		      // Show an error message
+		      console.log("Error updating ticket");
+		    }
+		  };
+		  xhr.send("progress=treasury_team&status=completed");
+		}
+	  
+
+});
 
 
 
@@ -988,6 +1394,8 @@ $('.create_invoice').on('click', function(event) {
 		      }).then((result) => {
 		        if (result.isConfirmed) {
 		          $('#invoice_modal').modal('hide');
+		          $('#proceed_collection').hide();   
+		          $('#invoice_modal_details').show();
 		          // Update the content using JavaScript here
 		          // For example, if you have a div with id "completed-table" that displays the completed tickets, you can update it like this:
 		          $('#completed-table').load('/getUpdateTicket #completed-table > *', function() {
@@ -995,7 +1403,7 @@ $('.create_invoice').on('click', function(event) {
 		        		$('.menu-item[data-table="completed"]').on('click', function() {
 		        		  // Show all rows
 		        		  $('#completed-table tbody tr').show();
-		        		  
+		        		 
 		        		  // Remove filters from other buttons
 		        		  $('.sales_team_button').removeClass('active');
 		        		  $('.billing_team_button').removeClass('active');
@@ -1145,6 +1553,50 @@ $('.create_invoce_modal').on('click', function(event) {
 
 </script>
 
+<script>
+
+$('.view_invoice_modal').on('click', function(event) {   
+	 
+	var ticketID = $('#ticket_id').val();
+		
+	//Retrieved User using ajax before opening the invoice
+	$.ajax({
+		type: "GET",
+		url: "/invoiceDetails?ticketID=" + ticketID,
+		success: function(invoiceDetails) {
+			$('#invoice_date_now_view').val(invoiceDetails.invoice_date);
+			$('#ticket_id_view').val(invoiceDetails.ticketID);
+			$('#ticket_title_invoice_view').val(invoiceDetails.ticket_issue_title);
+
+			$('#client_name_invoice_view').val(invoiceDetails.client_name);
+			$('#amount_invoice_view').val(invoiceDetails.invoice_amount);
+			$('#client_email_invoice_view').val(invoiceDetails.client_email);
+			//for image display
+			$('#client_signature_invoice_view').attr('src', '/img/' + invoiceDetails.client_payment_proof);
+			$('#client_payment_proof_invoice_view').attr('src', '/img/' + invoiceDetails.client_signature);
+			$('#view_invoice_modal').modal();
+			$('#ongoingModal').modal('hide');
+			
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			// handle the error here
+			console.log(textStatus);
+			
+			swal({
+				title: "Error",
+				text: "Error occur! Query did not return a unique result: 2",
+				icon: "error",
+				button: "OK",
+			});
+			
+		}
+	});
+	
+});
+
+</script>
+
+
 	<script>
 	//button for support
 
@@ -1201,26 +1653,39 @@ $('.create_invoce_modal').on('click', function(event) {
 								  $('#proceed_billing').hide();
 								  $('#proceed_collection').show();
 								  $('#proceed_treasury').hide();
+								  $('#invoice_modal_details').hide();
+								 
 							  }
 							  else
 							  if(progress === "collection_team"){
+								  
 								  $('#proceed_collection').hide();
 								  $('#proceed_treasury').show();
+								  $('#proceed_billing').hide();
+						
+								  $('#invoice_modal_details').show();
 							  }
 							  else
 							  if(progress === "treasury_team"){
-								
+								  
+								  $('#proceed_collection').hide();
+								  $('#invoice_modal_details').show();
+								  $('#proceed_billing').hide();
 								  $('#proceed_treasury').hide();
 							  }
 							  else{
+								 
+								  $('#invoice_modal_details').hide();
 								  $('#proceed_collection').hide();
 								  $('#progress_ongoing').val(toBilling); 	
 								  $('#proceed_billing').show();  
 								  $('#span_warning').hide();
 								  $('#proceed_treasury').hide();
 							  }
+							 
 						  }
 						  else{
+							  $('#invoice_modal_details').hide();
 							  $('#proceed_treasury').hide();
 							  $('#proceed_collection').hide();
 							  $('#proceed_billing').hide();
@@ -1305,10 +1770,7 @@ $('.create_invoce_modal').on('click', function(event) {
 	
 	
 	<script>
-	
-	
-	
-	
+ 
 	
 	// Event listener for On-going Tickets button
 	$('.menu-item[data-table="ongoing"]').on('click', function() {

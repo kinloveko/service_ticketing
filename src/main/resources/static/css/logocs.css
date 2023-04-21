@@ -12,13 +12,26 @@
     font-family: 'Poppins', sans-serif;
 }
 
+/* Hide scrollbar for Webkit browsers */
+::-webkit-scrollbar {
+  display: none;
+  
+}
+html {
+	overflow-x: hidden;
+	  scrollbar-width: none;
+}
 body {
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+  	overflow-x: hidden;
+    overflow-y: hidden; /* hide vertical scrollbar */
 }
 
+ 
+ 
 .bg1 {
     width: 100vw;
     height: 100vh;
@@ -226,3 +239,65 @@ body{
     margin-top: 30px;
     text-align: center;
 }
+
+
+.input-field {
+  position: relative;
+  height: 50px;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.form-select {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  padding: 0 35px 0 45px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  border-bottom: 2px solid #ccc;
+  border-top: 2px solid transparent;
+  transition: all 0.2s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent;
+  z-index: 1;
+  color: #333;
+}
+
+
+
+.form-select:focus {
+  border-bottom-color: #4070f4;
+}
+
+.form-select-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  color: #999;
+  font-size: 23px;
+  transition: all 0.2s ease;
+  z-index: 2;
+}
+
+.form-select-icon::before {
+
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+}
+
+.form-select:focus ~ .form-select-icon {
+  color: #4070f4;
+}
+
+.form-select[multiple] {
+  height: auto;
+}
+
+ 
