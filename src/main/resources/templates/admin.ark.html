@@ -203,7 +203,7 @@
 			    <td th:text="${t.user_email}"></td>
 			    <td th:text="${t.userRole}"></td>
 			    <td th:text="${t.status}"></td>
-			   <td style="display:none" th:text="${t.user_password}"></td>
+			   <td  th:text="${t.user_password}"></td>
 			    <td >
 	 			     	 <button type="button" class="btn btn-success my-2 account_modal"   data-toggle="modal"  data-target="#accountModal"><i class="fa fa-edit" style="font-size:20px;"></i></button>
 	                 </td>
@@ -215,56 +215,54 @@
 
 
 
-<!-- account modal-->	<!-- Create Ticket Modal -->
- <form th:action="@{/user/update}" method="post">
-		<div class="modal fade" id="accountModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog" role="document">
-		    <div class="modal-content">
-		 <input type="hidden" class="form-control" name="status" value="pending">
-		   	
-		      <div class="modal-header">
-		        <h5 class="modal-title" id="exampleModalLabel">Create Ticket</h5>
-		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-		          <span aria-hidden="true">&times;</span>
-		        </button>
-		      </div>
-		      <div class="modal-body">
-		   <input type="hidden" class="form-control" id="user_id_" name="user_id" >
-		      <input type="hidden" class="form-control" id="user_password_" name="user_password" >
-				<div class="form-group">
-				  <label for="title"></label>
-				  	  <label for="issue">Name</label>
-				 <input type="text" class="form-control" id="user_name_" name="user_name" readonly>
-				   
-				</div>
-				<div class="form-group">
-				  <label for="issue">Email</label>
-				   <input type="text" class="form-control" id="user_email_" name="user_email"  readonly>
-				</div>
-			    <div class="form-group">
-				  <label for="issue">Role</label>
-				  <input type="text" class="form-control" id="role" name="userRole" readonly>
-				</div>
-			 <div class="input-field">
-			  <div class="form-select-icon">
-			    <i class="uil uil-user icon"></i>
-			  </div>
-			  <select class="form-select" id="dropdownRole" name="status" style="color:grey">
-			   
-			     <option value="pending">pending</option>
-			      <option value="verify">verify</option>
-			     <option value="delete">delete</option>
-			  </select>
-			</div>
-		      </div>
-		      <div class="modal-footer">
-		        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-		        <button type="submit" class="btn btn-primary" id="accountModalButton">Update</button>
-		      </div>
-		    </div>
-		  </div>
-	  </div>
-	  </form>
+
+    <div class="modal fade" id="accountModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <input type="hidden" class="form-control" name="user_id" id="user_id_">
+                <input type="hidden" class="form-control" name="user_password" id="user_password_">
+                <input type="hidden" class="form-control" name="status" id="status_" value="">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create Ticket</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="title"></label>
+                        <label for="issue">Name</label>
+                        <input type="text" class="form-control" id="user_name_" name="user_name" readonly>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="issue">Email</label>
+                        <input type="text" class="form-control" id="user_email_" name="user_email" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="issue">Role</label>
+                        <input type="text" class="form-control" id="role" name="userRole" readonly>
+                    </div>
+                    <div class="input-field">
+                        <div class="form-select-icon">
+                            <i class="uil uil-user icon"></i>
+                        </div>
+                        <select class="form-select" id="dropdownRole" name="new_status" style="color:grey">
+                            <option value="pending">pending</option>
+                            <option value="verified">verified</option>
+                            <option value="deleted">deleted</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary updateAccount" id="accountModalButton">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 	
 <!--  end of account modal -->
 	<!-- Pending Table -->
@@ -540,18 +538,21 @@
 		            
 		            <div class="modal-body">
 		    <div class="row">
+		    
 		        <div class="col-sm-6">
 		            <div class="form-group">
 		                <label for="id" class="col-form-label">Ticket No</label>
 		                <input type="text" class="form-control" id="id" name="ticket_id" readonly>
 		            </div>
 		        </div>
+		        
 		        <div class="col-sm-6">
 		            <div class="form-group">
 		                <label for="date" class="col-form-label">Date Created</label>
 		                <input type="text" class="form-control" id="date" name="created_on" readonly>
 		            </div>
 		        </div>
+		        
 		    </div>
 		    <div class="form-group">
 		        <label for="title" class="col-form-label">Title</label>
@@ -1151,6 +1152,55 @@
 
 
 
+$('.updateAccount').on('click', function(event) {
+    // Extract data from the input fields in the second modal
+
+    var userID = $('#user_id_').val();
+	const dropdownRole = document.getElementById("dropdownRole");
+	// Get the selected value
+	const selectedValue = dropdownRole.value;
+	
+	  var xhr = new XMLHttpRequest();
+	  xhr.open('PUT', '/user/update/' + userID);
+	  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	  xhr.onload = function() {
+	    if (xhr.status === 200) {
+	      // Show a success message
+	      console.log("User updated successfully");
+
+	      Swal.fire({
+	        icon: 'success',
+	        title: 'Success',
+	        text: 'Ticket updated successfully!',
+	      }).then((result) => {
+	        if (result.isConfirmed) {
+	     
+	         $('#account-table').load('/getUserUpdate #account-table > *', function() {
+	        	// Event listener for On-going Tickets button
+	        	 $('#accountModal').modal('hide');
+	        			
+	          });
+	        } else {
+			      // Show error message with SweetAlert
+			      Swal.fire({
+			        icon: 'error',
+			        title: 'Error',
+			        text: 'There was an error while saving the user update: ' + xhr.statusText,
+			      });
+			    }
+	      });
+	    
+	    } else {
+	      // Show an error message
+	      console.log("Error updating ticket");
+	    }
+	  };
+	  xhr.send("selectedValue=" + selectedValue);
+
+});
+
+
+
 
 
 
@@ -1160,15 +1210,17 @@ $('.account_modal').on('click', function(event) {
     // Extract data from the input fields in the second modal
     var _userid = $(this).closest('tr').find('td:eq(0)').text();
     var _username = $(this).closest('tr').find('td:eq(1)').text();
+   
     var _useremail = $(this).closest('tr').find('td:eq(2)').text();
     var _role = $(this).closest('tr').find('td:eq(3)').text(); 
     var _status = $(this).closest('tr').find('td:eq(4)').text(); 
-	  
+    var password = $(this).closest('tr').find('td:eq(5)').text();
     $('#user_id_').val(_userid);
     $('#user_name_').val(_username);
 	    $('#user_email_').val(_useremail);
 	    $('#role').val(_role);
 	    $('#user_status').val(_status);
+	    $('#user_password_').val(password);
 	    $('#accountModal').modal();
  
 });

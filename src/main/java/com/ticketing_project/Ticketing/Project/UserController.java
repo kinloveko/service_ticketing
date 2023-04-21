@@ -12,7 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -44,15 +46,19 @@ public class UserController {
 		
 	}
 	
-	@PostMapping("/user/update")
-	public String updateUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
-		
-		userService.save(user);
-		redirectAttributes.addFlashAttribute("updateMessage", "User updated successfully!");
-		return "redirect:/admin.ark";	
-		
+ 
+	@PutMapping("/user/update/{userID}")
+	@ResponseBody
+	public void updateUser(@PathVariable final int userID,
+			  @RequestParam(value = "selectedValue") String selectedValue,
+			RedirectAttributes redirectAttributes) {
+	    Optional<User> existingUser = userService.findUserById(userID);
+
+	    existingUser.get().setStatus(selectedValue);
+	    redirectAttributes.addFlashAttribute("updateMessage", "User updated successfully!");
+	    userService.save(existingUser.get());
+	  
 	}
-	
 	
 	
 	@PostMapping("/login")
@@ -120,6 +126,11 @@ public class UserController {
     }
     
     
+    @GetMapping("/getUserUpdate")
+    public String userUpdate(Model m) {
+    	m.addAttribute("users",userService.getAllUsers());
+        return "admin.ark :: #account-table";
+    }
     
     @GetMapping("/getUpdateTicket")
     public String adminPages(Model m) {
