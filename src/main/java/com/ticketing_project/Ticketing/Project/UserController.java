@@ -19,9 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
-
-
 @Controller
 public class UserController {
 
@@ -85,6 +82,7 @@ public class UserController {
 	        	}
 	        	else if (i.getUserRole().equals("sales_team")
 	        			|| i.getUserRole().equals("support_team")
+	        			|| i.getUserRole().equals("sales_team_leader")
 	        			|| i.getUserRole().equals("billing_team")
 	        			|| i.getUserRole().equals("collection_team")
 	        			|| i.getUserRole().equals("treasury_team")

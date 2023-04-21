@@ -361,6 +361,7 @@
 		        <td style="display:none" th:text="${t.description}"></td>
 		        <td style="display:none" th:text="${t.client_signature}"></td>
 			    <td style="display:none" th:text="${t.client_payment_proof}"></td>
+			     <td style="display:none" th:text="${t.user_id}"></td>
 	
 			    <td  >
 					 <button type="button" class="btn btn-success my-2 ongoingBtn" 
@@ -682,7 +683,7 @@
 		  <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
  			  <input type="hidden" class="form-control" id="user_id" name="user_id">
-              <input type="hidden" class="form-control" id="status_" name="status" >
+              <input type="hidden" class="form-control" id="status__" name="status" >
                <input type="hidden" class="form-control" id="client_signatures" name="client_signature" >
                <input type="hidden" class="form-control" id="client_payment_proofs" name="client_payment_proof" >
                 <input type="hidden" class="form-control" id="salesSignatures" name="salesSignature" >
@@ -1328,8 +1329,7 @@ $('.procceed_treasury').on('click', function(event) {
 		        			  });
 		        			}
 		        		
-		        		
-		        		
+		
 		        		$('.collection_team_button').on('click', function() {
 		        		  // Loop through each table row
 		        		  $('#completed-table tbody tr').each(function() {
@@ -1726,7 +1726,7 @@ $('.view_invoice_modal').on('click', function(event) {
 								  $('#proceed_treasury').hide();
 							  }
 							  else{
-								 
+									
 								  $('#invoice_modal_details').hide();
 								  $('#proceed_collection').hide();
 								  $('#progress_ongoing').val(toBilling); 	
@@ -1742,32 +1742,26 @@ $('.view_invoice_modal').on('click', function(event) {
 							  $('#proceed_collection').hide();
 							  $('#proceed_billing').hide();
 							  $('#span_warning').show();
+							
 						  }
 						
-						  
-						  $('#proceed_support').hide();
 						  $('#ticket_status').show();
-						  
+						  $('#proceed_support').hide();
 						  // Add the justify-content-between class
 						  $('#buttonDiv').addClass('justify-content-between');
 						} 
 						else {
-							console.log(progress);
-						
+						  console.log(progress);
 						  $('#span_warning').hide();
 						  $('#progress_ongoing').val(toSupport); 	
 						  $('#proceed_billing').hide();  
-						  $('#proceed_support').show();
+						
 						  $('#ticket_status').hide();
 						  // Remove the justify-content-between class
 						    $('#buttonDiv').removeClass('justify-content-between');
 						
 						}
-			  	     
-				 
-				
-			
-				
+		
 				  if (client_signature && client_payment_proof) {
 						 //images 
 						 
@@ -1779,7 +1773,7 @@ $('.view_invoice_modal').on('click', function(event) {
 				  	        $('#client_signature').show();
 				  	       
 				  	      $('#span_warning_support').hide(); 
-				  	     
+						 
 					      
 					  	  	$('#client_payment_proof').attr('src', '/img/' + client_payment_proof);
 							$('#client_signature').attr('src', '/img/' + client_signature);
@@ -1811,7 +1805,7 @@ $('.view_invoice_modal').on('click', function(event) {
 	        $('#title_ongoing').val(title);
 	        $('#description_ongoing').val(description);
 	        $('#user_name_ongoing').val(userName);
-	        $('#status_').val(status);	
+	        $('#status__').val(status);	
 	        $('#amount_ongoing').val(amount);
 	        $('#conforme_no_ongoing').val(conformeNo); // set the conforme_no value in the #modalView modal
 	        $('#ongoingModal').modal();

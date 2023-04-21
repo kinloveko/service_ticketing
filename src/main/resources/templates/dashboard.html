@@ -528,7 +528,7 @@
             <div class="modal-body">
              <input type="hidden" class="form-control"  id="salesSignature" name="salesSignature"/>
              <input type="hidden" class="form-control"  id="status_ongoing"  name="status" >
-             <input type="hidden" class="form-control"  id="conforme_date_ongoing"  name="conforme_date" >
+             <input type="hidden" class="form-control"  id="_conforme_date_ongoing"  name="conforme_date" >
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">
@@ -773,16 +773,7 @@
 		});
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+	
 
 		$(document).ready(function() {
 		    $('.ongoing').on('click', function(event) {
@@ -811,7 +802,7 @@
 		        $('#conforme_no').val(conforme_no);
 		        $('#amount').val(amount);
 		        $('#thumbnail_ongoing').attr('src', '/img/' + signature);
-		        $('#conforme_date_ongoing').val(conforme_date_ongoing);
+		        $('#_conforme_date_ongoing').val(conforme_date_ongoing);
 		        $('#salesSignature').val(signature);
 	
 		        var client_signature_ongoing = $(this).closest('tr').find('td:eq(11)').text();
