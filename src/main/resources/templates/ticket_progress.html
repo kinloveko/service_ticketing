@@ -102,7 +102,7 @@
 		<main>
 			<div class="head-title">
 				<div class="left">
-  <a th:href="${session.user_role == 'client' ? 'dashboard' : 'admin.ark'}" style="background:transparent; text-decoration: none;">
+  <a th:href="${session.userRole == 'client' ? 'dashboard' : 'admin.ark'}" style="background:transparent; text-decoration: none;">
     <i class="bx bx-arrow-back" style="color:grey;font-size:25px"></i>
     <h5 style="color:grey">Back to dashboard</h5>
 </a>
@@ -125,8 +125,8 @@
     <div class="head"  >
    
   <div style="display: inline-block; ">
-      <h3 style="display: inline-block; ">Tickets Progress</h3>   
-     <span style="display:none" id="span_status" th:text="${ticket.progress}" ></span>
+      <h3 style="display: inline-block;  " >Tickets Progress</h3>   
+     <span style="display:none" id="span_status"  ></span>
 	
      <span    style="  color:grey; font-size:15px;">
      	(<span id="span_value" th:text="${ticket.ticket_id}" 
@@ -142,7 +142,7 @@
   <div th:style="${ticket.status == 'ongoing' ? ''  : 'display:none;'}">
  
         <ul class="horizontal-menu" 
-       th:style="${session.user_role == 'support_team' ? '' : 'display:none;'}">
+       th:style="${session.userRole == 'support_team' ? '' : 'display:none;'}">
     <li class="btn btn-primary add_button_update" data-toggle="modal" data-target="#support_add_modal">
         <i class='bx bx-plus' style="color: white;"></i>
         <span class="text">
@@ -275,11 +275,11 @@
 	  </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary feedback_modal"
-        	    th:style="${session.user_role == 'client' ? '' : 'display:none;'}"
+        	    th:style="${session.userRole == 'client' ? '' : 'display:none;'}"
                 data-toggle="modal"  data-target="#add_feedback_modal">Add feedback</button>
        
         <button type="button" class="btn btn-info view_feedback_modal"
-            th:style="${session.user_role == 'support_team' || session.user_role == 'sales_team' ? '' : 'display:none;'}"
+            th:style="${session.userRole == 'support_team' || session.userRole == 'sales_team' ? '' : 'display:none;'}"
                  >See feedbacks</button>
          
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
