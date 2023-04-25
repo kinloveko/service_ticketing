@@ -80,7 +80,8 @@ public class UserController {
 	        	if(i.getUserRole().equals("client")) {
 	        	      return "redirect:/dashboard"; // return the name of the dashboard page
 	        	}
-	        	else if (i.getUserRole().equals("sales_team")
+	        	else if (i.getUserRole().equals("sales_team_leader")||
+	        			i.getUserRole().equals("sales_team")
 	        			|| i.getUserRole().equals("support_team")
 	        			|| i.getUserRole().equals("sales_team_leader")
 	        			|| i.getUserRole().equals("billing_team")
@@ -131,10 +132,12 @@ public class UserController {
     }
     
     @GetMapping("/getUpdateTicket")
-    public String adminPages(Model m) {
+    public String getUpdateTicket(Model m) {
         ticketService.populateTicketModel(m);
         return "admin.ark :: #completed-table";
     }
+    
+    
     
 	
 	@GetMapping("/logout")

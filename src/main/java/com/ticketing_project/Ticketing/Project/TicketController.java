@@ -96,9 +96,12 @@ public class TicketController {
 			 return "redirect:/dashboard";
 			}
 
-	
-	
-	
+	 @GetMapping("/getTicket")
+	 @ResponseBody
+	    public String getTicket(@RequestParam int ticketID) {
+	       Ticket ticket = ticketService.getTicketById(ticketID);
+	        return ticket.getProgress();
+	    }
 	
 	//HTTP POST method
 	@PostMapping("/tickets/update-ticket-ongoing")

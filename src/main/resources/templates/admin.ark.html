@@ -18,7 +18,17 @@
 	  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
 	  rel="stylesheet"
 	/>
+	
+
 		<style>
+		
+.ticket-status {
+  background-color: #00b300; /* green */
+  border-radius: 10px;
+  padding:6px;
+  color:white;
+  font-size:11px;
+}
 		
 .alert {
 	padding: 20px;
@@ -415,6 +425,12 @@
 			    Treasury		    
 				</span>
 			  </li> 
+			   <li class=" btn completed_team" style="background-color:#ff8c00"  >
+			   <i class="bx bx-send" style="color: white;"></i>
+			    <span style="color:white">
+			    Client		    
+				</span>
+			  </li> 
 			  
 		</ul>
         </div>
@@ -575,7 +591,7 @@
 		</div>
 		            <div class="modal-footer">
 		                     <button type="button" class="btn btn-primary button_conforme"   data-toggle="modal"  data-target="#create_conforme" 
-		                     th:style="${session.userRole == 'sales_team' ? '' : 'display:none;'}"
+		                     th:style="${session.userRole == 'sales_team' || session.userRole == 'sales_team_leader'  ? '' : 'display:none;'}"
 		                     >Conforme Slip</button>
 		                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 		            </div>
@@ -791,7 +807,7 @@
 	  		
 	</div>
 	</div>
-	 <div  th:style="${session.userRole == 'sales_team' ? '' : 'display:none;'}">
+	 <div  th:style="${session.userRole == 'sales_team' || session.userRole == 'sales_team_leader' ? '' : 'display:none;'}">
 		 <div   id="span_warning_support" class="alert" style="text-align:center;" >
 		  <span  class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
 		  <strong>Warning:</strong> You cannot proceed to Support team until the client complies with the requirements
@@ -799,15 +815,18 @@
 	 </div>	 
 	 
  <div id="buttonDiv" class="modal-footer d-flex justify-content-between">
-   <div style="display:flex">
+ 	
+    <div style="display:flex">
     <button type="button"  style="display: inline-block; margin-right:10px" id="ticket_status" class="btn btn-primary"  >View Ticket Status</button>
     
-   
-    
-  	<div  th:style="${session.userRole  == 'collection_team' ||session.userRole  == 'treasury_team'  ? '' : 'display:none;'}"  >
+  	<div  th:style="${session.userRole  == 'collection_team' ||session.userRole  == 'treasury_team'  ? '' : 'display:none;'}">
+  	
    	<button type="button" id="invoice_modal_details" class="btn btn-primary view_invoice_modal">View Invoice</button>
+   	
    	</div>
+   	
    	</div>
+   	
    	<div class="d-flex justify-content-between"> 
   
    	<div  th:style="${session.userRole == 'billing_team' ? '' : 'display:none;'}"  >
@@ -816,7 +835,7 @@
    	 <div  th:style="${session.userRole == 'collection_team' ? '' : 'display:none;'}"  >
    	<button type="button" id="proceed_treasury" class="btn btn-success procceed_treasury">Send to Treasury</button>
    	</div>
-   	<div  th:style="${session.userRole == 'sales_team' ? '' : 'display:none;'}"  > 
+   	<div  th:style="${session.userRole == 'sales_team' || session.userRole == 'sales_team_leader' ? '' : 'display:none;'}"  > 
    		
    	 	<button type="submit" id="proceed_billing" class="btn btn-success"   >Send To billing</button>
         <button type="submit" id="proceed_support" class="btn btn-primary"   >SEND TO SUPPORT</button>
@@ -827,7 +846,7 @@
         </div>
     </div>
 		  </div>
-		  </form>
+ </form>
 	<!--End Ongoing Slip -->
 	
 	<!-- Create Invoice Modal -->
@@ -942,17 +961,19 @@
 	
 <!-- View Invoice -->
 
-		<form >
-		<div class="modal fade" id="view_invoice_modal" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
+	<form id="invoice-update-confirm" enctype="multipart/form-data" >
+		<div class="modal fade" id="view_invoice_modals" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
 		  <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
- 
- 				
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Invoice details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+ 			<!-- Hidden -->
+ 				<input type="hidden" class="form-control" id="client_signature_value" name="client_signature" >
+ 		        <input type="hidden" class="form-control" id="client_payment_proof_value" name="client_payment_proof" >
+            <div class="modal-header"  style="display: inline-block; ">
+                <h5 class="modal-title" id="exampleModalLabel"  style="display: inline-block; ">Invoice details</h5>
+              
+              		<span id="ticket_progress_invoice"></span>
+      
+              
             </div>
             
             <div class="modal-body">
@@ -1013,7 +1034,8 @@
 	  	</div>
 	  	  <div class="col-sm-6">
         <div class="mb-3">
-	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_signature_invoice_view"   class="rounded float-left imageSignature">
+        
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_signature_invoice_view" class="rounded float-left imageSignature">
 			</div>
 		</div>
 	</div>
@@ -1028,7 +1050,7 @@
         <div class="col-sm-6">
      <div class="mb-3">
      	
-	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof_invoice_view"   class="rounded float-left imageProof">
+	  		<img style="width:150px;height:150px;margin-left:30px;cursor:pointer;"  id="client_payment_proof_invoice_view" class="rounded float-left imageProof">
 	</div>
 	</div>
 	</div>
@@ -1036,15 +1058,24 @@
 	</div>	
 	</div>
 	<div  class="modal-footer d-flex justify-content-between">
-		<div >
-		<label for="customFile" class="form-label" style="font-weight:bold;">Proof of confirmation</label>
-	  	<input type="file" class="form-control"  name="img5" required/>		
+		<div>
+		<div th:style="${session.userRole == 'collection_team' ? '' : 'display:none;'}">
+		 <button type="button" id="generateOR" class="btn btn-primary generate_or">Generate OR</button>
+		</div>
+		<div  id="proof_confirmation_treasury" th:style="${session.userRole == 'treasury_team' ? '' : 'display:none;'}" >
+		<label for="customFile"  class="form-label" style="font-weight:bold;">Proof of confirmation</label>
+	  	<input type="file" class="form-control"  id="image_upload" name="img1" required/>		
+		</div>
 		</div>
 	 <div class="d-flex justify-content-between" style="margin-top:35px">
+	 <div  th:style="${session.userRole == 'collection_team' ? '' : 'display:none;'}"  >
+   	 <button type="button" id="send_to_client" class="btn btn-primary send_to_client">EMAIL CLIENT</button>
+   	</div>
 	 <div  th:style="${session.userRole == 'treasury_team' ? '' : 'display:none;'}"  >
-   	 <button type="button" id="send_to_collection" class="btn btn-primary send_to_collection">Send to Collection</button>
+   	 <button type="button" id="send_to_collection" class="btn btn-primary send_to_collection_button">Send to Collection</button>
    	</div>
     <button type="button" class="btn" style="margin-left:10px;background-color:grey;color:white" data-dismiss="modal">Close</button> 
+
      </div>	
     
 	</div>
@@ -1104,8 +1135,17 @@
             icon: 'success',
             confirmButtonText: 'OK'
         });
-       
     </script>
+    <script th:if="${paymentSuccess}">
+        Swal.fire({
+            title: 'Success',
+            text: 'Confirmation sent successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    </script>
+    
+       
 	<script type="text/javascript">
 	// Get the modal and the image inside it
 	
@@ -1143,13 +1183,215 @@
 	</script>
 
 <script type="text/javascript">
-
-
-//creating invoice using ajax
+ 
 //purpose to prevent to refresh the page while inserting a new record
+ $(document).ready(function() {
+    $('.generate_or').on('click', function() {
+        // Extract data from the input fields in the second modal
+
+        var ticketID = $('#ticket_id_view').val();
+        console.log(ticketID);
+        var xhr = new XMLHttpRequest();
+        var url = "/pdf/generate/" + ticketID;
+
+        // Show loading animation with Swal
+        Swal.fire({
+            title: 'Loading...',
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        xhr.open("GET", url);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                // Show a success message
+                console.log("PDF");
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'OR Generated successfully!',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        window.open('/pdf/generate/' + ticketID);
+                    	
+                    	
+                    	
+                    	
+                    } else {
+                        // Show error message with SweetAlert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'There was an error while saving the user update: ' + xhr.statusText,
+                        });
+                    }
+                });
+
+            } else {
+                // Show an error message
+                console.log("Error Updating Invoice");
+            }
+        };
+        xhr.send();
+    });
+});
+
+ 
+$(document).ready(function() {
+  $('.send_to_collection_button').on('click', function() {
+    // Extract data from the input fields in the second modal
+    var imageUpload = $('#image_upload').prop('files')[0];
+    var ticketID = $('#ticket_id_view').val();
+    var form = document.getElementById("invoice-update-confirm");
+    var formData = new FormData(form);
+    var xhr = new XMLHttpRequest();
+    var url = "/invoice/update/"+ticketID;
+
+    // Show loading animation with Swal
+    Swal.fire({
+      title: 'Loading...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    xhr.open("PUT", url);
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        // Show a success message
+        console.log("User updated successfully");
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Ticket updated successfully!',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            $('#view_invoice_modals').modal('hide');
+            $('#send_to_collection').hide();
+            $('#proof_confirmation_treasury').hide();
+
+            $('#completed-table').load('/getUpdateTicket #completed-table > *', function() {
 
 
+        		$('.menu-item[data-table="completed"]').on('click', function() {
+        		  // Show all rows
+        		  $('#completed-table tbody tr').show();
+        		
+        		  
+        		  // Remove filters from other buttons
+        		  $('.sales_team_button').removeClass('active');
+        		  $('.billing_team_button').removeClass('active');
+        		  $('.collection_team_button').removeClass('active');
+        		  $('.treasury_team_button').removeClass('active');
+        		});
+        	 
+        		// Event listener for Ready sales_team button
+        		$('.sales_team_button').on('click', function() {
+        		  // Loop through each table row
+        		  $('#completed-table tbody tr').each(function() {
+        			var _status = $(this).find('td:nth-child(5)').text();
+        			var _progress = $(this).find('td:nth-child(8)').text();
+        		    console.log(_status);
+        		    
+        		    if (!_status === 'completed' || !(_progress === 'support_team')) {
+        		    	  $(this).hide();
+        		    	} else {
+        		    	  $(this).show();
+        		    	}
+        		  });
+        		});
+        		
+        		// Event listener for Ready billing team button
+        		$('.billing_team_button').on('click', function() {
+        		  // Loop through each table row
+        			applyBillingFilter();
+        		});
+        		
+        		function applyBillingFilter() {
+        			  // Loop through each table row
+        			  $('#completed-table tbody tr').each(function() {
+        			    var _status = $(this).find('td:nth-child(5)').text();
+        			    var _progress = $(this).find('td:nth-child(8)').text();
+        			    console.log(_status);
+        			    console.log(_progress);
+        			    if (!(_status === 'completed')  || !(_progress === 'billing_team')) {
+        			      $(this).hide();
+        			    } else {
+        			      $(this).show();
+        			    }
+        			  });
+        			}
+        		
 
+        		$('.collection_team_button').on('click', function() {
+        		  // Loop through each table row
+        		  $('#completed-table tbody tr').each(function() {
+        			var _status = $(this).find('td:nth-child(5)').text();
+        			var _progress = $(this).find('td:nth-child(8)').text();
+        		    console.log(_status);
+        		    if (!(_status === 'completed')  || !(_progress === 'collection_team')) {
+        		    	  $(this).hide();
+        		    	} else {
+        		    	  $(this).show();
+        		    	}
+        		  });
+        		});
+
+        		// Event listener for Ready treasury team button
+        		$('.treasury_team_button').on('click', function() {
+        			  // Loop through each table row
+        			  $('#completed-table tbody tr').each(function() {
+        				var _status = $(this).find('td:nth-child(5)').text();
+        				var _progress = $(this).find('td:nth-child(8)').text();
+        			    console.log(_status);
+        			    if (!(_status === 'completed')  || !(_progress === 'treasury_team')) {
+        			    	  $(this).hide();
+        			    	} else {
+        			    	  $(this).show();
+        			    	}
+        			  });
+        			});
+        		$('.completed_team').on('click', function() {
+        			  // Loop through each table row
+        			  $('#completed-table tbody tr').each(function() {
+        				var _status = $(this).find('td:nth-child(5)').text();
+        				var _progress = $(this).find('td:nth-child(8)').text();
+        			    console.log(_status);
+        			    if (!(_status === 'completed')  || !(_progress === 'completed')) {
+        			    	  $(this).hide();
+        			    	} else {
+        			    	  $(this).show();
+        			    	}
+        			  });
+        			});
+            });
+          } else {
+            // Show error message with SweetAlert
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'There was an error while saving the user update: ' + xhr.statusText,
+            });
+          }
+        });
+
+      } else {
+        // Show an error message
+        console.log("Error Updating Invoice");
+      }
+    };
+    xhr.send(formData);
+
+  });
+});
 
 
 
@@ -1358,6 +1600,20 @@ $('.procceed_treasury').on('click', function(event) {
 		        			    	}
 		        			  });
 		        			});
+		        		$('.completed_team').on('click', function() {
+		        			  // Loop through each table row
+		        			  $('#completed-table tbody tr').each(function() {
+		        				var _status = $(this).find('td:nth-child(5)').text();
+		        				var _progress = $(this).find('td:nth-child(8)').text();
+		        			    console.log(_status);
+		        			    if (!(_status === 'completed')  || !(_progress === 'completed')) {
+		        			    	  $(this).hide();
+		        			    	} else {
+		        			    	  $(this).show();
+		        			    	}
+		        			  });
+		        			});
+		        				
 		        			
 		          });
 		        } else {
@@ -1530,6 +1786,20 @@ $('.create_invoice').on('click', function(event) {
 		        			    	}
 		        			  });
 		        			});
+		        		$('.completed_team').on('click', function() {
+		        			  // Loop through each table row
+		        			  $('#completed-table tbody tr').each(function() {
+		        				var _status = $(this).find('td:nth-child(5)').text();
+		        				var _progress = $(this).find('td:nth-child(8)').text();
+		        			    console.log(_status);
+		        			    if (!(_status === 'completed')  || !(_progress === 'completed')) {
+		        			    	  $(this).hide();
+		        			    	} else {
+		        			    	  $(this).show();
+		        			    	}
+		        			  });
+		        			});
+		        				
 		        			
 		          });
 		        }
@@ -1605,6 +1875,8 @@ $('.create_invoce_modal').on('click', function(event) {
 
 </script>
 
+
+
 <script>
 
 $('.view_invoice_modal').on('click', function(event) {   
@@ -1612,6 +1884,35 @@ $('.view_invoice_modal').on('click', function(event) {
 	var ticketID = $('#ticket_id').val();
 		
 	//Retrieved User using ajax before opening the invoice
+	
+	
+		
+	$.ajax({
+		type: "GET",
+		url: "/getTicket?ticketID=" + ticketID,
+		success: function(result) {
+			var spanText = $('#ticket_progress_invoice');
+			spanText.html('<strong>' + result + '</strong>');
+			if (result === 'completed') {
+			  spanText.addClass('ticket-status');
+			} else {
+			  spanText.text('');
+			}
+
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			// handle the error here
+			console.log(textStatus);
+			console.log(errorThrown);
+			console.log(jqXHR);
+		 
+		}
+	});
+	
+
+	
+	
+	
 	$.ajax({
 		type: "GET",
 		url: "/invoiceDetails?ticketID=" + ticketID,
@@ -1619,21 +1920,29 @@ $('.view_invoice_modal').on('click', function(event) {
 			$('#invoice_date_now_view').val(invoiceDetails.invoice_date);
 			$('#ticket_id_view').val(invoiceDetails.ticketID);
 			$('#ticket_title_invoice_view').val(invoiceDetails.ticket_issue_title);
-
+			
+		/* 	$('#ticket_progress_invoice').text(invoiceDetails.progress); */
+			
+			
 			$('#client_name_invoice_view').val(invoiceDetails.client_name);
 			$('#amount_invoice_view').val(invoiceDetails.invoice_amount);
 			$('#client_email_invoice_view').val(invoiceDetails.client_email);
 			//for image display
-			$('#client_signature_invoice_view').attr('src', '/img/' + invoiceDetails.client_payment_proof);
-			$('#client_payment_proof_invoice_view').attr('src', '/img/' + invoiceDetails.client_signature);
-			$('#view_invoice_modal').modal();
+			$('#client_signature_invoice_view').attr('src', '/img/' + invoiceDetails.client_signature);
+			$('#client_payment_proof_invoice_view').attr('src', '/img/' + invoiceDetails.client_payment_proof);
+			
+			$('#client_signature_value').val(invoiceDetails.client_signature);
+            $('#client_payment_proof_value').val(invoiceDetails.client_payment_proof);
+              
+			$('#view_invoice_modals').modal();
 			$('#ongoingModal').modal('hide');
 			
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			// handle the error here
 			console.log(textStatus);
-			
+			console.log(errorThrown);
+			console.log(jqXHR);
 			swal({
 				title: "Error",
 				text: "Error occur! Query did not return a unique result: 2",
@@ -1697,7 +2006,7 @@ $('.view_invoice_modal').on('click', function(event) {
 				$('#thumbnail').attr('src', '/img/' + signature);
 				
 			
-					if (progress === "support_team" || progress === "billing_team" || progress ===  "collection_team" || progress === "treasury_team" ) {
+					if (progress === "support_team" || progress === "billing_team" || progress ===  "collection_team" || progress === "treasury_team" || progress === "completed" ) {
 			  
 						if(status === "completed"){
 							
@@ -1706,27 +2015,44 @@ $('.view_invoice_modal').on('click', function(event) {
 								  $('#proceed_collection').show();
 								  $('#proceed_treasury').hide();
 								  $('#invoice_modal_details').hide();
-								 
+								  $('#send_to_collection').hide();
+								  $('#proof_confirmation_treasury').hide();
+								  $('#generateOR').hide();
 							  }
 							  else
 							  if(progress === "collection_team"){
-								  
+								  $('#send_to_collection').hide();
 								  $('#proceed_collection').hide();
 								  $('#proceed_treasury').show();
 								  $('#proceed_billing').hide();
-						
+								  $('#proof_confirmation_treasury').hide();
 								  $('#invoice_modal_details').show();
+								  $('#generateOR').hide();
 							  }
 							  else
 							  if(progress === "treasury_team"){
-								  
+								  $('#send_to_collection').show();
 								  $('#proceed_collection').hide();
 								  $('#invoice_modal_details').show();
+								  $('#proof_confirmation_treasury').show();
 								  $('#proceed_billing').hide();
 								  $('#proceed_treasury').hide();
-							  }
+								  $('#generateOR').hide();
+							  }else
+								  if(progress === "completed"){
+									  $('#generateOR').show();
+									  $('#send_to_collection').hide();
+									  $('#proceed_collection').hide();
+									  $('#invoice_modal_details').show();
+									  $('#proceed_billing').hide();
+									  $('#proceed_treasury').hide();
+									  $('#proceed_collection').hide();
+									  $('#proof_confirmation_treasury').hide();
+									  
+								  }
 							  else{
-									
+								  $('#generateOR').hide();
+								  $('#proof_confirmation_treasury').hide();
 								  $('#invoice_modal_details').hide();
 								  $('#proceed_collection').hide();
 								  $('#progress_ongoing').val(toBilling); 	
@@ -1737,6 +2063,7 @@ $('.view_invoice_modal').on('click', function(event) {
 							 
 						  }
 						  else{
+							  $('#generateOR').hide();
 							  $('#invoice_modal_details').hide();
 							  $('#proceed_treasury').hide();
 							  $('#proceed_collection').hide();
@@ -1772,7 +2099,7 @@ $('.view_invoice_modal').on('click', function(event) {
 				  	        $('#client_payment_proof').show();
 				  	        $('#client_signature').show();
 				  	       
-				  	      $('#span_warning_support').hide(); 
+				  	       $('#span_warning_support').hide(); 
 						 
 					      
 					  	  	$('#client_payment_proof').attr('src', '/img/' + client_payment_proof);
@@ -1927,6 +2254,10 @@ $('.view_invoice_modal').on('click', function(event) {
 	  });
 	});
 
+	
+	
+	
+	
 	// Event listener for Ready treasury team button
 	$('.treasury_team_button').on('click', function() {
 		  // Loop through each table row
@@ -1941,7 +2272,25 @@ $('.view_invoice_modal').on('click', function(event) {
 		    	}
 		  });
 		});
-		
+	
+	
+	$('.completed_team').on('click', function() {
+		  // Loop through each table row
+		  $('#completed-table tbody tr').each(function() {
+			var _status = $(this).find('td:nth-child(5)').text();
+			var _progress = $(this).find('td:nth-child(8)').text();
+		    console.log(_status);
+		    if (!(_status === 'completed')  || !(_progress === 'completed')) {
+		    	  $(this).hide();
+		    	} else {
+		    	  $(this).show();
+		    	}
+		  });
+		});
+			
+	
+	
+	
 	
 	// Add click event listener to the button in the first modal
 	$(document).ready(function() {

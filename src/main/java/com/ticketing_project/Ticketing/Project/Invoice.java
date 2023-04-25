@@ -53,12 +53,12 @@ public class Invoice {
 	private int ticketID;
 	
 	
-	@Column(name="client_payment_proof", nullable=false)
+	@Column(name="client_payment_proof", nullable=true)
 	@Getter
 	@Setter
 	private String client_payment_proof;
 	
-	@Column(name="client_signature", nullable=false)
+	@Column(name="client_signature", nullable=true)
 	@Getter
 	@Setter
 	private String client_signature;
@@ -75,7 +75,7 @@ public class Invoice {
 	private String client_email;
 	
 	
-	@Column(name="payment_confirmation", nullable=false)
+	@Column(name="payment_confirmation")
 	@Getter
 	@Setter
 	private String paymentConfirmation;
