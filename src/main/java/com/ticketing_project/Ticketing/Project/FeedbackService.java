@@ -10,13 +10,12 @@ public class FeedbackService {
 
 	@Autowired
 	private FeedbackRepository repo;
-	
-	
+
 	public Feedback save(Feedback feedback) {
 		return repo.save(feedback);
 	}
-	
+
 	public List<Feedback> getFeedbacksByStatusId(int statusId) {
-	    return repo.findAllByStatusId(statusId);
+		return repo.findAllByStatusId(statusId);
 	}
 }

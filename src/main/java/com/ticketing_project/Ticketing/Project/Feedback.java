@@ -16,32 +16,29 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="Feedback")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table(name = "Feedback")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Entity
 public class Feedback {
-	
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="feedback_id", nullable=false)
+	@Column(name = "feedback_id", nullable = false)
 	@Getter
 	@Setter
 	private int feedback_id;
-	
-	
-	@Column(name="statusId", nullable=false)
+
+	@Column(name = "statusId", nullable = false)
 	@Getter
 	@Setter
 	private int statusId;
-	
-	@Column(name="feedback_message", nullable=false)
+
+	@Column(name = "feedback_message", nullable = false)
 	@Getter
 	@Setter
 	private String feedback_message;
 
-	
-	@Column(name="feedback_date_time", nullable=false)
+	@Column(name = "feedback_date_time", nullable = false)
 	@Getter
 	@Setter
 	private String feedback_date_time;

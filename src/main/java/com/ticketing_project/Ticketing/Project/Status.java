@@ -19,45 +19,41 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="status")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table(name = "status")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Entity
 public class Status {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="status_id", nullable=false)
+	@Column(name = "status_id", nullable = false)
 	@Getter
 	@Setter
 	private int status_id;
-	
-	@Column(name="ticketID", nullable=false)
+
+	@Column(name = "ticketID", nullable = false)
 	@Getter
 	@Setter
 	private int ticketID;
-	
-	
-	@Column(name="status_title", nullable=false)
+
+	@Column(name = "status_title", nullable = false)
 	@Getter
 	@Setter
 	private String status_title;
-	
-	@Column(name="status_message", nullable=false)
+
+	@Column(name = "status_message", nullable = false)
 	@Getter
 	@Setter
 	private String status_message;
-	
-	
-	@Column(name="status_date_time", nullable=false)
+
+	@Column(name = "status_date_time", nullable = false)
 	@Getter
 	@Setter
 	private String status_date_time;
-	
-	
-	@Column(name="status_progress", nullable=false)
+
+	@Column(name = "status_progress", nullable = false)
 	@Getter
 	@Setter
 	private String status_progress;
-	
-	
+
 }

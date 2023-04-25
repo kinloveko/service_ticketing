@@ -13,148 +13,172 @@ import org.springframework.ui.Model;
 
 @Service
 public class TicketService {
-	
+
 	@Autowired
 	private TicketRepository repo;
-		
+
 	@Autowired
 	private UserRepository userRepo;
-	
+
 	public Ticket save(Ticket ticket) {
 		return repo.save(ticket);
 	}
-	
-	
+
 	public void update(int ticketId, Ticket updatedTicket) {
-		//List containing the ticket that matches the ticketId
-		List<Ticket> matchingTicket = getAllTickets().stream()
-				.filter(ticket -> ticket.getTicket_id() == ticketId)
+		// List containing the ticket that matches the ticketId
+		List<Ticket> matchingTicket = getAllTickets().stream().filter(ticket -> ticket.getTicket_id() == ticketId)
 				.toList();
-		
-		if(matchingTicket.size() != 0) {
+
+		if (matchingTicket.size() != 0) {
 			if (updatedTicket.getTitle() != null) {
 				matchingTicket.get(0).setTitle(updatedTicket.getTitle());
-		    }
-		    if (updatedTicket.getDescription() != null) {
-		    	matchingTicket.get(0).setDescription(updatedTicket.getDescription());
-		    }
-		    if (updatedTicket.getStatus() != null) {
-		    	matchingTicket.get(0).setStatus(updatedTicket.getStatus());
-		    }
-		    if (updatedTicket.getUser_id() != 0) {
-		    	matchingTicket.get(0).setUser_id(updatedTicket.getUser_id());
-		    }
-		    
-		    repo.save(matchingTicket.get(0));
+			}
+			if (updatedTicket.getDescription() != null) {
+				matchingTicket.get(0).setDescription(updatedTicket.getDescription());
+			}
+			if (updatedTicket.getStatus() != null) {
+				matchingTicket.get(0).setStatus(updatedTicket.getStatus());
+			}
+			if (updatedTicket.getUser_id() != 0) {
+				matchingTicket.get(0).setUser_id(updatedTicket.getUser_id());
+			}
+
+			repo.save(matchingTicket.get(0));
 		}
 	}
-	
+
 	public void delete(int ticketId) {
-		//List containing the ticket that matches the ticketId
-		List<Ticket> matchingTicket = getAllTickets().stream()
-				.filter(ticket -> ticket.getTicket_id() == ticketId)
+		// List containing the ticket that matches the ticketId
+		List<Ticket> matchingTicket = getAllTickets().stream().filter(ticket -> ticket.getTicket_id() == ticketId)
 				.toList();
-		
-		if(matchingTicket.size() != 0) {
-		    repo.delete(matchingTicket.get(0));
+
+		if (matchingTicket.size() != 0) {
+			repo.delete(matchingTicket.get(0));
 		}
 	}
-	
-	public List<Ticket> getAllTickets()
-	{
+
+	public List<Ticket> getAllTickets() {
 		final List<Ticket> ticketList = repo.findAll();
 		return ticketList;
 	}
-	
-	
+
 	public Ticket getTicketById(int ticketId) {
-		List<Ticket> matchingTicket = repo.findAll().stream()
-				.filter(ticket -> ticket.getTicket_id() == ticketId)
+		List<Ticket> matchingTicket = repo.findAll().stream().filter(ticket -> ticket.getTicket_id() == ticketId)
 				.toList();
-		
-		if(matchingTicket.size() == 0) return null;
-		
+
+		if (matchingTicket.size() == 0)
+			return null;
+
 		return matchingTicket.get(0);
 	}
-	
-	public List<Ticket> getTicketsByUserId(int user_id){
-		return repo.findAll()
-				.stream()
-				.filter(ticket -> ticket.getUser_id() == user_id)
-				.toList();
+
+	public List<Ticket> getTicketsByUserId(int user_id) {
+		return repo.findAll().stream().filter(ticket -> ticket.getUser_id() == user_id).toList();
 	}
-	
-	
+
+	public void clientOwnTicket(Model m, int userID) {
+
+		List<Ticket> tickets = repo.findAll().stream().filter(ticket -> ticket.getUser_id() == userID).toList();
+
+		List<Ticket> pendingTickets = new ArrayList<>();
+		List<Ticket> ongoingTickets = new ArrayList<>();
+		List<Ticket> completedTickets = new ArrayList<>();
+
+		for (Ticket ticket : tickets) {
+			switch (ticket.getStatus()) {
+			case "pending":
+				pendingTickets.add(ticket);
+				break;
+			case "ongoing":
+				ongoingTickets.add(ticket);
+				break;
+			case "completed":
+				completedTickets.add(ticket);
+				break;
+			}
+		}
+
+		Collections.sort(pendingTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
+		Collections.sort(ongoingTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
+		Collections.sort(completedTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
+
+		m.addAttribute("pending_tickets", pendingTickets);
+		m.addAttribute("pending_ticket_count", pendingTickets.size());
+
+		m.addAttribute("ongoing_tickets", ongoingTickets);
+		m.addAttribute("ongoing_ticket_count", ongoingTickets.size());
+
+		m.addAttribute("completed_tickets", completedTickets);
+		m.addAttribute("completed_ticket_count", completedTickets.size());
+
+	}
+
 	public void populateTicketModel(Model m) {
-	    List<Ticket> tickets = getAllTickets();
-	    List<Ticket> pendingTickets = new ArrayList<>();
-	    List<Ticket> ongoingTickets = new ArrayList<>();
-	    List<Ticket> completedTickets = new ArrayList<>();
-	    List<Ticket> supportTickets = new ArrayList<>();
+		List<Ticket> tickets = getAllTickets();
+		List<Ticket> pendingTickets = new ArrayList<>();
+		List<Ticket> ongoingTickets = new ArrayList<>();
+		List<Ticket> completedTickets = new ArrayList<>();
+		List<Ticket> supportTickets = new ArrayList<>();
 
-	    for (Ticket ticket : tickets) {
-	        switch (ticket.getStatus()) {
-	            case "pending":
-	                pendingTickets.add(ticket);
-	                break;
-	            case "ongoing":
-	                ongoingTickets.add(ticket);
-	                break;
-	            case "completed":
-	                completedTickets.add(ticket);
-	                break;
-	        }
+		for (Ticket ticket : tickets) {
+			switch (ticket.getStatus()) {
+			case "pending":
+				pendingTickets.add(ticket);
+				break;
+			case "ongoing":
+				ongoingTickets.add(ticket);
+				break;
+			case "completed":
+				completedTickets.add(ticket);
+				break;
+			}
 
-	        if (ticket.getProgress() != null && ticket.getProgress().equals("support_team") && ticket.getStatus().equals("ongoing")) {
-	            supportTickets.add(ticket);
-	        }
-	    }
+			if (ticket.getProgress() != null && ticket.getProgress().equals("support_team")
+					&& ticket.getStatus().equals("ongoing")) {
+				supportTickets.add(ticket);
+			}
+		}
 
-	    Collections.sort(pendingTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
-	    Collections.sort(ongoingTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
-	    Collections.sort(completedTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
-	    Collections.sort(supportTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
+		Collections.sort(pendingTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
+		Collections.sort(ongoingTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
+		Collections.sort(completedTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
+		Collections.sort(supportTickets, Comparator.comparingInt(Ticket::getTicket_id).reversed());
 
-	    m.addAttribute("pending_tickets", pendingTickets);
-	    m.addAttribute("pending_ticket_count", pendingTickets.size());
+		m.addAttribute("pending_tickets", pendingTickets);
+		m.addAttribute("pending_ticket_count", pendingTickets.size());
 
-	    m.addAttribute("ongoing_tickets", ongoingTickets);
-	    m.addAttribute("ongoing_ticket_count", ongoingTickets.size());
+		m.addAttribute("ongoing_tickets", ongoingTickets);
+		m.addAttribute("ongoing_ticket_count", ongoingTickets.size());
 
-	    m.addAttribute("completed_tickets", completedTickets);
-	    m.addAttribute("completed_ticket_count", completedTickets.size());
+		m.addAttribute("completed_tickets", completedTickets);
+		m.addAttribute("completed_ticket_count", completedTickets.size());
 
-	    m.addAttribute("support_tickets", supportTickets);
-	    m.addAttribute("support_count", supportTickets.size());
- 
-	    
+		m.addAttribute("support_tickets", supportTickets);
+		m.addAttribute("support_count", supportTickets.size());
+
 	}
-	
-	//TicketService
+
+	// TicketService
 	@Autowired
-		private JavaMailSender mailSender;
-		
-		public void sendEmail(String toEmail, String body, String subject) {
-			SimpleMailMessage message = new SimpleMailMessage();
-			message.setFrom("ark.alliance2023@gmail.com");
-			message.setTo(toEmail);
-			message.setText(body);
-			message.setSubject(subject);
-			
-			mailSender.send(message);
-		}
-		
-		public List<String> getEmailsOfSalesTeam() {
-		    List<User> salesTeamUsers = userRepo.findByUserRole("sales_team_leader");
-		    List<String> emails = new ArrayList<>();
-		    for (User user : salesTeamUsers) {
-		        emails.add(user.getUser_email());
-		    }
-		    return emails;
-		}
+	private JavaMailSender mailSender;
 
+	public void sendEmail(String toEmail, String body, String subject) {
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setFrom("ark.alliance2023@gmail.com");
+		message.setTo(toEmail);
+		message.setText(body);
+		message.setSubject(subject);
 
-	
-	
-	
+		mailSender.send(message);
+	}
+
+	public List<String> getEmailsOfSalesTeam() {
+		List<User> salesTeamUsers = userRepo.findByUserRole("sales_team_leader");
+		List<String> emails = new ArrayList<>();
+		for (User user : salesTeamUsers) {
+			emails.add(user.getUser_email());
+		}
+		return emails;
+	}
+
 }

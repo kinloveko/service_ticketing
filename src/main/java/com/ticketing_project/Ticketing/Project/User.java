@@ -1,6 +1,5 @@
 package com.ticketing_project.Ticketing.Project;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,48 +14,42 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
-
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="user")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Table(name = "user")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Entity
 public class User {
-		
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="user_id", nullable=false)
+	@Column(name = "user_id", nullable = false)
 	@Getter
 	@Setter
 	private int user_id;
-	
+
 	@Getter
 	@Setter
-	@Column(name="user_email", nullable=false)
+	@Column(name = "user_email", nullable = false)
 	private String user_email;
-	
+
 	@Getter
 	@Setter
-	@Column(name="user_name", nullable=false)
+	@Column(name = "user_name", nullable = false)
 	private String user_name;
 	@Getter
 	@Setter
-	@Column(name="user_password", nullable=false)
+	@Column(name = "user_password", nullable = false)
 	private String user_password;
-	
+
 	@Getter
 	@Setter
-	@Column(name="user_role", nullable=false)
-	private String userRole ;
-	
-	
+	@Column(name = "user_role", nullable = false)
+	private String userRole;
+
 	@Getter
 	@Setter
-	@Column(name="status", nullable=false)
+	@Column(name = "status", nullable = false)
 	private String status;
-	
+
 }
-
-

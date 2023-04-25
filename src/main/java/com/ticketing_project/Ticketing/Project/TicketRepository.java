@@ -7,8 +7,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Integer> {
-	
+
 	List<Ticket> findByStatus(String status);
-	List<Ticket> findByTitle(String title); 
-	
+
+	List<Ticket> findByTitle(String title);
+
 }

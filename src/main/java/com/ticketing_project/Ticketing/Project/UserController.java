@@ -24,122 +24,111 @@ public class UserController {
 
 	@Autowired
 	private TicketService ticketService;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@GetMapping("/")
 	public String home() {
- 	return "Login";
+		return "Login";
 	}
 
-	
-	
 	@PostMapping("/save")
 	public String addUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
 		userService.save(user);
 		redirectAttributes.addFlashAttribute("successMessage", "Account registered successfully!");
-		return "redirect:/";	
-		
+		return "redirect:/";
+
 	}
-	
- 
+
 	@PutMapping("/user/update/{userID}")
 	@ResponseBody
-	public void updateUser(@PathVariable final int userID,
-			  @RequestParam(value = "selectedValue") String selectedValue,
+	public void updateUser(@PathVariable final int userID, @RequestParam(value = "selectedValue") String selectedValue,
 			RedirectAttributes redirectAttributes) {
-	    Optional<User> existingUser = userService.findUserById(userID);
+		Optional<User> existingUser = userService.findUserById(userID);
 
-	    existingUser.get().setStatus(selectedValue);
-	    redirectAttributes.addFlashAttribute("updateMessage", "User updated successfully!");
-	    userService.save(existingUser.get());
-	  
+		existingUser.get().setStatus(selectedValue);
+		redirectAttributes.addFlashAttribute("updateMessage", "User updated successfully!");
+		userService.save(existingUser.get());
+
 	}
-	
-	
+
 	@PostMapping("/login")
-	public String login(HttpServletRequest request, HttpSession session,Model m) {
-	    String user_email = request.getParameter("user_email");
-	    String user_password = request.getParameter("user_password");
-	    List<User> users = userService.getAllUsers();
-	    List<User> accounts = new ArrayList<>();	
-	    // Find the user with the matching email and password
-	    for(User i:users) {
-	    	 
-	    	 
-	        if(i.getUser_email().equals(user_email) && i.getUser_password().equals(user_password)) {
-	        	       
-	        	session.setAttribute("user_email", user_email);
-	        	session.setAttribute("user_password", user_password);
-	        	session.setAttribute("user_id", i.getUser_id());
-	        	session.setAttribute("user_name", i.getUser_name());
-	        	session.setAttribute("userRole", i.getUserRole());
-	        	
-	        	
-	        	if(i.getUserRole().equals("client")) {
-	        	      return "redirect:/dashboard"; // return the name of the dashboard page
-	        	}
-	        	else if (i.getUserRole().equals("sales_team_leader")||
-	        			i.getUserRole().equals("sales_team")
-	        			|| i.getUserRole().equals("support_team")
-	        			|| i.getUserRole().equals("sales_team_leader")
-	        			|| i.getUserRole().equals("billing_team")
-	        			|| i.getUserRole().equals("collection_team")
-	        			|| i.getUserRole().equals("treasury_team")
-	        			|| i.getUserRole().equals("super_admin")){
-	        			
-	        		   m.addAttribute("users", users);
-	        		 return "redirect:/admin.ark"; // return the name of the dashboard page
-	        	}
-	        }
-	    }
-	    
-	    return "login"; // return the name of the login page if no matching user is found
+	public String login(HttpServletRequest request, HttpSession session, Model m) {
+		String user_email = request.getParameter("user_email");
+		String user_password = request.getParameter("user_password");
+		List<User> users = userService.getAllUsers();
+		List<User> accounts = new ArrayList<>();
+		// Find the user with the matching email and password
+		for (User i : users) {
+
+			if (i.getUser_email().equals(user_email) && i.getUser_password().equals(user_password)) {
+
+				session.setAttribute("user_email", user_email);
+				session.setAttribute("user_password", user_password);
+				session.setAttribute("user_id", i.getUser_id());
+				session.setAttribute("user_name", i.getUser_name());
+				session.setAttribute("userRole", i.getUserRole());
+
+				if (i.getUserRole().equals("client")) {
+					return "redirect:/dashboard"; // return the name of the dashboard page
+				} else if (i.getUserRole().equals("sales_team_leader") || i.getUserRole().equals("sales_team")
+						|| i.getUserRole().equals("support_team") || i.getUserRole().equals("sales_team_leader")
+						|| i.getUserRole().equals("billing_team") || i.getUserRole().equals("collection_team")
+						|| i.getUserRole().equals("treasury_team") || i.getUserRole().equals("super_admin")) {
+
+					m.addAttribute("users", users);
+					return "redirect:/admin.ark"; // return the name of the dashboard page
+				}
+			}
+		}
+
+		return "login"; // return the name of the login page if no matching user is found
 	}
-	
+
 	@GetMapping("/userDetails")
 	@ResponseBody
 	public String getFeedbacksByStatusId(@RequestParam int userId) {
-	    Optional<User> userDetails = userService.findUserById(userId);
-	    String email =userDetails.get().getUser_email();
-	    return email;
+		Optional<User> userDetails = userService.findUserById(userId);
+		String email = userDetails.get().getUser_email();
+		return email;
 	}
-	
-	
-    //GET mapping method for /admin.ark
-    @GetMapping("/admin.ark")
-    public String adminPage(Model m,HttpSession session) {
-    	 List<User> users = userService.getAllUsers();
-        ticketService.populateTicketModel(m);
-        m.addAttribute("users", users);
-        return "admin.ark";
-    }
-    
 
-    //GET mapping method for /admin.ark
-    @GetMapping("/admin.register")
-    public String adminRegistration(Model m) {
-       
-        return "admin.register";
-    }
-    
-    
-    @GetMapping("/getUserUpdate")
-    public String userUpdate(Model m) {
-    	m.addAttribute("users",userService.getAllUsers());
-        return "admin.ark :: #account-table";
-    }
-    
-    @GetMapping("/getUpdateTicket")
-    public String getUpdateTicket(@RequestParam("tableId") String tableId, Model m) {
-        ticketService.populateTicketModel(m);
-        return "admin.ark :: #" + tableId;
-    }
-    
-    
-    
-	
+	// GET mapping method for /admin.ark
+	@GetMapping("/admin.ark")
+	public String adminPage(Model m, HttpSession session) {
+		List<User> users = userService.getAllUsers();
+		ticketService.populateTicketModel(m);
+		m.addAttribute("users", users);
+		return "admin.ark";
+	}
+
+	// GET mapping method for /admin.ark
+	@GetMapping("/admin.register")
+	public String adminRegistration(Model m) {
+
+		return "admin.register";
+	}
+
+	@GetMapping("/getUserUpdate")
+	public String userUpdate(Model m) {
+		m.addAttribute("users", userService.getAllUsers());
+		return "admin.ark :: #account-table";
+	}
+
+	@GetMapping("/getUpdateTicket")
+	public String getUpdateTicket(@RequestParam("tableId") String tableId, Model m) {
+		ticketService.populateTicketModel(m);
+		return "admin.ark :: #" + tableId;
+	}
+
+	@GetMapping("/updateClientTicket")
+	public String getClientTicket(@RequestParam("tableId") String tableId, Model m, HttpSession session) {
+		int user_id = (int) session.getAttribute("user_id");
+		ticketService.clientOwnTicket(m, user_id);
+		return "dashboard :: #" + tableId;
+	}
+
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
 		session.removeAttribute("user_email");

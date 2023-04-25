@@ -1,6 +1,5 @@
 package com.ticketing_project.Ticketing.Project;
 
-
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -19,24 +18,21 @@ public class FeedbackController {
 
 	@Autowired
 	private FeedbackService feedbackService;
-	
+
 	@PostMapping("/feedback/add")
-	public String addNewTicket(@ModelAttribute Feedback newFeedback, RedirectAttributes redirectAttributes, HttpSession session){
-	    feedbackService.save(newFeedback);
-	    int ticketId = (int) session.getAttribute("ticketId"); 
-	    redirectAttributes.addFlashAttribute("successMessage", "Your feedback is much appreciated. Thank you!");
-	    return "redirect:/ticket_progress?ticketId="+ticketId;
+	public String addNewTicket(@ModelAttribute Feedback newFeedback, RedirectAttributes redirectAttributes,
+			HttpSession session) {
+		feedbackService.save(newFeedback);
+		int ticketId = (int) session.getAttribute("ticketId");
+		redirectAttributes.addFlashAttribute("successMessage", "Your feedback is much appreciated. Thank you!");
+		return "redirect:/ticket_progress?ticketId=" + ticketId;
 	}
-	
-	
-	
-	
-	
+
 	@GetMapping("/feedbacks")
 	@ResponseBody
 	public List<Feedback> getFeedbacksByStatusId(@RequestParam int statusId) {
-	    List<Feedback> feedbacks = feedbackService.getFeedbacksByStatusId(statusId);
-	    return feedbacks;
+		List<Feedback> feedbacks = feedbackService.getFeedbacksByStatusId(statusId);
+		return feedbacks;
 	}
-	
+
 }

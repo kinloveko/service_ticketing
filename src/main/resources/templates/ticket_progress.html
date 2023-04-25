@@ -1,540 +1,417 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="https://www.thymeleaf.com">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<!-- Fontawesome -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<!-- Boxicons -->
-	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
-	<!-- My CSS -->
-	<link rel="stylesheet" href="css/style.css">
+<!-- Fontawesome -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- Boxicons -->
+<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css'
+	rel='stylesheet'>
+<!-- My CSS -->
+<link rel="stylesheet" href="css/style.css">
 <!-- SweetAlert -->
-	<link rel="stylesheet" href="sweetalert2.min.css">
-	<!-- My Bootstrap CSS -->
-	<link
-	  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
-	  rel="stylesheet"
-	/>
- <style>
- .feedback {
-    background-color: #EDEFF1;
-    color: #222222;
-    padding: 10px;
-    border-radius: 20px;
-    margin: auto;
-    align-items:center;
-	margin-top:5px;
-    margin-left: 15px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    cursor: pointer;
-    word-wrap: break-word;
-    max-width: 100%; /* adjust this value as needed */
-  }
-  .message {
-   	width:100%;
-   	    margin-top:10px;
-    margin-left: 10px;
-  }
-  
-  .feedback:hover {
-    background-color: #f2f2f3;
-  }
+<link rel="stylesheet" href="sweetalert2.min.css">
+<!-- My Bootstrap CSS -->
+<link
+	href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
+	rel="stylesheet" />
+<script
+	th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
+<style>
+.feedback {
+	background-color: #EDEFF1;
+	color: #222222;
+	padding: 10px;
+	border-radius: 20px;
+	margin: auto;
+	align-items: center;
+	margin-top: 5px;
+	margin-left: 15px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	cursor: pointer;
+	word-wrap: break-word;
+	max-width: 100%; /* adjust this value as needed */
+}
 
-  .feedback-time {
-  margin-left:10px;
-    color: grey;
-    font-size: 13px;
-  }
+.message {
+	width: 100%;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+.feedback:hover {
+	background-color: #f2f2f3;
+}
+
+.feedback-time {
+	margin-left: 10px;
+	color: grey;
+	font-size: 13px;
+}
 </style>
-	<!-- My Bootstrap CSS -->
-		<link rel="stylesheet" th:href="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'">
-<script th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
-<script th:src="'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js'"></script>
-<script th:src="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'"></script>
-	
-	<title>Ticket Progress</title>
-	
-	<style>
-  .left a, .left h5 {
-    display: inline-block;
-    vertical-align: middle;
-  }
-  
-  .left a {
-    margin-right: 5px;
-  }
-  
-  .ticket-status {
-  color: white;
-  font-size: 11px;
-  
-  padding: 5px 10px;
+<!-- My Bootstrap CSS -->
+<link rel="stylesheet"
+	th:href="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'">
+<script
+	th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
+<script
+	th:src="'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js'"></script>
+<script
+	th:src="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'"></script>
+
+<title>Ticket Progress</title>
+
+<style>
+.left a, .left h5 {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.left a {
+	margin-right: 5px;
+}
+
+.ticket-status {
+	color: white;
+	font-size: 11px;
+	padding: 5px 10px;
 }
 
 .ticket-status.on-going {
-  background-color:  #FFC300; 
-  border-radius: 10px;
+	background-color: #FFC300;
+	border-radius: 10px;
 }
 
 .ticket-status.closed {
-  background-color: #00b300; /* green */
-  border-radius: 5px;
+	background-color: #00b300; /* green */
+	border-radius: 5px;
 }
 </style>
-	
+
 </head>
-<body >
+<body>
 
 	<!-- SIDEBAR -->
-	<section id="sidebar" class="hide" style="width:0%;">
-		
-	</section>
+	<section id="sidebar" class="hide" style="width: 0%;"></section>
 	<!-- SIDEBAR -->
 
 	<!-- CONTENT -->
 	<section id="content">
-	
+
 		<!-- MAIN -->
 		<main>
 			<div class="head-title">
 				<div class="left">
-  <a th:href="${session.userRole == 'client' ? 'dashboard' : 'admin.ark'}" style="background:transparent; text-decoration: none;">
-    <i class="bx bx-arrow-back" style="color:grey;font-size:25px"></i>
-    <h5 style="color:grey">Back to dashboard</h5>
-</a>
-  	
-	</div>	
+					<a
+						th:href="${session.userRole == 'client' ? 'dashboard' : 'admin.ark'}"
+						style="background: transparent; text-decoration: none;"> <i
+						class="bx bx-arrow-back" style="color: grey; font-size: 25px"></i>
+						<h5 style="color: grey">Back to dashboard</h5>
+					</a>
+
+				</div>
 			</div>
 
- 	<!-- hidden -->
+			<!-- hidden -->
 
- 	<!--Progress Table -->
-<div class="table-data" id="status-table" style=" 
-  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2);
-  border-collapse: collapse;
-  border-radius:20px;
-  background:white;
-  width: 100%;
-  margin-bottom: 1rem;">
-  
-  <div class="order">
-    <div class="head"  >
-   
-  <div style="display: inline-block; ">
-      <h3 style="display: inline-block;  " >Tickets Progress</h3>   
+			<!--Progress Table -->
+			<div class="table-data" id="status-table"
+				style="box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2); border-collapse: collapse; border-radius: 20px; background: white; width: 100%; margin-bottom: 1rem;">
 
-     <span    style="  color:grey; font-size:15px;">
-     	(<span id="span_value" th:text="${ticket.ticket_id}" 
-     style="  color:grey; font-size:15px;"></span>)
-     </span>
-     <span th:text="${ticketId}" ></span>
-     
-  <span  style="font-size:15px;">
-     	<strong><span class="ticket-status" id="status_id" th:text="${ticket.status}" ></span></strong>	
-     </span>
-  </div>
-    <h3></h3>   
-  <div th:style="${ticket.status == 'ongoing' ? ''  : 'display:none;'}">
- 
-        <ul class="horizontal-menu" 
-       th:style="${session.userRole == 'support_team' ? '' : 'display:none;'}">
-    <li class="btn btn-primary add_button_update" data-toggle="modal" data-target="#support_add_modal">
-        <i class='bx bx-plus' style="color: white;"></i>
-        <span class="text">
-            ADD PROGRESS
-        </span>
-    </li>
- 
-    <li class="btn btn-success"   onclick="showConfirmation()">
-        <i class='bx bxs-check-circle' style="color: white;"></i>
-        <span class="text">
-            MARKED AS COMPLETED
-        </span>
-    </li>
-</ul>
- </div>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Status ID</th>
-          <th>Status Title</th>
-          <th>Status Message</th>
-          <th>Status Date Time</th>
-          <th>Status Progress</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>	
-        <tr th:each="status : ${findStatus}">
-          <td th:text="${status.status_id}"></td>
-          <td th:text="${status.status_title}"></td>
-          <td th:text="${status.status_message}"></td>
-          <td th:text="${status.status_date_time}"></td>
-          <td th:text="${status.status_progress}"></td>
-          <td>
-            	 <button type="button" class="btn btn-success my-2 eBtn"   data-toggle="modal"  data-target="#view_progress"><i class="fa fa-eye" style="font-size:20px;"></i></button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-   <div th:if="${#lists.isEmpty(findStatus)}" style="text-align:center;margin-top:20px">
-  <span style="color:red">No status updates found.</span>
-</div>
-  </div>
-</div>
- 
- 		<!--End of progress table   -->
-	
-	<!-- Add update modal   -->
+				<div class="order">
+					<div class="head">
 
-	  <form th:action="@{/status/add}"  method="post">
-		<div class="modal fade" id="support_add_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-           
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add a Progress</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            
-  		 <div class="modal-body">
-  		 
-		      	<div class="form-group">
-				  <!--  hidden attributes  --> 
-     			   <input type="hidden" class="form-control" id="ticket_id_add" name="ticketID" th:value="${ticket.ticket_id}" >
-     			   <input type="hidden" class="form-control" id="status_date_time_add" name="status_date_time">
-     			   <input type="hidden" class="form-control"  id="status_progress_add" name="status_progress"> 
-        
+						<div style="display: inline-block;">
+							<h3 style="display: inline-block;">Tickets Progress</h3>
+
+							<span style="color: grey; font-size: 15px;"> (<span
+								id="span_value" th:text="${ticket.ticket_id}"
+								style="color: grey; font-size: 15px;"></span>)
+							</span> <span th:text="${ticketId}"></span> <span
+								style="font-size: 15px;"> <strong><span
+									class="ticket-status" id="status_id" th:text="${ticket.status}"></span></strong>
+							</span>
+						</div>
+						<h3></h3>
+						<div
+							th:style="${ticket.status == 'ongoing' ? ''  : 'display:none;'}">
+
+							<ul class="horizontal-menu"
+								th:style="${session.userRole == 'support_team' ? '' : 'display:none;'}">
+								<li class="btn btn-primary add_button_update"
+									data-toggle="modal" data-target="#support_add_modal"><i
+									class='bx bx-plus' style="color: white;"></i> <span
+									class="text"> ADD PROGRESS </span></li>
+
+								<li class="btn btn-success" onclick="showConfirmation()"><i
+									class='bx bxs-check-circle' style="color: white;"></i> <span
+									class="text"> MARKED AS COMPLETED </span></li>
+							</ul>
+						</div>
+					</div>
+					<table>
+						<thead>
+							<tr>
+								<th>Status ID</th>
+								<th>Status Title</th>
+								<th>Status Message</th>
+								<th>Status Date Time</th>
+								<th>Status Progress</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="status : ${findStatus}">
+								<td th:text="${status.status_id}"></td>
+								<td th:text="${status.status_title}"></td>
+								<td th:text="${status.status_message}"></td>
+								<td th:text="${status.status_date_time}"></td>
+								<td th:text="${status.status_progress}"></td>
+								<td>
+									<button type="button" class="btn btn-success my-2 eBtn"
+										data-toggle="modal" data-target="#view_progress">
+										<i class="fa fa-eye" style="font-size: 20px;"></i>
+									</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div th:if="${#lists.isEmpty(findStatus)}"
+						style="text-align: center; margin-top: 20px">
+						<span style="color: red">No status updates found.</span>
+					</div>
 				</div>
-			 <div class="form-group">
-			 <label for="title">Update Title</label>
-			  <input type="text" class="form-control" name="status_title">
-			 </div>
-				<div class="form-group">
-				  <label for="issue">Update Comments</label>
-				  <textarea class="form-control" rows="5" name="status_message"></textarea>
-				  			
+			</div>
+
+			<!--End of progress table   -->
+
+			<!-- Add update modal   -->
+
+			<form th:action="@{/status/add}" method="post">
+				<div class="modal fade" id="support_add_modal" tabindex="-1"
+					role="dialog" aria-labelledby="exampleModalLabel"
+					aria-hidden="true">
+					<div class="modal-dialog modal-xl" role="document">
+						<div class="modal-content">
+
+							<div class="modal-header">
+								<h5 class="modal-title" id="exampleModalLabel">Add a
+									Progress</h5>
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+
+							<div class="modal-body">
+
+								<div class="form-group">
+									<!--  hidden attributes  -->
+									<input type="hidden" class="form-control" id="ticket_id_add"
+										name="ticketID" th:value="${ticket.ticket_id}"> <input
+										type="hidden" class="form-control" id="status_date_time_add"
+										name="status_date_time"> <input type="hidden"
+										class="form-control" id="status_progress_add"
+										name="status_progress">
+
+								</div>
+								<div class="form-group">
+									<label for="title">Update Title</label> <input type="text"
+										class="form-control" name="status_title">
+								</div>
+								<div class="form-group">
+									<label for="issue">Update Comments</label>
+									<textarea class="form-control" rows="5" name="status_message"></textarea>
+
+								</div>
+							</div>
+
+							<div class="modal-footer text-right">
+								<button type="submit" class="btn btn-primary add_button_comment">ADD
+									UPDATE</button>
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
 				</div>
-		      </div>
-	
-         <div class="modal-footer text-right">
-  <button type="submit" class="btn btn-primary add_button_comment">ADD UPDATE</button>
-  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-</div>
-        </div>
-    </div>
-		  </div>
-		  </form>
-		  
-		<!-- End of add update modal-->
-		
-	<!-- Modal for viewing -->
-	
- <!-- View progress modal -->
-<div class="modal fade" id="view_progress" tabindex="-1" role="dialog" aria-labelledby="example" aria-hidden="true">
-  <div class="modal-dialog modal-xl" role="document">
-    <div class="modal-content">
-       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Progress Details</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div> 
-        <input type="hidden" class="form-control" id="status_id_"  >
-      <div class="modal-body">
- 		    <div class="row">
-        <div class="col-sm-6">
-            <div class="form-group">
-                <label for="id" class="col-form-label">Date of progress</label>
-                <input type="text" class="form-control" id="date" readonly>
-            </div>
-        </div>
-        <div class="col-sm-6">
-        <div class="form-group">
-                <label for="conforme_no" class="col-form-label">Progress status</label>
-                <input type="text" class="form-control"  id="status" readonly>
-            </div>
-        </div>
-  	  </div>
- 		 <div class="form-group">
-                <label for="conforme_no" class="col-form-label">Progress Title</label>
-                <input type="text" class="form-control"  id="title" readonly>
-            </div>
-              <div class="form-group">
-                <label for="id" class="col-form-label">Progress comments</label>
-                <textarea class="form-control" rows="5" id="comments" readonly></textarea>
-            </div>
-	  </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary feedback_modal"
-        	    th:style="${session.userRole == 'client' ? '' : 'display:none;'}"
-                data-toggle="modal"  data-target="#add_feedback_modal">Add feedback</button>
-       
-        <button type="button" class="btn btn-info view_feedback_modal"
-            th:style="${session.userRole == 'support_team' || session.userRole == 'sales_team' ? '' : 'display:none;'}"
-                 >See feedbacks</button>
-         
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        
-      </div>
-    </div>
-  </div>
-</div>
- <!-- End of view progress modal -->
- 
- <!-- Add feedback modal -->
-	  <form  th:action="@{/feedback/add}" method="post">
-		<div class="modal fade" id="add_feedback_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-           
-	<div class="modal-header" style="display: flex; flex-direction: column;">
-	    <h5 class="modal-title" id="exampleModalLabel">Add a feedback</h5>
-	    <p style="margin-top: 5px;margin-bottom:-10px;color:grey">Provide detailed feedback to help us quickly identify and address any issues you are experiencing, and improve our service.</p>
-	 
-	</div>
-            
-  		 <div class="modal-body">
-  		 
-		      	<div class="form-group">
-				  <!--  hidden attributes  --> 
-     			   <input type="text" class="form-control" id="status_id_feedback_" name="statusId">
-        			<input type="hidden" class="form-control" id="feedback_date" name="feedback_date_time">
+			</form>
+
+			<!-- End of add update modal-->
+
+			<!-- Modal for viewing -->
+
+			<!-- View progress modal -->
+			<div class="modal fade" id="view_progress" tabindex="-1"
+				role="dialog" aria-labelledby="example" aria-hidden="true">
+				<div class="modal-dialog modal-xl" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Progress
+								Details</h5>
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<input type="hidden" class="form-control" id="status_id_">
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label for="id" class="col-form-label">Date of
+											progress</label> <input type="text" class="form-control" id="date"
+											readonly>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label for="conforme_no" class="col-form-label">Progress
+											status</label> <input type="text" class="form-control" id="status"
+											readonly>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="conforme_no" class="col-form-label">Progress
+									Title</label> <input type="text" class="form-control" id="title"
+									readonly>
+							</div>
+							<div class="form-group">
+								<label for="id" class="col-form-label">Progress comments</label>
+								<textarea class="form-control" rows="5" id="comments" readonly></textarea>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary feedback_modal"
+								th:style="${session.userRole == 'client' ? '' : 'display:none;'}"
+								data-toggle="modal" data-target="#add_feedback_modal">Add
+								feedback</button>
+
+							<button type="button" class="btn btn-info view_feedback_modal"
+								th:style="${session.userRole == 'support_team' || session.userRole == 'sales_team' ? '' : 'display:none;'}">See
+								feedbacks</button>
+
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">Close</button>
+
+						</div>
+					</div>
 				</div>
-				<div class="form-group">
-				  <label for="issue">Feedback message</label>
-				  <textarea class="form-control" rows="5" name="feedback_message"></textarea>
-				  			
+			</div>
+			<!-- End of view progress modal -->
+
+			<!-- Add feedback modal -->
+			<form th:action="@{/feedback/add}" method="post">
+				<div class="modal fade" id="add_feedback_modal" tabindex="-1"
+					role="dialog" aria-labelledby="exampleModalLabel"
+					aria-hidden="true">
+					<div class="modal-dialog modal-xl" role="document">
+						<div class="modal-content">
+
+							<div class="modal-header"
+								style="display: flex; flex-direction: column;">
+								<h5 class="modal-title" id="exampleModalLabel">Add a
+									feedback</h5>
+								<p style="margin-top: 5px; margin-bottom: -10px; color: grey">Provide
+									detailed feedback to help us quickly identify and address any
+									issues you are experiencing, and improve our service.</p>
+
+							</div>
+
+							<div class="modal-body">
+
+								<div class="form-group">
+									<!--  hidden attributes  -->
+									<input type="text" class="form-control"
+										id="status_id_feedback_" name="statusId"> <input
+										type="hidden" class="form-control" id="feedback_date"
+										name="feedback_date_time">
+								</div>
+								<div class="form-group">
+									<label for="issue">Feedback message</label>
+									<textarea class="form-control" rows="5" name="feedback_message"></textarea>
+
+								</div>
+							</div>
+
+							<div class="modal-footer text-right">
+								<button type="submit" class="btn btn-primary  ">SUBMIT
+									FEEDBACK</button>
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">Close</button>
+							</div>
+						</div>
+					</div>
 				</div>
-		      </div>
-	
-         <div class="modal-footer text-right">
-  <button type="submit" class="btn btn-primary  ">SUBMIT FEEDBACK</button>
-  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-</div>
-        </div>
-    </div>
-		  </div>
-		  </form>
-	
- <!--End of  Add feedback modal -->	  
- 
-		<!-- View Feedbacks -->
-	
-	
-	<div class="modal fade" id="view_feedback_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		  <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-           
-		<div class="modal-header" style="display: flex; flex-direction: column;">
-	    <h5 class="modal-title" id="exampleModalLabel">Feedback ID <span style="color:gray">(<span id="span_id"></span>)</span></h5>
-	    <p style="margin-top: 5px;margin-bottom:-10px;color:grey">Note: All feedbacks shown are only for one specific progress</p>
-	 
-	</div>
-  		 <div class="modal-body" >
-		      	<div class="form-group">
-				  <!--  hidden attributes  --> 
-     			   <input type="hidden" class="form-control" id="status_id_feedback_" name="statusId">
-        			<input type="hidden" class="form-control" id="feedback_date" name="feedback_date_time">
+			</form>
+
+			<!--End of  Add feedback modal -->
+
+			<!-- View Feedbacks -->
+
+
+			<div class="modal fade" id="view_feedback_modal" tabindex="-1"
+				role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-xl" role="document">
+					<div class="modal-content">
+
+						<div class="modal-header"
+							style="display: flex; flex-direction: column;">
+							<h5 class="modal-title" id="exampleModalLabel">
+								Feedback ID <span style="color: gray">(<span id="span_id"></span>)
+								</span>
+							</h5>
+							<p style="margin-top: 5px; margin-bottom: -10px; color: grey">Note:
+								All feedbacks shown are only for one specific progress</p>
+
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+								<!--  hidden attributes  -->
+								<input type="hidden" class="form-control"
+									id="status_id_feedback_" name="statusId"> <input
+									type="hidden" class="form-control" id="feedback_date"
+									name="feedback_date_time">
+							</div>
+							<div class="form-group">
+								<label for="issue">Feedback message</label>
+								<div id="_messages"></div>
+
+							</div>
+						</div>
+						<div class="modal-footer text-right">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">CLOSE</button>
+						</div>
+					</div>
 				</div>
-				<div class="form-group">
-				  <label for="issue">Feedback message</label>
-				<div id="_messages" ></div>
-				  			
-				</div>
-		      </div>
-     <div class="modal-footer text-right">
-  <button type="button" class="btn btn-secondary" data-dismiss="modal">CLOSE</button>
-</div>
-        </div>
-    </div>
-		  </div>
-		 
-		
-		<!-- End of view Feedbacks -->  
-		  
+			</div>
+
+
+			<!-- End of view Feedbacks -->
+
 		</main>
 		<!-- MAIN -->
 	</section>
 	<!-- CONTENT -->
-	
+
+	<script src="Javascript/ticket_progress_dom.js"></script>
 	<script src="Javascript/dashboard.js"></script>
-		<!-- SweetAlert JS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<!-- SweetAlert JS -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-	 <script th:if="${successMessage}">
-        Swal.fire({
-            title: 'Success',
-            text: 'Ticket saved successfully!',
-            icon: 'success',
-            confirmButtonText: 'OK'
-        });
-       
-    </script>
-	
-	<script>
-	 //for status color
-	 // get the span element
-	var statusSpan = document.querySelector('.ticket-status');
-
-
-	// check the status value and add the appropriate class
-	if (statusSpan.textContent === 'ongoing') {
-	  statusSpan.classList.add('on-going');
-	 
-	  
-	} else if (statusSpan.textContent === 'completed') {
-	  statusSpan.classList.add('closed');
-
-	};
-		
-		
-		//for completed button
-		//if the completed button is clicked it will change the status to completed 
-function showConfirmation() {
-  var ticketId = $('#span_value').text();
-
-  Swal.fire({
-    title: 'Are you sure?',
-    text: "You won't be able to revert this!",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Yes, mark it as completed!'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      // Make an AJAX call to update the ticket
-      $.ajax({
-        type: "PUT",
-        url: "/tickets/update-ticket/" + ticketId,
-        data: {
-          "progress": "support_team",
-          "status": "completed"
-        },
-        success: function() {
-          // Show a success message
-          Swal.fire(
-            'Marked as completed!',
-            'The ticket has been marked as completed.',
-            'success'
-          ).then((result) => {
-            if (result.isConfirmed) {
-              location.reload();
-            }
-          });
-        },
-        error: function() {
-          // Show an error message
-          Swal.fire(
-            'Oops...',
-            'Something went wrong!',
-            'error'
-          );
-        }
-      });
-    }
-  });
-}
-		//for viewing all the feedbacks
-	 
-		
-	$('.view_feedback_modal').on('click', function(event) {   
-	    var currentDate = new Date().toLocaleString('en-US');
-	    
-	    var statusId = $('#status_id_').val();
-	    $('#status_id_feedback').val(statusId);
-	    $('#feedback_date').val(currentDate);
-	    $('#view_feedback_modal').modal();
-	    $('#view_progress').modal('hide');
-	    $('#span_id').text(statusId);
-	    
-	    
-	    $.ajax({
-	        type: "GET",
-	        url: "/feedbacks?statusId=" + statusId,
-	        success: function(feedbacks) {
-	            var messages = $('#_messages');
-	            messages.empty(); // clear existing content
-	            if (feedbacks.length === 0) {
-	                messages.append('<span style="color:red">No feedbacks yet.</span>');
-	            } else {
-	                $.each(feedbacks, function(index, feedback) {
-	                    messages.append('<div class="feedback">' +'<p class="message">'+ feedback.feedback_message +'</span>' +
-	                        '<span class="feedback-time">' + feedback.feedback_date_time + '</span>' +
-	                        '</div>');
-	                });
-	            }
-	        },
-	        error: function(jqXHR, textStatus, errorThrown) {
-	            // handle the error here
-	            console.log(textStatus);
-	        }
-	    });
-	  
-	});
-	 
-	
+	<script th:if="${successMessage}">
+		Swal.fire({
+			title : 'Success',
+			text : 'Ticket saved successfully!',
+			icon : 'success',
+			confirmButtonText : 'OK'
+		});
 	</script>
-	
-	<script>
-
-	
-	//for adding a feedbacks
-	$('.feedback_modal').on('click', function(event) {
-	  
-	    var currentDate = new Date().toLocaleString('en-US');
-	    var status_id_ = $('#status_id_').val();
-	  
-	    $('#status_id_feedback_').val(status_id_);
-	    $('#feedback_date').val(currentDate);
-	    $('#add_feedback_modal').modal();
-	    $('#view_progress').modal('hide');
-	});
-	
-	
-	//adding a progress
-	$('.add_button_update').on('click', function(event) {
-	 
-		var currentDate = new Date().toLocaleString('en-US');
-			
-	    $('#status_date_time_add').val(currentDate);
-	    $('#status_progress_add').val("ongoing");	    
-	    
-	    $('#support_add_modal').modal();
-	    
-	});
-	
-	
-	//viewing the progress
-	$('.eBtn').on('click', function(event) {
-	  
-	       var status_id_ = $(this).closest('tr').find('td:eq(0)').text();
-   		   var _title = $(this).closest('tr').find('td:eq(1)').text();
-   		   var _comments = $(this).closest('tr').find('td:eq(2)').text();
-   	    
-	       var dateCreated = $(this).closest('tr').find('td:eq(3)').text();
-	       var _progress = $(this).closest('tr').find('td:eq(4)').text();
-	        
-	    $('#status_id_').val(status_id_);
-	    $('#title').val(_title);
-	    $('#comments').val(_comments);
-	    $('#date').val(dateCreated);
-	    $('#status').val(_progress);	    
-	    
-	    $('#view_progress').modal();
-	    
-	});
-	
-	
-</script>
-	
-	
 </body>
