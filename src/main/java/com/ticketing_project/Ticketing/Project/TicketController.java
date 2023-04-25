@@ -96,12 +96,17 @@ public class TicketController {
 			 return "redirect:/dashboard";
 			}
 
-	 @GetMapping("/getTicket")
+	 
+	
+	
+	@GetMapping("/getTicket")
 	 @ResponseBody
 	    public String getTicket(@RequestParam int ticketID) {
 	       Ticket ticket = ticketService.getTicketById(ticketID);
 	        return ticket.getProgress();
 	    }
+	 
+	 
 	
 	//HTTP POST method
 	@PostMapping("/tickets/update-ticket-ongoing")
@@ -114,29 +119,8 @@ public class TicketController {
 		 
 		}
 	
-	@PostMapping("/tickets/update-ticket")
-		public String conformeTicket(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes, @RequestParam MultipartFile img) {
-			
-			newTicket.setSalesSignature(img.getOriginalFilename());
-			
-			Ticket uploadImg = ticketService.save(newTicket);
-			
-			if (uploadImg != null) {
-				try {
 
-					File saveFile = new ClassPathResource("static/img").getFile();
-					Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + img.getOriginalFilename());
-					System.out.println(path);
-					System.out.println(img.getOriginalFilename());
-					Files.copy(img.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			redirectAttributes.addFlashAttribute("successMessage", "Conforme slip saved successfully!");
-			 return "redirect:/admin.ark";
-			}
+	
 	
 	
 	@PostMapping("/tickets/update-tickets-client")
@@ -189,6 +173,32 @@ public class TicketController {
 	  ticketService.update(ticketId, ticketToUpdate);
 
 	}
+	
+	@PutMapping("/tickets/update_ticket")
+	@ResponseBody
+	public void conformeTicket(@ModelAttribute Ticket newTicket ,RedirectAttributes redirectAttributes, @RequestParam MultipartFile img) {
+		
+		newTicket.setSalesSignature(img.getOriginalFilename());
+		
+		Ticket uploadImg = ticketService.save(newTicket);
+		
+		if (uploadImg != null) {
+			try {
+
+				File saveFile = new ClassPathResource("static/img").getFile();
+				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + img.getOriginalFilename());
+				System.out.println(path);
+				System.out.println(img.getOriginalFilename());
+				Files.copy(img.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		redirectAttributes.addFlashAttribute("conformeSlip", "Conforme slip generated successfully!");
+		
+		}
+
 	
 	
 	//HTTP DELETE method

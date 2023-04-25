@@ -52,6 +52,9 @@ public class InvoiceController {
 	    return invoiceDetails;
 	}
 	
+	
+
+	
 	@PutMapping("/invoice/update/{ticketID}")
 	@ResponseBody
 	public String updateInvoice(@PathVariable  int ticketID,HttpSession session, @RequestParam MultipartFile img1, RedirectAttributes redirectAttributes){	   
@@ -59,9 +62,8 @@ public class InvoiceController {
 
 		Invoice newInvoice = invoiceService.findByTicketID(ticketID);
 		  
-		  newInvoice.setPaymentConfirmation(img1.getOriginalFilename());
-	
-	   
+	    newInvoice.setPaymentConfirmation(img1.getOriginalFilename());
+
 	    Ticket updateTicket = ticketService.getTicketById(newInvoice.getTicketID());
 	    updateTicket.setProgress("completed");
 	    

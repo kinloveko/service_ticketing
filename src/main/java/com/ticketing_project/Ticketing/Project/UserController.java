@@ -132,9 +132,9 @@ public class UserController {
     }
     
     @GetMapping("/getUpdateTicket")
-    public String getUpdateTicket(Model m) {
+    public String getUpdateTicket(@RequestParam("tableId") String tableId, Model m) {
         ticketService.populateTicketModel(m);
-        return "admin.ark :: #completed-table";
+        return "admin.ark :: #" + tableId;
     }
     
     
