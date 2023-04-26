@@ -1,6 +1,8 @@
 package com.ticketing_project.Ticketing.Project;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,8 +12,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.bouncycastle.mime.encoding.Base64OutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
@@ -28,33 +33,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.itextpdf.commons.utils.Base64;
+import com.itextpdf.commons.utils.Base64.OutputStream;
+import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.source.ByteArrayOutputStream;
+
 @Controller
 public class TicketController {
-
-	/*
-	 * @GetMapping("/tickets/assigned/{userId}/filter")
-	 * 
-	 * @ResponseBody public List<Ticket> getTicketsByUserIdAndStatus(@PathVariable
-	 * int userId,
-	 * 
-	 * @RequestParam String status){ return
-	 * ticketService.getTicketsByStatusAndUserId(userId, status); }
-	 */
-
-	/*
-	 * @GetMapping("/tickets/all/filter")
-	 * 
-	 * @ResponseBody public List<Ticket> getAllTicketsByStatus(@RequestParam final
-	 * String status){ return ticketService.getTicketsByStatus(status); }
-	 */
-
-	/*
-	 * @GetMapping("/tickets/assigned/{userId}")
-	 * 
-	 * @ResponseBody public List<Ticket> getTicketsByUserId(@PathVariable final int
-	 * userId){ return ticketService.getTicketsByUserId(userId); }
-	 * 
-	 */
 
 	@Autowired
 	private StatusService statusService;
@@ -256,5 +241,24 @@ public class TicketController {
 
 		return "dashboard";
 	}
-
+	
+	@GetMapping("/tickets/csv")
+	public String generateCsvFileByCreatedOn(@RequestParam String filter, HttpServletResponse response) throws IOException, java.io.IOException {
+	    // Generate CSV data
+	 ticketService.generateCsvFileByCreatedOn(filter,response);
+	 return "admin.ark";
+	}
+	@GetMapping("/tickets/csv/assignee")
+	public String generateCsvFileByAssignee(@RequestParam String asignee, HttpServletResponse response) throws IOException, java.io.IOException {
+	    // Generate CSV data
+	 ticketService.generateCsvFileByAssignee(asignee,response);
+	 return "admin.ark";
+	}
+	
+	@GetMapping("/tickets/csv/aging")
+	public String generateCsvFileByAging(@RequestParam String aging, HttpServletResponse response) throws IOException, java.io.IOException {
+	    // Generate CSV data
+	 ticketService.generateCsvFileByAging(aging,response);
+	 return "admin.ark";
+	}
 }

@@ -122,21 +122,41 @@
 	<section id="content">
 		<!-- NAVBAR -->
 		<nav>
-			<i class='bx bx-menu'></i> <a href="admin.ark" class="nav-link"><strong>Admin
-					Panel</strong></a>
+			<i class='bx bx-menu'></i> <a href="admin.ark" class="nav-link">
+				<strong>Admin Panel</strong>
+			</a>
 
 			<form action="#"></form>
 			<strong>Hello, <span th:text="${session.user_name}"></span></strong>
 			<a href="#" class="profile"> <img src="img/people.png">
 			</a>
 		</nav>
+
+		<div class=" d-flex justify-content-between"
+			style="margin-right: 20px; margin-top: 10px">
+			<div></div>
+			<div class="btn-group dropleft" style="border-radius: 20px;">
+				<button type="button" class="btn btn-success"
+					style="border-radius: 20px; padding: 5px 10px; font-size: 13px;"
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<i class='bx bxs-download' style="font-size: 14px;"></i> Reports to
+					EXCEL
+
+				</button>
+				<div class="dropdown-menu">
+					<a class="dropdown-item monthly_report" style="cursor: pointer">Monthly
+						Reports</a> <a class="dropdown-item ticket_per_assignee"
+						style="cursor: pointer">Ticket List Per Assignee</a> <a
+						class="dropdown-item aging_tickets" style="cursor: pointer">Aging
+						Tickets</a>
+				</div>
+			</div>
+		</div>
 		<!-- NAVBAR -->
 
 		<!-- MAIN -->
 		<main>
-
 			<ul class="box-info">
-
 				<li class="menu-item " data-table="pending"
 					onclick="handleClick(this)"><i class='bx bxs-calendar-check'></i>
 					<span class="text">
@@ -144,8 +164,8 @@
 						<p>Pending Tickets</p>
 				</span></li>
 				<li class="menu-item " data-table="ongoing"
-					onclick="handleClick(this)"><i class='bx bxs-hourglass'></i>
-					<span class="text">
+					onclick="handleClick(this)"><i class='bx bxs-hourglass'></i> <span
+					class="text">
 						<h3 id="ongoing_count" th:text="${ongoing_ticket_count}">0</h3>
 						<p>On-going Tickets</p>
 				</span></li>
@@ -158,6 +178,167 @@
 				</span></li>
 			</ul>
 
+
+
+			<!-- Modal for CSV Drop down -->
+			<!-- Montly CSV -->
+			<form th:action="@{/tickets/csv}" method="get">
+				<div class="modal fade" id="monthly_report_filter_modal"
+					tabindex="-1" role="dialog" aria-labelledby="example"
+					aria-hidden="true">
+					<div class="modal-dialog modal-xl" role="document">
+						<div class="modal-content">
+							<!-- Hidden -->
+							<div class="modal-header" style="display: inline-block;">
+								<h6 class="modal-title" id="exampleModalLabel"
+									style="display: inline-block;">Monthly Reports</h6>
+							</div>
+
+							<div class="modal-body">
+								<div class="form-group">
+									<label for="id" class="col-form-label">Choose filter</label>
+									<div class="input-field">
+										<div class="form-select-icon">
+											<i class="uil uil-user icon"></i>
+										</div>
+										<select class="form-select" id="dropdownRole" name="filter"
+											style="color: grey">
+											<option value="default">Choose filter</option>
+											<option value="This month">This month</option>
+											<option value="Last month">Last month</option>
+											<option value="All tickets">All tickets</option>
+
+										</select>
+									</div>
+								</div>
+
+
+							</div>
+							<div class="modal-footer ">
+								<button type="submit" class="btn btn-primary download_excel">Download
+									EXCEL FILE</button>
+								<button type="button" class="btn"
+									style="margin-left: 10px; background-color: grey; color: white"
+									data-dismiss="modal">Close</button>
+								<div class="d-flex justify-content-between"
+									style="margin-top: 35px">
+									<div></div>
+
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<!-- End of  Montly CSV -->
+
+			<!-- Assignee CSV -->
+			<form th:action="@{/tickets/csv/assignee}" method="get">
+				<div class="modal fade" id="ticket_per_assignee_modal" tabindex="-1"
+					role="dialog" aria-labelledby="example" aria-hidden="true">
+					<div class="modal-dialog modal-xl" role="document">
+						<div class="modal-content">
+							<!-- Hidden -->
+							<div class="modal-header" style="display: inline-block;">
+								<h6 class="modal-title" id="exampleModalLabel"
+									style="display: inline-block;">Ticket per assignee</h6>
+							</div>
+
+							<div class="modal-body">
+								<div class="form-group">
+									<label for="id" class="col-form-label">Choose Assignee</label>
+									<div class="input-field">
+										<div class="form-select-icon">
+											<i class="uil uil-user icon"></i>
+										</div>
+										<select class="form-select" id="dropdownRoleAssignee"
+											name="asignee" style="color: grey">
+											<option value="default">Choose filter</option>
+											<option value="Sales Team">Sales Team</option>
+											<option value="Support Team">Support Team</option>
+											<option value="Billing Team">Billing Team</option>
+											<option value="Collection Team">Collection Team</option>
+											<option value="Treasury Team">Treasury Team</option>
+											<option value="Completed">Completed</option>
+										</select>
+									</div>
+								</div>
+
+
+							</div>
+							<div class="modal-footer ">
+								<button type="submit"
+									class="btn btn-primary download_excel_asignee">Download
+									EXCEL FILE</button>
+								<button type="button" class="btn"
+									style="margin-left: 10px; background-color: grey; color: white"
+									data-dismiss="modal">Close</button>
+								<div class="d-flex justify-content-between"
+									style="margin-top: 35px">
+									<div></div>
+
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<!--End of Assignee CSV -->
+
+			<!-- Aging tickets -->
+			<form th:action="@{/tickets/csv/aging}" method="get">
+				<div class="modal fade" id="aging_ticket_modal" tabindex="-1"
+					role="dialog" aria-labelledby="example" aria-hidden="true">
+					<div class="modal-dialog modal-xl" role="document">
+						<div class="modal-content">
+							<!-- Hidden -->
+							<div class="modal-header" style="display: inline-block;">
+								<h6 class="modal-title" id="exampleModalLabel"
+									style="display: inline-block;">Aging tickets</h6>
+							</div>
+
+							<div class="modal-body">
+								<div class="form-group">
+									<label for="id" class="col-form-label">Choose status</label>
+									<div class="input-field">
+										<div class="form-select-icon">
+											<i class="uil uil-user icon"></i>
+										</div>
+										<select class="form-select" id="dropdownAging" name="aging"
+											style="color: grey">
+											<option value="default">Choose filter</option>
+											<option value="pending">Pending</option>
+											<option value="ongoing">On-going</option>
+											<option value="all">All aging tickets</option>
+										</select>
+									</div>
+								</div>
+
+
+							</div>
+							<div class="modal-footer ">
+								<button type="submit"
+									class="btn btn-primary download_excel_aging">Download
+									EXCEL FILE</button>
+								<button type="button" class="btn"
+									style="margin-left: 10px; background-color: grey; color: white"
+									data-dismiss="modal">Close</button>
+								<div class="d-flex justify-content-between"
+									style="margin-top: 35px">
+									<div></div>
+
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<!-- End of Aging tickets -->
+			<!-- End of Aging tickets -->
+			<!-- End of Modal for CSV Drop down -->
 
 
 			<!-- Account Table -->
@@ -202,7 +383,7 @@
 
 
 
-
+			<!-- Modal Table -->
 			<div class="modal fade" id="accountModal" tabindex="-1" role="dialog"
 				aria-labelledby="exampleModalLabel" aria-hidden="true">
 				<div class="modal-dialog" role="document">
@@ -449,7 +630,6 @@
 					</div>
 				</div>
 			</div>
-
 
 			<!-- Support Table -->
 			<div class="table-data" id="support-table" style="display: none">
@@ -903,8 +1083,8 @@
 
 							<!-- Hiiden -->
 							<input type="hidden" class="form-control"
-								id="client_signatures_hidden" name="client_signature">
-							<input type="hidden" class="form-control"
+								id="client_signatures_hidden" name="client_signature"> <input
+								type="hidden" class="form-control"
 								id="client_payment_proofs_hidden" name="client_payment_proof">
 
 							<div class="modal-header">
@@ -1243,14 +1423,13 @@
 		});
 	</script>
 	<script th:if="${conformeSlip}">
-        Swal.fire({
-            title: 'Success',
-            text: 'Conforme slip generated successfully!',
-            icon: 'success',
-            confirmButtonText: 'OK'
-        });
-    </script>
-
+		Swal.fire({
+			title : 'Success',
+			text : 'Conforme slip generated successfully!',
+			icon : 'success',
+			confirmButtonText : 'OK'
+		});
+	</script>
 
 
 </body>

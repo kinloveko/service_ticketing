@@ -2,6 +2,128 @@
  * for image viewer
  */
 
+
+
+
+
+$(document).ready(function() {
+  $('.aging_tickets').on('click', function() {
+    // Show the modal
+    $('#aging_ticket_modal').modal();
+  });
+
+  $('.download_excel_aging').on('click', function() {
+    // Get the select element value
+    const dropdownValue = $('#dropdownAging').val();
+
+    // Show error if the selected value is "default"
+    if (dropdownValue === "default") {
+      Swal.fire({
+        title : 'Error',
+        text : 'Please choose a filter',
+        icon : 'error',
+        confirmButtonText : 'OK'
+      });
+      return false;
+    } else {
+      // Show success if the selected value is not "default"
+      Swal.fire({
+        title : 'Success',
+        text : 'Excel file download successfully!',
+        icon : 'success',
+        confirmButtonText : 'OK'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Close the modal
+          console.log(dropdownValue);
+          $('#aging_ticket_modal').modal('hide');
+        }
+      });
+      return true;
+    }
+  });
+});
+
+
+$(document).ready(function() {
+  $('.ticket_per_assignee').on('click', function() {
+    // Show the modal
+    $('#ticket_per_assignee_modal').modal();
+  });
+
+  $('.download_excel_asignee').on('click', function() {
+    // Get the select element value
+    const dropdownValue = $('#dropdownRoleAssignee').val();
+
+    // Show error if the selected value is "default"
+    if (dropdownValue === "default") {
+      Swal.fire({
+        title : 'Error',
+        text : 'Please choose a filter',
+        icon : 'error',
+        confirmButtonText : 'OK'
+      });
+      return false;
+    } else {
+      // Show success if the selected value is not "default"
+      Swal.fire({
+        title : 'Success',
+        text : 'Excel file download successfully!',
+        icon : 'success',
+        confirmButtonText : 'OK'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Close the modal
+          $('#ticket_per_assignee_modal').modal('hide');
+        }
+      });
+      return true;
+    }
+  });
+});
+
+
+$(document).ready(function() {
+  $('.monthly_report').on('click', function() {
+    // Show the modal
+    $('#monthly_report_filter_modal').modal();
+  });
+
+  $('.download_excel').on('click', function() {
+    // Get the select element value
+    const dropdownValue = $('#dropdownRole').val();
+
+    // Show error if the selected value is "default"
+    if (dropdownValue === "default") {
+      Swal.fire({
+        title : 'Error',
+        text : 'Please choose a filter',
+        icon : 'error',
+        confirmButtonText : 'OK'
+      });
+      return false;
+    } else {
+      // Show success if the selected value is not "default"
+      Swal.fire({
+        title : 'Success',
+        text : 'Conforme slip generated successfully!',
+        icon : 'success',
+        confirmButtonText : 'OK'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Close the modal
+          $('#monthly_report_filter_modal').modal('hide');
+        }
+      });
+      return true;
+    }
+  });
+});
+
+
+
+
+
 $(document).ready(function() {
 
 	$('.imageProof').on('click', function(event) {

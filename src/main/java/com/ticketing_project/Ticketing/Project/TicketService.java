@@ -1,15 +1,41 @@
 package com.ticketing_project.Ticketing.Project;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.net.http.HttpResponse;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.sl.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+
+import com.itextpdf.commons.utils.Base64.OutputStream;
+import com.itextpdf.io.exceptions.IOException;
+import com.itextpdf.io.source.ByteArrayOutputStream;
+import com.itextpdf.layout.element.Cell;
+import com.lowagie.text.Row;
+import com.opencsv.CSVWriter;
 
 @Service
 public class TicketService {
@@ -181,4 +207,260 @@ public class TicketService {
 		return emails;
 	}
 
+	public void generateCsvFileByAging(String filter, HttpServletResponse response)
+			throws IOException, java.io.IOException {
+		// Create a new workbook
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		List<Ticket> allTickets = repo.findAll();
+
+		// Retrieve filtered tickets from database
+		List<Ticket> ongoingTickets = new ArrayList<>();
+		List<Ticket> pendingTickets = new ArrayList<>();
+		// All pending accounts has no assignee so here we don't need to add it on EXCEL
+		// file
+		int minimumAge = 2;
+		for (Ticket i : allTickets) {
+
+			Instant minimumAgeInstant = Instant.now().minus(minimumAge, ChronoUnit.DAYS);
+			Date minimumAgeDate = Date.from(minimumAgeInstant);
+
+			if (filter.equals("all")) {
+
+				if (i.getStatus().equals("pending") && i.getCreated_on().before(minimumAgeDate)) {
+					pendingTickets.add(i);
+				}
+				else if (i.getStatus().equals("ongoing") && i.getCreated_on().before(minimumAgeDate)) {
+						if ((i.getClient_signature() == null && i.getClient_payment_proof() == null)
+								|| (i.getClient_signature().equals("") && i.getClient_payment_proof().equals("")))
+							ongoingTickets.add(i);
+					}
+
+			} else if (filter.equals("pending")) {
+				if (i.getStatus().equals("pending") && i.getCreated_on().before(minimumAgeDate)) {
+					pendingTickets.add(i);
+				}
+			} else if (filter.equals("ongoing")) {
+				if (i.getStatus().equals("ongoing") && i.getCreated_on().before(minimumAgeDate)) {
+					if ((i.getClient_signature() == null && i.getClient_payment_proof() == null)
+							|| (i.getClient_signature().equals("") && i.getClient_payment_proof().equals("")))
+						ongoingTickets.add(i);
+				}
+			}
+		}
+
+		// Write data to CSV file
+		response.setContentType("text/csv");
+		response.setHeader("Content-Disposition",
+				"attachment; filename=\"tickets_" + System.currentTimeMillis() + ".xlsx\"");
+
+		// Get output stream from response object
+		ServletOutputStream outputStream = response.getOutputStream();
+
+		// Write header row to each sheet
+		String[] header = { "Ticket ID", "User Name", "Title", "Description", "Status", "Created On", "User ID",
+				"Conforme No.", "Amount", "Sales Signature", "Client Payment Proof", "Client Signature",
+				"Conforme Date", "Progress" };
+
+		if (filter.equals("all")) {
+			writeDataToSheet(workbook.createSheet("Pending Tickets"), pendingTickets, header);
+			writeDataToSheet(workbook.createSheet("Ongoing Tickets"), ongoingTickets, header);
+	
+
+
+		} else if (ongoingTickets.size()!=0) {
+			writeDataToSheet(workbook.createSheet("Ongoing Tickets"), ongoingTickets, header);
+
+		} else if (pendingTickets.size()!=0) {
+			writeDataToSheet(workbook.createSheet("Pending Tickets"), pendingTickets, header);
+
+
+		}
+		// Write data to Excel file
+		workbook.write(outputStream);
+
+		// Flush and close output stream
+		outputStream.flush();
+		outputStream.close();
+	}
+
+	public void generateCsvFileByAssignee(String filter, HttpServletResponse response)
+			throws IOException, java.io.IOException {
+		// Create a new workbook
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		List<Ticket> allTickets = repo.findAll();
+
+		// Retrieve filtered tickets from database
+		List<Ticket> ongoingTickets = new ArrayList<>();
+		List<Ticket> completedTickets = new ArrayList<>();
+
+		// All pending accounts has no assignee so here we don't need to add it on EXCEL
+		// file
+		for (Ticket i : allTickets) {
+
+			if (filter.equals("Sales Team")) {
+				if (i.getStatus().equals("ongoing") && i.getProgress().equals("sales_team"))
+					ongoingTickets.add(i);
+				if (i.getStatus().equals("completed") && i.getProgress().equals("support_team"))
+					ongoingTickets.add(i);
+
+			} else if (filter.equals("Billing Team")) {
+				if (i.getStatus().equals("completed") && i.getProgress().equals("billing_team"))
+					completedTickets.add(i);
+			} else if (filter.equals("Support Team")) {
+				if (i.getStatus().equals("ongoing") && i.getProgress().equals("support_team"))
+					ongoingTickets.add(i);
+			} else if (filter.equals("Collection Team")) {
+				if (i.getStatus().equals("completed") && i.getProgress().equals("collection_team"))
+					completedTickets.add(i);
+			} else if (filter.equals("Treasury Team")) {
+				if (i.getStatus().equals("completed") && i.getProgress().equals("treasury_team"))
+					completedTickets.add(i);
+			} else {
+				if (i.getStatus().equals("completed") && i.getProgress().equals("completed"))
+					completedTickets.add(i);
+			}
+
+		}
+
+		// Write data to CSV file
+		response.setContentType("text/csv");
+		response.setHeader("Content-Disposition",
+				"attachment; filename=\"tickets_" + System.currentTimeMillis() + ".xlsx\"");
+
+		// Get output stream from response object
+		ServletOutputStream outputStream = response.getOutputStream();
+
+		// Write header row to each sheet
+		String[] header = { "Ticket ID", "User Name", "Title", "Description", "Status", "Created On", "User ID",
+				"Conforme No.", "Amount", "Sales Signature", "Client Payment Proof", "Client Signature",
+				"Conforme Date", "Progress" };
+
+		if (filter.equals("Sales Team")) {
+			writeDataToSheet(workbook.createSheet("Ongoing Tickets"), ongoingTickets, header);
+		} else if (filter.equals("Billing Team")) {
+			writeDataToSheet(workbook.createSheet("Completed Tickets"), completedTickets, header);
+		} else if (filter.equals("Support Team")) {
+			writeDataToSheet(workbook.createSheet("Ongoing Tickets"), ongoingTickets, header);
+		} else if (filter.equals("Collection Team")) {
+			writeDataToSheet(workbook.createSheet("Completed Tickets"), completedTickets, header);
+		} else if (filter.equals("Treasury Team")) {
+			writeDataToSheet(workbook.createSheet("Completed Tickets"), completedTickets, header);
+		} else {
+			writeDataToSheet(workbook.createSheet("Completed Tickets"), completedTickets, header);
+		}
+
+		// Write data to Excel file
+		workbook.write(outputStream);
+
+		// Flush and close output stream
+		outputStream.flush();
+		outputStream.close();
+	}
+
+	public void generateCsvFileByCreatedOn(String filter, HttpServletResponse response)
+			throws IOException, java.io.IOException {
+		// Create a new workbook
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		List<Ticket> allTickets = repo.findAll();
+
+		// Calculate start and end dates based on filter
+		LocalDate startDate, endDate;
+		if (filter.equals("This month")) {
+			startDate = LocalDate.now().withDayOfMonth(1);
+			endDate = LocalDate.now().plusMonths(1).withDayOfMonth(1).minusDays(1);
+		} else if (filter.equals("Last month")) {
+			startDate = LocalDate.now().minusMonths(1).withDayOfMonth(1);
+			endDate = LocalDate.now().withDayOfMonth(1).minusDays(1);
+		} else if (filter.equals("All tickets")) {
+			startDate = LocalDate.of(2023, 1, 1); // Beginning of time
+			endDate = LocalDate.now();
+		} else {
+			throw new IllegalArgumentException("Invalid filter: " + filter);
+		}
+
+		// Convert start and end dates to timestamps
+		Instant startInstant = startDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+		Instant endInstant = endDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+		java.sql.Timestamp startTimestamp = java.sql.Timestamp.from(startInstant);
+		java.sql.Timestamp endTimestamp = java.sql.Timestamp.from(endInstant);
+
+		// Retrieve filtered tickets from database
+		List<Ticket> pendingTickets = new ArrayList<>();
+		List<Ticket> ongoingTickets = new ArrayList<>();
+		List<Ticket> completedTickets = new ArrayList<>();
+		for (Ticket ticket : allTickets) {
+			if (ticket.getCreated_on().after(startTimestamp) && ticket.getCreated_on().before(endTimestamp)) {
+				switch (ticket.getStatus()) {
+				case "ongoing":
+					ongoingTickets.add(ticket);
+					break;
+				case "completed":
+					completedTickets.add(ticket);
+					break;
+				case "pending":
+					pendingTickets.add(ticket);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		// Write data to CSV file
+		response.setContentType("text/csv");
+		response.setHeader("Content-Disposition",
+				"attachment; filename=\"tickets_" + System.currentTimeMillis() + ".xlsx\"");
+
+		// Get output stream from response object
+		ServletOutputStream outputStream = response.getOutputStream();
+
+		// Write header row to each sheet
+		String[] header = { "Ticket ID", "User Name", "Title", "Description", "Status", "Created On", "User ID",
+				"Conforme No.", "Amount", "Sales Signature", "Client Payment Proof", "Client Signature",
+				"Conforme Date", "Progress" };
+
+		// Write data to appropriate sheet
+		writeDataToSheet(workbook.createSheet("Pending Tickets"), pendingTickets, header);
+		writeDataToSheet(workbook.createSheet("Ongoing Tickets"), ongoingTickets, header);
+		writeDataToSheet(workbook.createSheet("Completed Tickets"), completedTickets, header);
+
+		// Write data to Excel file
+		workbook.write(outputStream);
+
+		// Flush and close output stream
+		outputStream.flush();
+		outputStream.close();
+	}
+
+	private void writeDataToSheet(XSSFSheet sheet, List<Ticket> tickets, String[] header)
+			throws FileNotFoundException, IOException {
+		// Create header row
+		XSSFRow headerRow = sheet.createRow(0);
+		int count = 0;
+		for (String i : header) {
+
+			headerRow.createCell(count).setCellValue(i);
+			count++;
+		}
+
+		// Write data rows
+		for (int i = 0; i < tickets.size(); i++) {
+			Ticket ticket = tickets.get(i);
+			XSSFRow dataRow = sheet.createRow(i + 1);
+			dataRow.createCell(0).setCellValue(ticket.getTicket_id());
+			dataRow.createCell(1).setCellValue(ticket.getUser_name());
+			dataRow.createCell(2).setCellValue(ticket.getTitle());
+			dataRow.createCell(3).setCellValue(ticket.getDescription());
+			dataRow.createCell(4).setCellValue(ticket.getStatus());
+			dataRow.createCell(5).setCellValue(ticket.getCreated_on().toLocalDateTime().toString());
+			dataRow.createCell(6).setCellValue(ticket.getUser_id());
+			dataRow.createCell(7).setCellValue(ticket.getConforme_no());
+			dataRow.createCell(8).setCellValue(ticket.getAmount());
+			dataRow.createCell(9).setCellValue(ticket.getSalesSignature());
+			dataRow.createCell(10).setCellValue(ticket.getClient_payment_proof());
+			dataRow.createCell(11).setCellValue(ticket.getClient_signature());
+			dataRow.createCell(12).setCellValue(ticket.getConforme_date());
+			dataRow.createCell(13).setCellValue(ticket.getProgress());
+		}
+	}
 }
