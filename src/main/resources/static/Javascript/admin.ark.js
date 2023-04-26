@@ -7,117 +7,295 @@
 
 
 $(document).ready(function() {
-  $('.aging_tickets').on('click', function() {
-    // Show the modal
-    $('#aging_ticket_modal').modal();
-  });
+	$('.send_to_client').on('click', function() {
+		// Show the modal
+		var ticket = $('#ticket_id_view').val();
+		var email = $('#client_name_invoice_view').val();
+		var name = $('#client_email_invoice_view').val();
 
-  $('.download_excel_aging').on('click', function() {
-    // Get the select element value
-    const dropdownValue = $('#dropdownAging').val();
 
-    // Show error if the selected value is "default"
-    if (dropdownValue === "default") {
-      Swal.fire({
-        title : 'Error',
-        text : 'Please choose a filter',
-        icon : 'error',
-        confirmButtonText : 'OK'
-      });
-      return false;
-    } else {
-      // Show success if the selected value is not "default"
-      Swal.fire({
-        title : 'Success',
-        text : 'Excel file download successfully!',
-        icon : 'success',
-        confirmButtonText : 'OK'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Close the modal
-          console.log(dropdownValue);
-          $('#aging_ticket_modal').modal('hide');
-        }
-      });
-      return true;
-    }
-  });
+		$('#ticket_id_email').val(ticket);
+		$('#email_client_name').val(email);
+		$('#email_client').val(name);
+		$('#view_invoice_modals').modal('hide');
+		$('#email_client_modal').modal();
+
+	});
+
+	$('.send_to_client_btn').on('click', function() {
+
+
+
+		var ticketID = $('#ticket_id_view').val();
+		var form = document.getElementById("email-client-form");
+		var formData = new FormData(form);
+		var xhr = new XMLHttpRequest();
+		var url = "/send/confirmation/client/" + ticketID;
+		var tableId = "completed-table";
+		// Show loading animation with Swal
+		Swal.fire({
+			title: 'Loading...',
+			allowEscapeKey: false,
+			allowOutsideClick: false,
+			didOpen: () => {
+				Swal.showLoading();
+			}
+		});
+
+		xhr.open("PUT", url);
+		xhr.onload = function() {
+			if (xhr.status === 200) {
+				// Show a success message
+				console.log("User updated successfully");
+
+				Swal.fire({
+					icon: 'success',
+					title: 'Success',
+					text: 'Email sent updated successfully!',
+				}).then((result) => {
+					if (result.isConfirmed) {
+
+						$('#email_client_modal').modal('hide');
+						$('#' + tableId).load('/getUpdateTicket?tableId=' + tableId + ' #' + tableId + ' > *', function() {
+							// callback function
+							// Event listener for On-going Tickets button
+							$('.menu-item[data-table="completed"]').on('click', function() {
+								// Show all rows
+								$('#completed-table tbody tr').show();
+
+								// Remove filters from other buttons
+								$('.sales_team_button').removeClass('active');
+								$('.billing_team_button').removeClass('active');
+								$('.collection_team_button').removeClass('active');
+								$('.treasury_team_button').removeClass('active');
+							});
+
+							// Event listener for Ready sales_team button
+							$('.sales_team_button').on('click', function() {
+								// Loop through each table row
+								$('#completed-table tbody tr').each(function() {
+									var _status = $(this).find('td:nth-child(5)').text();
+									var _progress = $(this).find('td:nth-child(8)').text();
+									console.log(_status);
+
+									if (!_status === 'completed' || !(_progress === 'support_team')) {
+										$(this).hide();
+									} else {
+										$(this).show();
+									}
+								});
+							});
+
+							// Event listener for Ready billing team button
+							$('.billing_team_button').on('click', function() {
+								// Loop through each table row
+								applyBillingFilter();
+							});
+
+							function applyBillingFilter() {
+								// Loop through each table row
+								$('#completed-table tbody tr').each(function() {
+									var _status = $(this).find('td:nth-child(5)').text();
+									var _progress = $(this).find('td:nth-child(8)').text();
+									console.log(_status);
+									console.log(_progress);
+									if (!(_status === 'completed') || !(_progress === 'billing_team')) {
+										$(this).hide();
+									} else {
+										$(this).show();
+									}
+								});
+							}
+
+
+
+							$('.collection_team_button').on('click', function() {
+								// Loop through each table row
+								$('#completed-table tbody tr').each(function() {
+									var _status = $(this).find('td:nth-child(5)').text();
+									var _progress = $(this).find('td:nth-child(8)').text();
+									console.log(_status);
+									if (!(_status === 'completed') || !(_progress === 'collection_team')) {
+										$(this).hide();
+									} else {
+										$(this).show();
+									}
+								});
+							});
+
+							// Event listener for Ready treasury team button
+							$('.treasury_team_button').on('click', function() {
+								// Loop through each table row
+								$('#completed-table tbody tr').each(function() {
+									var _status = $(this).find('td:nth-child(5)').text();
+									var _progress = $(this).find('td:nth-child(8)').text();
+									console.log(_status);
+									if (!(_status === 'completed') || !(_progress === 'treasury_team')) {
+										$(this).hide();
+									} else {
+										$(this).show();
+									}
+								});
+							});
+							$('.completed_team').on('click', function() {
+								// Loop through each table row
+								$('#completed-table tbody tr').each(function() {
+									var _status = $(this).find('td:nth-child(5)').text();
+									var _progress = $(this).find('td:nth-child(8)').text();
+									console.log(_status);
+									if (!(_status === 'completed') || !(_progress === 'completed')) {
+										$(this).hide();
+									} else {
+										$(this).show();
+									}
+								});
+							});
+
+
+
+						});
+					} else {
+						// Show error message with SweetAlert
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: 'There was an error while saving the user update: ' + xhr.statusText,
+						});
+					}
+				});
+
+			} else {
+				// Show an error message
+				console.log("Error Updating Invoice");
+			}
+		};
+		xhr.send(formData);
+
+	});
+
+
+});
+
+
+
+
+
+
+
+
+
+$(document).ready(function() {
+	$('.aging_tickets').on('click', function() {
+		// Show the modal
+		$('#aging_ticket_modal').modal();
+	});
+
+	$('.download_excel_aging').on('click', function() {
+		// Get the select element value
+		const dropdownValue = $('#dropdownAging').val();
+
+		// Show error if the selected value is "default"
+		if (dropdownValue === "default") {
+			Swal.fire({
+				title: 'Error',
+				text: 'Please choose a filter',
+				icon: 'error',
+				confirmButtonText: 'OK'
+			});
+			return false;
+		} else {
+			// Show success if the selected value is not "default"
+			Swal.fire({
+				title: 'Success',
+				text: 'Excel file download successfully!',
+				icon: 'success',
+				confirmButtonText: 'OK'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					// Close the modal
+					console.log(dropdownValue);
+					$('#aging_ticket_modal').modal('hide');
+				}
+			});
+			return true;
+		}
+	});
 });
 
 
 $(document).ready(function() {
-  $('.ticket_per_assignee').on('click', function() {
-    // Show the modal
-    $('#ticket_per_assignee_modal').modal();
-  });
+	$('.ticket_per_assignee').on('click', function() {
+		// Show the modal
+		$('#ticket_per_assignee_modal').modal();
+	});
 
-  $('.download_excel_asignee').on('click', function() {
-    // Get the select element value
-    const dropdownValue = $('#dropdownRoleAssignee').val();
+	$('.download_excel_asignee').on('click', function() {
+		// Get the select element value
+		const dropdownValue = $('#dropdownRoleAssignee').val();
 
-    // Show error if the selected value is "default"
-    if (dropdownValue === "default") {
-      Swal.fire({
-        title : 'Error',
-        text : 'Please choose a filter',
-        icon : 'error',
-        confirmButtonText : 'OK'
-      });
-      return false;
-    } else {
-      // Show success if the selected value is not "default"
-      Swal.fire({
-        title : 'Success',
-        text : 'Excel file download successfully!',
-        icon : 'success',
-        confirmButtonText : 'OK'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Close the modal
-          $('#ticket_per_assignee_modal').modal('hide');
-        }
-      });
-      return true;
-    }
-  });
+		// Show error if the selected value is "default"
+		if (dropdownValue === "default") {
+			Swal.fire({
+				title: 'Error',
+				text: 'Please choose a filter',
+				icon: 'error',
+				confirmButtonText: 'OK'
+			});
+			return false;
+		} else {
+			// Show success if the selected value is not "default"
+			Swal.fire({
+				title: 'Success',
+				text: 'Excel file download successfully!',
+				icon: 'success',
+				confirmButtonText: 'OK'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					// Close the modal
+					$('#ticket_per_assignee_modal').modal('hide');
+				}
+			});
+			return true;
+		}
+	});
 });
 
 
 $(document).ready(function() {
-  $('.monthly_report').on('click', function() {
-    // Show the modal
-    $('#monthly_report_filter_modal').modal();
-  });
+	$('.monthly_report').on('click', function() {
+		// Show the modal
+		$('#monthly_report_filter_modal').modal();
+	});
 
-  $('.download_excel').on('click', function() {
-    // Get the select element value
-    const dropdownValue = $('#dropdownRole').val();
+	$('.download_excel').on('click', function() {
+		// Get the select element value
+		const dropdownValue = $('#dropdownRole').val();
 
-    // Show error if the selected value is "default"
-    if (dropdownValue === "default") {
-      Swal.fire({
-        title : 'Error',
-        text : 'Please choose a filter',
-        icon : 'error',
-        confirmButtonText : 'OK'
-      });
-      return false;
-    } else {
-      // Show success if the selected value is not "default"
-      Swal.fire({
-        title : 'Success',
-        text : 'Conforme slip generated successfully!',
-        icon : 'success',
-        confirmButtonText : 'OK'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // Close the modal
-          $('#monthly_report_filter_modal').modal('hide');
-        }
-      });
-      return true;
-    }
-  });
+		// Show error if the selected value is "default"
+		if (dropdownValue === "default") {
+			Swal.fire({
+				title: 'Error',
+				text: 'Please choose a filter',
+				icon: 'error',
+				confirmButtonText: 'OK'
+			});
+			return false;
+		} else {
+			// Show success if the selected value is not "default"
+			Swal.fire({
+				title: 'Success',
+				text: 'Conforme slip generated successfully!',
+				icon: 'success',
+				confirmButtonText: 'OK'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					// Close the modal
+					$('#monthly_report_filter_modal').modal('hide');
+				}
+			});
+			return true;
+		}
+	});
 });
 
 

@@ -73,9 +73,14 @@ public class UserController {
 				if (i.getUserRole().equals("client")) {
 					return "redirect:/dashboard"; // return the name of the dashboard page
 				} else if (i.getUserRole().equals("sales_team_leader") || i.getUserRole().equals("sales_team")
-						|| i.getUserRole().equals("support_team") || i.getUserRole().equals("sales_team_leader")
+						|| i.getUserRole().equals("support_team") || i.getUserRole().equals("support_team_leader")
 						|| i.getUserRole().equals("billing_team") || i.getUserRole().equals("collection_team")
-						|| i.getUserRole().equals("treasury_team") || i.getUserRole().equals("super_admin")) {
+						|| i.getUserRole().equals("collection_team_leader")
+						|| i.getUserRole().equals("treasury_team_leader")
+						|| i.getUserRole().equals("billing_team_leader")
+						|| i.getUserRole().equals("collection_team_leader")
+						|| i.getUserRole().equals("collection_team_leader") || i.getUserRole().equals("treasury_team")
+						|| i.getUserRole().equals("super_admin")) {
 
 					m.addAttribute("users", users);
 					return "redirect:/admin.ark"; // return the name of the dashboard page

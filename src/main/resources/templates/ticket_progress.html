@@ -142,7 +142,7 @@
 							th:style="${ticket.status == 'ongoing' ? ''  : 'display:none;'}">
 
 							<ul class="horizontal-menu"
-								th:style="${session.userRole == 'support_team' ? '' : 'display:none;'}">
+								th:style="${session.userRole == 'support_team' || session.userRole == 'support_team_leader' ? '' : 'display:none;'}">
 								<li class="btn btn-primary add_button_update"
 									data-toggle="modal" data-target="#support_add_modal"><i
 									class='bx bx-plus' style="color: white;"></i> <span
@@ -294,7 +294,7 @@
 								feedback</button>
 
 							<button type="button" class="btn btn-info view_feedback_modal"
-								th:style="${session.userRole == 'support_team' || session.userRole == 'sales_team' ? '' : 'display:none;'}">See
+								th:style="${session.userRole == 'support_team' || session.userRole == 'support_team_leader' || session.userRole == 'sales_team' || session.userRole == 'sales_team_leader' ? '' : 'display:none;'}">See
 								feedbacks</button>
 
 							<button type="button" class="btn btn-secondary"

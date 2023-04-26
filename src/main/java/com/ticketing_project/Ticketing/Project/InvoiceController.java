@@ -9,12 +9,19 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.mail.util.ByteArrayDataSource;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,6 +41,9 @@ public class InvoiceController {
 
 	@Autowired
 	private TicketService ticketService;
+
+	@Autowired
+	private UserService userService;
 
 	@PostMapping("/invoice/save")
 	public String addNewTicket(@ModelAttribute Invoice newInvoice, HttpSession session) {
@@ -85,7 +95,7 @@ public class InvoiceController {
 				String emailSubject = "Payment Confirmation: Ticket ID #" + newInvoice.getTicketID();
 				String attachment = proofPath.toString();
 				// Send email to sales team
-				List<String> collectionTeamEmails = invoiceService.getEmailsOfCollectionTeam();
+				List<String> collectionTeamEmails = invoiceService.getEmailsOfCollectionTeamLeader();
 				for (String email : collectionTeamEmails) {
 					invoiceService.sendEmail(email, emailBody, emailSubject, attachment);
 				}
@@ -97,6 +107,51 @@ public class InvoiceController {
 		redirectAttributes.addFlashAttribute("paymentSuccess", "Payment Comfirmation saved successfully!");
 		return "redirect:/admin.ark";
 	}
+
+	@PutMapping("/send/confirmation/client/{ticketID}")
+	@ResponseBody
+	public String sendBillingStatement(@PathVariable int ticketID, HttpSession session,	@RequestParam String client_email,
+			@RequestParam MultipartFile img1, RedirectAttributes redirectAttributes) throws MessagingException {
+
+		Invoice newInvoice = invoiceService.findByTicketID(ticketID);
+
+		newInvoice.setPaymentConfirmation(img1.getOriginalFilename());
+
+		Ticket updateTicket = ticketService.getTicketById(newInvoice.getTicketID());
+		updateTicket.setProgress("completed");
+
+		ticketService.save(updateTicket);
+		if (newInvoice != null) {
+			String name = (String) session.getAttribute("user_name");
+			String emailBody = "Dear Sir/Ma'am,\n\n"
+					+ "Please find attached the official receipt/scan copy of the payment made for Ticket ID #"
+					+ newInvoice.getTicketID() + ". The following information has been verified:\n\n" + "Invoice ID: "
+					+ newInvoice.getInvoice_id() + "\n" + "Date: " + newInvoice.getInvoice_date() + "\n"
+					+ "Client Name: " + newInvoice.getClient_name() + "\n" + "Email Address: "
+					+ newInvoice.getClient_email() + "\n" + "Ticket ID: " + newInvoice.getTicketID() + "\n" + "Title: "
+					+ newInvoice.getTicket_issue_title() + "\n" + "Paid Amount: " + newInvoice.getInvoice_amount()
+					+ "\n\n" + "Best regards,\n" + name + "\n" + "Treasury";
+			String emailSubject = "Official Receipt/Scan Copy: Payment Confirmation for Ticket ID #"
+					+ newInvoice.getTicketID();
+			byte[] pdfBytes = null;
+			try {
+				pdfBytes = img1.getBytes();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			// Send email to sales team
+			
+			invoiceService.sendEmailClient(client_email, emailBody, emailSubject, pdfBytes);
+
+		}
+		redirectAttributes.addFlashAttribute("ClientSuccess", "Email Sent successfully!");
+		return "redirect:/admin.ark";
+	}
+	
+	
+	
+	
 
 	@GetMapping("/pdf/generate/{ticketID}")
 	@ResponseBody
@@ -118,5 +173,5 @@ public class InvoiceController {
 
 		invoiceService.export(response, ticketID);
 	}
-	
+
 }

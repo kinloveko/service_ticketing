@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -48,6 +49,15 @@ public class TicketController {
 	private TicketService ticketService;
 	// ticketController
 
+	@GetMapping("/send-aging-ticket-reminders")
+	@ResponseBody
+	public void sendAgingTicketReminders() throws MessagingException {
+	    // Call the service method to send email reminders for aging tickets
+	   ticketService.sendAgingTicketReminders();
+
+	}
+	
+	
 	@PostMapping("/tickets/post-ticket")
 	public String addNewTicket(@ModelAttribute Ticket newTicket, RedirectAttributes redirectAttributes,
 			HttpSession session) {

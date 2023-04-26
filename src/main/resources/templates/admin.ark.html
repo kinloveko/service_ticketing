@@ -382,7 +382,6 @@
 			</div>
 
 
-
 			<!-- Modal Table -->
 			<div class="modal fade" id="accountModal" tabindex="-1" role="dialog"
 				aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -441,6 +440,7 @@
 
 
 			<!--  end of account modal -->
+
 			<!-- Pending Table -->
 			<div class="table-data" id="pending-table">
 				<div class="order">
@@ -475,7 +475,7 @@
 										<i class="fa fa-edit" style="font-size: 20px;"></i>
 									</button>
 									<button type="button" class="btn btn-danger my-2"
-										th:style="${session.userRole == 'sales_team' ? '' : 'display:none;'}">
+										th:style="${session.userRole == 'sales_team' || session.userRole == 'sales_team' ? '' : 'display:none;'}">
 										<i class="fa fa-trash" style="font-size: 20px;"></i>
 									</button>
 								</td>
@@ -760,6 +760,7 @@
 				</div>
 			</div>
 			<!-- End of  View Ticket -->
+
 			<!-- Conformed Slip Modal -->
 			<form id="pending-form" enctype="multipart/form-data">
 				<div class="modal fade" id="create_conforme" tabindex="-1"
@@ -1029,7 +1030,7 @@
 										Ticket Status</button>
 
 									<div
-										th:style="${session.userRole  == 'collection_team' ||session.userRole  == 'treasury_team'  ? '' : 'display:none;'}">
+										th:style="${session.userRole  == 'collection_team_leader' || session.userRole  == 'collection_team' || session.userRole  == 'treasury_team' || session.userRole  == 'treasury_team_leader'  ? '' : 'display:none;'}">
 
 										<button type="button" id="invoice_modal_details"
 											class="btn btn-primary view_invoice_modal">View
@@ -1042,13 +1043,13 @@
 								<div class="d-flex justify-content-between">
 
 									<div
-										th:style="${session.userRole == 'billing_team' ? '' : 'display:none;'}">
+										th:style="${session.userRole == 'billing_team' || session.userRole == 'billing_team_leader'  ? '' : 'display:none;'}">
 										<button type="button" id="proceed_collection"
 											class="btn btn-success create_invoce_modal">Create
 											Invoice</button>
 									</div>
 									<div
-										th:style="${session.userRole == 'collection_team' ? '' : 'display:none;'}">
+										th:style="${session.userRole == 'collection_team'  || session.userRole == 'collection_team_leader' ? '' : 'display:none;'}">
 										<button type="button" id="proceed_treasury"
 											class="btn btn-success procceed_treasury">Send to
 											Treasury</button>
@@ -1204,6 +1205,75 @@
 				</div>
 			</form>
 
+			<!-- Email Client -->
+			<form id="email-client-form" enctype="multipart/form-data">
+				<div class="modal fade" id="email_client_modal" tabindex="-1"
+					role="dialog" aria-labelledby="example" aria-hidden="true">
+					<div class="modal-dialog modal-xl" role="document">
+						<div class="modal-content">
+
+							<div class="modal-header" style="display: inline-block;">
+								<h5 class="modal-title" id="exampleModalLabel"
+									style="display: inline-block;">Email details</h5>
+							</div>
+
+							<div class="modal-body">
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label for="id" class="col-form-label">Ticket No.</label> <input
+												type="text" class="form-control" id="ticket_id_email"
+												name="ticketID" readonly>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label for="title" class="col-form-label">Client name</label>
+											<input type="text" class="form-control"
+												id="email_client_name" name="client_name" readonly>
+
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label for="description" class="col-form-label">Client
+												email</label> <input type="text" class="form-control"
+												id="email_client" name="client_email" readonly>
+										</div>
+									</div>
+									<div class="col-sm-6">
+									<label style="margin-top:7px" for="customFile" class="form-label"
+										>Generated Official Receipt</label>
+									<input type="file" class="form-control" id="image_upload"
+										name="img1" required />
+								</div>
+								</div>
+							</div>
+
+							<div class="modal-footer ">
+
+								
+									 	<button type="button" id="send_to_client"
+											class="btn btn-primary send_to_client_btn">SEND EMAIL</button>
+								 
+
+									<button type="button" class="btn"
+										style="margin-left: 10px; background-color: grey; color: white"
+										data-dismiss="modal">Close</button>
+
+								</div>
+
+							</div>
+						</div>
+					</div>
+			
+			</form>
+
+
+			<!-- End of Email Client -->
+
 
 			<!-- View Invoice -->
 
@@ -1325,12 +1395,12 @@
 							<div class="modal-footer d-flex justify-content-between">
 								<div style="margin-top: 35px">
 									<div
-										th:style="${session.userRole == 'collection_team' ? '' : 'display:none;'}">
+										th:style="${session.userRole == 'collection_team'  || session.userRole == 'collection_team_leader' ? '' : 'display:none;'}">
 										<button type="button" id="generateOR"
 											class="btn btn-primary generate_or">Generate OR</button>
 									</div>
 									<div id="proof_confirmation_treasury"
-										th:style="${session.userRole == 'treasury_team' ? '' : 'display:none;'}">
+										th:style="${session.userRole == 'treasury_team' || session.userRole == 'treasury_team_leader' ? '' : 'display:none;'}">
 										<label for="customFile" class="form-label"
 											style="font-weight: bold;">Proof of confirmation</label> <input
 											type="file" class="form-control" id="image_upload"
@@ -1340,12 +1410,12 @@
 								<div class="d-flex justify-content-between"
 									style="margin-top: 35px">
 									<div
-										th:style="${session.userRole == 'collection_team' ? '' : 'display:none;'}">
+										th:style="${session.userRole == 'collection_team' || session.userRole == 'collection_team_leader' ? '' : 'display:none;'}">
 										<button type="button" id="send_to_client"
 											class="btn btn-primary send_to_client">EMAIL CLIENT</button>
 									</div>
 									<div
-										th:style="${session.userRole == 'treasury_team' ? '' : 'display:none;'}">
+										th:style="${session.userRole == 'treasury_team' || session.userRole == 'treasury_team_leader' ? '' : 'display:none;'}">
 										<button type="button" id="send_to_collection"
 											class="btn btn-primary send_to_collection_button">Send
 											to Collection</button>
@@ -1361,7 +1431,6 @@
 					</div>
 				</div>
 			</form>
-
 
 			<!-- End of Create Invoice Modal -->
 			<!-- imageviewer -->
@@ -1426,6 +1495,14 @@
 		Swal.fire({
 			title : 'Success',
 			text : 'Conforme slip generated successfully!',
+			icon : 'success',
+			confirmButtonText : 'OK'
+		});
+	</script>
+	<script th:if="${ClientSuccess}">
+		Swal.fire({
+			title : 'Success',
+			text : 'Email Sent Successfully!',
 			icon : 'success',
 			confirmButtonText : 'OK'
 		});

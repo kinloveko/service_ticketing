@@ -1,41 +1,32 @@
 package com.ticketing_project.Ticketing.Project;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.mail.MessagingException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.poi.sl.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
-import com.itextpdf.commons.utils.Base64.OutputStream;
 import com.itextpdf.io.exceptions.IOException;
-import com.itextpdf.io.source.ByteArrayOutputStream;
-import com.itextpdf.layout.element.Cell;
-import com.lowagie.text.Row;
-import com.opencsv.CSVWriter;
 
 @Service
 public class TicketService {
@@ -46,8 +37,59 @@ public class TicketService {
 	@Autowired
 	private UserRepository userRepo;
 
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private InvoiceService invoiceService;
+
 	public Ticket save(Ticket ticket) {
 		return repo.save(ticket);
+	}
+
+	@Scheduled(cron = "0 0 0 */5 * *") // This runs every 5 days at midnight
+	public void sendAgingTicketReminders() throws MessagingException {
+		// Get all tickets
+
+		List<Ticket> allTickets = repo.findAll();
+
+		// Get current date and calculate two days before
+		Date currentDate = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(currentDate);
+		cal.add(Calendar.DATE, -2);
+		Date twoDaysAgo = cal.getTime();
+
+		// Loop through all tickets
+		for (Ticket ticket : allTickets) {
+			java.util.Optional<User> userDetails = userService.findUserById(ticket.getUser_id());
+			if (ticket.getStatus().equals("pending") && ticket.getCreated_on().before(twoDaysAgo)) {
+				// Check if the ticket is aging 2 days without progress
+				// Send email reminder
+
+				String emailBody = "Dear Sir/Ma'am,\n\n"
+						+ "This is a reminder that your ticket with ID #" + ticket.getTicket_id()
+						+ " has been pending for 2 days without progress. "
+						+ "To help the sales staff understand more fully the reason of your problem, kindly submit an updated explanation. We appreciate your assisting us..\n\n"
+						+ "Best regards,\n" + "info@ark.alliance";
+				String emailSubject = "Reminder: Ticket ID #" + ticket.getTicket_id()
+						+ " Pending for 2 Days without Progress";
+				invoiceService.sendReminder(userDetails.get().getUser_email(), emailBody, emailSubject);
+			} else if (ticket.getStatus().equals("ongoing") && ((ticket.getClient_signature() == null
+					|| ticket.getClient_signature().equals(""))
+					&& (ticket.getClient_payment_proof() == null || ticket.getClient_payment_proof().equals("")))) {
+					// Check if the ticket is ongoing but client signature and payment proof are not provided
+				// Send email reminder
+				String emailBody = "Dear Sir/Ma'am,\n\n" + "This is a reminder that your ticket with ID #"
+						+ ticket.getTicket_id()
+						+ " is ongoing but we have not yet received your signature and payment proof. "
+						+ "Please provide these information as soon as possible to avoid delay in processing your request. Thank you.\n\n"
+						+ "Best regards,\n" + "Ark.Alliance@Support";
+				String emailSubject = "Reminder: Ticket ID #" + ticket.getTicket_id()
+						+ " Missing Client Signature and Payment Proof";
+				invoiceService.sendReminder(userDetails.get().getUser_email(), emailBody, emailSubject);
+			}
+		}
 	}
 
 	public void update(int ticketId, Ticket updatedTicket) {
@@ -228,12 +270,11 @@ public class TicketService {
 
 				if (i.getStatus().equals("pending") && i.getCreated_on().before(minimumAgeDate)) {
 					pendingTickets.add(i);
+				} else if (i.getStatus().equals("ongoing") && i.getCreated_on().before(minimumAgeDate)) {
+					if ((i.getClient_signature() == null && i.getClient_payment_proof() == null)
+							|| (i.getClient_signature().equals("") && i.getClient_payment_proof().equals("")))
+						ongoingTickets.add(i);
 				}
-				else if (i.getStatus().equals("ongoing") && i.getCreated_on().before(minimumAgeDate)) {
-						if ((i.getClient_signature() == null && i.getClient_payment_proof() == null)
-								|| (i.getClient_signature().equals("") && i.getClient_payment_proof().equals("")))
-							ongoingTickets.add(i);
-					}
 
 			} else if (filter.equals("pending")) {
 				if (i.getStatus().equals("pending") && i.getCreated_on().before(minimumAgeDate)) {
@@ -264,15 +305,12 @@ public class TicketService {
 		if (filter.equals("all")) {
 			writeDataToSheet(workbook.createSheet("Pending Tickets"), pendingTickets, header);
 			writeDataToSheet(workbook.createSheet("Ongoing Tickets"), ongoingTickets, header);
-	
 
-
-		} else if (ongoingTickets.size()!=0) {
+		} else if (ongoingTickets.size() != 0) {
 			writeDataToSheet(workbook.createSheet("Ongoing Tickets"), ongoingTickets, header);
 
-		} else if (pendingTickets.size()!=0) {
+		} else if (pendingTickets.size() != 0) {
 			writeDataToSheet(workbook.createSheet("Pending Tickets"), pendingTickets, header);
-
 
 		}
 		// Write data to Excel file

@@ -13,6 +13,7 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -71,9 +72,25 @@ public class InvoiceService {
 
 		mailSender.send(mimeMessage);
 	}
+	
+	
+	
+	public void sendReminder(String toEmail, String body, String subject) throws MessagingException {
 
-	public List<String> getEmailsOfCollectionTeam() {
-		List<User> collectionTeamUsers = UserRepo.findByUserRole("collection_team");
+		MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+		MimeMessageHelper mineMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+		mineMessageHelper.setFrom("ark.alliance2023@gmail.com");
+		mineMessageHelper.setTo(toEmail);
+		mineMessageHelper.setText(body);
+		mineMessageHelper.setSubject(subject);
+
+		mailSender.send(mimeMessage);
+	}
+
+	public List<String> getEmailsOfCollectionTeamLeader() {
+		List<User> collectionTeamUsers = UserRepo.findByUserRole("collection_team_leader");
 		List<String> emails = new ArrayList<>();
 		for (User user : collectionTeamUsers) {
 			emails.add(user.getUser_email());
@@ -81,12 +98,31 @@ public class InvoiceService {
 		return emails;
 	}
 
+
+	public void sendEmailClient(String toEmail, String body, String subject, byte[] attachment) throws MessagingException {
+
+	    MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+	    MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+	    mimeMessageHelper.setFrom("ark.alliance2023@gmail.com");
+	    mimeMessageHelper.setTo(toEmail);
+	    mimeMessageHelper.setText(body);
+	    mimeMessageHelper.setSubject(subject);
+
+	    ByteArrayResource attachmentResource = new ByteArrayResource(attachment);
+
+	    mimeMessageHelper.addAttachment("attachment.pdf", attachmentResource);
+
+	    mailSender.send(mimeMessage);
+	}
+
 	public void export(HttpServletResponse response, @RequestParam int ticketID) throws IOException {
 		// Get invoice details from database
 
 		Invoice invoice = repo.findByticketID(ticketID);
 		String ticketIDNo = String.valueOf(invoice.getTicketID());
-		String Amount = "₱ "+ String.valueOf(invoice.getInvoice_amount());
+		String Amount = "₱ " + String.valueOf(invoice.getInvoice_amount());
 
 		// Create new document
 		Document document = new Document(PageSize.A4);
@@ -135,8 +171,7 @@ public class InvoiceService {
 		Paragraph invoiceNo = new Paragraph("Date : " + formattedDate, FontFactory.getFont(FontFactory.HELVETICA));
 		invoiceNo.setAlignment(Element.ALIGN_LEFT);
 		invoiceNo.add(Chunk.NEWLINE);
-		invoiceNo.add(
-				new Chunk("INVOICE NO :" + invoice.getInvoice_id(), FontFactory.getFont(FontFactory.HELVETICA)));
+		invoiceNo.add(new Chunk("INVOICE NO :" + invoice.getInvoice_id(), FontFactory.getFont(FontFactory.HELVETICA)));
 		invoiceNo.setAlignment(Element.ALIGN_LEFT);
 		invoiceNo.add(Chunk.NEWLINE);
 		invoiceNo.add(Chunk.NEWLINE);
@@ -146,12 +181,12 @@ public class InvoiceService {
 		// Add bill to details
 		Paragraph billTo = new Paragraph("BILLING TO:", FontFactory.getFont(FontFactory.HELVETICA));
 		billTo.add(Chunk.NEWLINE);
-		
-		billTo.add(new Chunk("Name : "  , FontFactory.getFont(FontFactory.HELVETICA)));
+
+		billTo.add(new Chunk("Name : ", FontFactory.getFont(FontFactory.HELVETICA)));
 		billTo.add(new Chunk(invoice.getClient_name(), FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
 		billTo.add(Chunk.NEWLINE);
-		billTo.add(new Chunk("Email : " , FontFactory.getFont(FontFactory.HELVETICA)));
-	 
+		billTo.add(new Chunk("Email : ", FontFactory.getFont(FontFactory.HELVETICA)));
+
 		billTo.add(new Chunk(invoice.getClient_email(), FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
 		billTo.setAlignment(Element.ALIGN_LEFT);
 		document.add(billTo);
@@ -167,27 +202,30 @@ public class InvoiceService {
 		float cellPadding = 10;
 
 		// Add header row
-		PdfPCell ticketNoHeader = new PdfPCell(new Phrase("Ticket No:", FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
+		PdfPCell ticketNoHeader = new PdfPCell(
+				new Phrase("Ticket No:", FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
 		ticketNoHeader.setPadding(cellPadding);
 		ticketNoHeader.setBackgroundColor(new Color(0xED, 0xEF, 0xF1));
 		ticketNoHeader.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		ticketNoHeader.setHorizontalAlignment(Element.ALIGN_LEFT);
 		ticketNoHeader.setBorder(4);
-	
+
 		ticketNoHeader.setBorderColor(Color.WHITE);
 		ticketTable.addCell(ticketNoHeader);
 
-		PdfPCell descriptionHeader = new PdfPCell(new Phrase("Description:", FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
+		PdfPCell descriptionHeader = new PdfPCell(
+				new Phrase("Description:", FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
 		descriptionHeader.setPadding(cellPadding);
 		descriptionHeader.setBorderColor(Color.WHITE);
 		descriptionHeader.setBackgroundColor(new Color(0xED, 0xEF, 0xF1));
 		descriptionHeader.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		descriptionHeader.setHorizontalAlignment(Element.ALIGN_LEFT);
 		descriptionHeader.setBorder(4);
-		
+
 		ticketTable.addCell(descriptionHeader);
 
-		PdfPCell servicePriceHeader = new PdfPCell(new Phrase("Service price:", FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
+		PdfPCell servicePriceHeader = new PdfPCell(
+				new Phrase("Service price:", FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
 		servicePriceHeader.setPadding(cellPadding);
 		servicePriceHeader.setBorderColor(Color.WHITE);
 		servicePriceHeader.setBackgroundColor(new Color(0xED, 0xEF, 0xF1));
@@ -209,7 +247,8 @@ public class InvoiceService {
 
 		ticketTable.addCell(ticketNoCell);
 
-		PdfPCell descriptionCell = new PdfPCell(new Phrase(invoice.getTicket_issue_title(), FontFactory.getFont(FontFactory.HELVETICA)));
+		PdfPCell descriptionCell = new PdfPCell(
+				new Phrase(invoice.getTicket_issue_title(), FontFactory.getFont(FontFactory.HELVETICA)));
 		descriptionCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		descriptionCell.setBackgroundColor(new Color(0xF5, 0xF5, 0xF5));
 		descriptionCell.setPadding(15);
@@ -234,22 +273,22 @@ public class InvoiceService {
 		emptyCell.setBackgroundColor(new Color(0xF5, 0xF5, 0xF5));
 		emptyCell.setMinimumHeight(50);
 		emptyCell.setBorderColor(Color.WHITE);
-	
+
 		emptyCell.setBorder(4);
 
 		ticketTable.addCell(emptyCell);
 
 		PdfPCell emptyCell2 = new PdfPCell();
 		emptyCell2.setMinimumHeight(50);
-	
+
 		emptyCell2.setBorderColor(Color.WHITE);
 		emptyCell2.setBackgroundColor(new Color(0xF5, 0xF5, 0xF5));
 		emptyCell2.setBorder(4);
-	
+
 		ticketTable.addCell(emptyCell2);
 
 		PdfPCell emptyCell3 = new PdfPCell();
-		
+
 		emptyCell3.setBorderColor(Color.WHITE);
 		emptyCell3.setBackgroundColor(new Color(0xF5, 0xF5, 0xF5));
 		emptyCell3.setMinimumHeight(10);
@@ -261,12 +300,10 @@ public class InvoiceService {
 		emptyCell4.setMinimumHeight(10);
 		emptyCell4.setBorder(4);
 		emptyCell4.setBorderColor(Color.WHITE);
-	
+
 		emptyCell4.setBackgroundColor(new Color(0xF5, 0xF5, 0xF5));
 		ticketTable.addCell(emptyCell4);
 
-		
-		
 		// Add total row
 		PdfPCell totalHeader = new PdfPCell(new Phrase("Total:", FontFactory.getFont(FontFactory.HELVETICA_BOLD)));
 		totalHeader.setPadding(cellPadding);
@@ -278,7 +315,6 @@ public class InvoiceService {
 		totalHeader.setBorder(4);
 		ticketTable.addCell(totalHeader);
 
-		
 		PdfPCell totalCell = new PdfPCell(new Phrase(Amount, FontFactory.getFont(FontFactory.HELVETICA)));
 		totalCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		totalCell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -287,7 +323,7 @@ public class InvoiceService {
 		totalCell.setBackgroundColor(new Color(0xF5, 0xF5, 0xF5));
 		totalCell.setBorder(4);
 		ticketTable.addCell(totalCell);
-	
+
 		document.add(ticketTable);
 		document.close();
 	}
