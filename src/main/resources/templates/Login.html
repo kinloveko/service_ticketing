@@ -126,9 +126,17 @@
 				confirmButtonText : 'OK'
 			});
 		</script>
+		<script th:if="${emailDuplicate}">
+			Swal.fire({
+				title : 'Email already exist!',
+				text : 'Please try different email!',
+				icon : 'danger',
+				confirmButtonText : 'OK'
+			});
+		</script>
 		<script type="text/javascript">
 		
-	
+		
 
 		$(document).ready(function() {
 			
@@ -170,7 +178,7 @@
 			        console.log(result);
 			        if (result === "redirect:/Login") {
 			          Swal.fire({
-			            title: 'Account not exist!',
+			            title: 'Account doesn&#39;t exist!',
 			            text: 'Invalid email and password! Try again!',
 			            icon: 'warning',
 			            confirmButtonText: 'OK'

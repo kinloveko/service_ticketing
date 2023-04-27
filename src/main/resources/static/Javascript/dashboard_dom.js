@@ -1,6 +1,6 @@
 /**
- * 
- */
+* 
+*/
 
 window.onload = function() {
 	if (window.history && window.history.pushState) {
@@ -27,18 +27,19 @@ $(window).on('load pageshow', function() { // add pageshow event listener
 		});
 	}
 });
+
 $(document).ready(function() {
 
-	$('.delete_btn_client').on('click', function() {
-		// Extract data from the input fields in the second modal
-		/*  var imageUpload = $('#image_upload').prop('files')[0];*/
+	// Attach click event handler to the parent of the delete buttons using event delegation
+	$('#pending-table').on('click', '.delete_btn_client', function(event) {
 		event.preventDefault();
+		deleteUserTicket($(this));
+	});
 
-		var ticketID = $(this).closest('tr').find('td:eq(0)').text();
-		console.log(ticketID);
-
-
+	function deleteUserTicket(button) {
 		var tableId = "pending-table";
+		var ticketID = button.closest('tr').find('td:eq(0)').text();
+
 		// Show loading animation with Swal
 		Swal.fire({
 			title: 'Are you sure?',
@@ -52,8 +53,6 @@ $(document).ready(function() {
 		}).then((result) => {
 			if (result.isConfirmed) {
 				var xhr = new XMLHttpRequest();
-
-
 
 				xhr.open('DELETE', '/tickets/delete/' + ticketID);
 
@@ -75,6 +74,30 @@ $(document).ready(function() {
 										$('#pending_count').text(pendingCount - 1);
 
 
+										$(document).ready(function() {
+											$('.eBtn').on('click', function(event) {
+
+												event.preventDefault();
+
+												var ticketId = $(this).closest('tr').find('td:eq(0)').text();
+												var dateCreated = $(this).closest('tr').find('td:eq(4)').text();
+												var title = $(this).closest('tr').find('td:eq(2)').text();
+												var description = $(this).closest('tr').find('td:eq(3)').text();
+												var userName = $(this).closest('tr').find('td:eq(1)').text();
+												var status = $(this).closest('tr').find('td:eq(5)').text();
+												var conforme_no = $(this).closest('tr').find('td:eq(6)').text();
+												$('#id').val(ticketId);
+												$('#date').val(dateCreated);
+												$('#title').val(title);
+												$('#description').val(description);
+												$('#name').val(userName);
+												$('#status').val(status);
+												$('#conforme_no').val(conforme_no);
+												$('#viewTicket').modal();
+
+
+											});
+										});
 									});
 								}
 							});
@@ -92,8 +115,10 @@ $(document).ready(function() {
 				xhr.send();
 			}
 		});
-	});
+	}
 });
+
+
 
 
 
@@ -295,22 +320,15 @@ $(document).ready(function() {
 	});
 });
 
-
-
 $(document).ready(function() {
-	$('.create_ticket_button').on('click', function() {
-		// Extract data from the input fields in the second modal
-		/*  var imageUpload = $('#image_upload').prop('files')[0];*/
+	$('.create_ticket_button').on('click', function(event) {
 		event.preventDefault();
 
-
-		var createTicketform = document.getElementById("create-ticket-form");
+		var createTicketform = $('#create-ticket-form')[0];
 		var formData = new FormData(createTicketform);
 
-
-
 		var tableId = "pending-table";
-		// Show loading animation with Swal
+
 		Swal.fire({
 			title: 'Loading...',
 			allowEscapeKey: false,
@@ -320,49 +338,64 @@ $(document).ready(function() {
 			}
 		});
 
-		var xhr = new XMLHttpRequest();
-		xhr.open('POST', '/tickets/post-ticket');
-		xhr.onload = function() {
-			if (xhr.status === 200) {
-				// Show a success message
-				console.log("User updated successfully");
-
+		$.ajax({
+			type: "POST",
+			url: "/tickets/post-ticket",
+			data: formData,
+			contentType: false,
+			processData: false,
+			success: function(data) {
 				Swal.fire({
 					icon: 'success',
 					title: 'Success',
-					text: 'Ticket Created successfully!',
+					text: 'Ticket created successfully!',
 				}).then((result) => {
 					if (result.isConfirmed) {
 						$('#createTicketModal').modal('hide');
 
 						$('#' + tableId).load('/updateClientTicket?tableId=' + tableId + ' #' + tableId + ' > *', function() {
-							// callback function
-							// callback function to update the value of the pending count span
 							var pendingCount = parseInt($('#pending_count').text());
 							$('#pending_count').text(pendingCount + 1);
 
-						});
 
-					} else {
-						// Show error message with SweetAlert
-						Swal.fire({
-							icon: 'error',
-							title: 'Error',
-							text: 'There was an error while saving the ticket: ' + xhr.statusText,
+							$(document).ready(function() {
+								$('.eBtn').on('click', function(event) {
+
+									event.preventDefault();
+
+									var ticketId = $(this).closest('tr').find('td:eq(0)').text();
+									var dateCreated = $(this).closest('tr').find('td:eq(4)').text();
+									var title = $(this).closest('tr').find('td:eq(2)').text();
+									var description = $(this).closest('tr').find('td:eq(3)').text();
+									var userName = $(this).closest('tr').find('td:eq(1)').text();
+									var status = $(this).closest('tr').find('td:eq(5)').text();
+									var conforme_no = $(this).closest('tr').find('td:eq(6)').text();
+									$('#id').val(ticketId);
+									$('#date').val(dateCreated);
+									$('#title').val(title);
+									$('#description').val(description);
+									$('#name').val(userName);
+									$('#status').val(status);
+									$('#conforme_no').val(conforme_no);
+									$('#viewTicket').modal();
+
+
+								});
+							});
 						});
 					}
 				});
-
-			} else {
-				// Show an error message
-				console.log("Error Creating Ticket");
+			},
+			error: function(xhr, status, error) {
+				Swal.fire({
+					icon: 'error',
+					title: 'Error',
+					text: 'There was an error while creating the ticket: ' + error,
+				});
 			}
-		};
-		xhr.send(formData);
+		});
 	});
 });
-
-
 //Button for ongoing 
 $(document).ready(function() {
 

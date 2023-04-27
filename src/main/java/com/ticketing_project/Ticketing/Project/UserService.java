@@ -25,6 +25,21 @@ public class UserService {
 		return userList;
 	}
 
+	public User findByUserEmail(String email) {
+		return repo.findByUserEmail(email);
+	}
 
-	
+	public User loginUser(String email, String password) {
+		return repo.findByUserEmailAndPassword(email, password);
+	}
+
+	public void deleteUser(int userID) {
+		// List containing the ticket that matches the ticketId
+		List<User> user = getAllUsers().stream().filter(userIDs -> userIDs.getUser_id() == userID).toList();
+
+		if (user.size() != 0) {
+			repo.delete(user.get(0));
+		}
+	}
+
 }

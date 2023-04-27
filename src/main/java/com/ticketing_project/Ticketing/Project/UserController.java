@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,21 +31,21 @@ public class UserController {
 	private UserService userService;
 
 	@GetMapping("/")
-	public String login(HttpSession session,HttpServletResponse response) {
-	    // check if user role is not null in session storage
-	    if (session.getAttribute("userRole") != null) {
-	        String role = (String) session.getAttribute("userRole");
-	        if (role.equals("client")) {
-	            return "redirect:/dashboard";
-	        } else {
-	            return "redirect:/admin.ark";
-	        }
-	    }
+	public String login(HttpSession session, HttpServletResponse response) {
+		// check if user role is not null in session storage
+		if (session.getAttribute("userRole") != null) {
+			String role = (String) session.getAttribute("userRole");
+			if (role.equals("client")) {
+				return "redirect:/dashboard";
+			} else {
+				return "redirect:/admin.ark";
+			}
+		}
 		// Set response headers to disable caching
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 		response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 		response.setHeader("Expires", "0"); // Proxies.
-	    return "login";
+		return "login";
 	}
 
 	@PostMapping("/login")
@@ -63,24 +64,27 @@ public class UserController {
 				session.setAttribute("user_id", i.getUser_id());
 				session.setAttribute("user_name", i.getUser_name());
 				session.setAttribute("userRole", i.getUserRole());
-				
+
 				// Set response headers to disable caching
 				response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 				response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 				response.setHeader("Expires", "0"); // Proxies.
-				
-				if (i.getUserRole().equals("client")) {
-					return "dashboard"; // return the name of the dashboard page
-				} else if (i.getUserRole().equals("sales_team_leader") || i.getUserRole().equals("sales_team")
-						|| i.getUserRole().equals("support_team") || i.getUserRole().equals("support_team_leader")
-						|| i.getUserRole().equals("billing_team") || i.getUserRole().equals("collection_team")
-						|| i.getUserRole().equals("collection_team_leader")
-						|| i.getUserRole().equals("treasury_team_leader")
-						|| i.getUserRole().equals("billing_team_leader")
-						|| i.getUserRole().equals("collection_team_leader")
-						|| i.getUserRole().equals("collection_team_leader") || i.getUserRole().equals("treasury_team")
-						|| i.getUserRole().equals("super_admin")) {
 
+				switch (i.getUserRole()) {
+				case "client":
+					return "dashboard";
+
+				case "sales_team":
+				case "support_team":
+				case "billing_team":
+				case "treasury_team":
+				case "collection_team":
+				case "sales_team_leader":
+				case "support_team_leader":
+				case "treasury_team_leader":
+				case "billing_team_leader":
+				case "collection_team_leader":
+				case "super_admin":
 					if (i.getStatus().equals("verified")) {
 						m.addAttribute("users", users);
 						return "admin.ark";
@@ -88,18 +92,11 @@ public class UserController {
 						redirectAttributes.addFlashAttribute("errorLogin", "Account not yet verified!");
 						return "notVerified";
 					}
+					break;
 				}
 			}
 		}
 		return "redirect:/Login";
-	}
-
-	@GetMapping("/userDetails")
-	@ResponseBody
-	public String getFeedbacksByStatusId(@RequestParam int userId) {
-		Optional<User> userDetails = userService.findUserById(userId);
-		String email = userDetails.get().getUser_email();
-		return email;
 	}
 
 	// GET mapping method for /admin.ark
@@ -163,10 +160,26 @@ public class UserController {
 
 	@PostMapping("/save")
 	public String addUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
-		userService.save(user);
-		redirectAttributes.addFlashAttribute("successMessage", "Account registered successfully!");
+
+		User existingUser = userService.findByUserEmail(user.getUser_email());
+
+		if (existingUser == null) {
+			userService.save(user);
+			redirectAttributes.addFlashAttribute("successMessage", "Account registered successfully!");
+		} else {
+			redirectAttributes.addFlashAttribute("emailDuplicate", "Email already exists!");
+		}
+
 		return "redirect:/";
 
+	}
+
+	@GetMapping("/userDetails")
+	@ResponseBody
+	public String getFeedbacksByStatusId(@RequestParam int userId) {
+		Optional<User> userDetails = userService.findUserById(userId);
+		String email = userDetails.get().getUser_email();
+		return email;
 	}
 
 	@PutMapping("/user/update/{userID}")
@@ -182,4 +195,11 @@ public class UserController {
 
 		return "redirect:/users";
 	}
+
+	@DeleteMapping("/user/delete/{userID}")
+	@ResponseBody
+	public void deleteTicket(@PathVariable int userID) {
+		userService.deleteUser(userID);
+	}
+
 }

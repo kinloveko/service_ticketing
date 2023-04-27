@@ -34,19 +34,20 @@ $(window).on('load pageshow', function() { // add pageshow event listener
 
 
 
-
 $(document).ready(function() {
 
-	$('.delete_ongoing_ticket').on('click', function() {
-		// Extract data from the input fields in the second modal
-		/*  var imageUpload = $('#image_upload').prop('files')[0];*/
+
+
+	// Attach click event handler to the parent of the delete buttons using event delegation
+	$('#account-table').on('click', '.delete_user_btn', function(event) {
 		event.preventDefault();
+		deleteUserTicket($(this));
+	});
 
-		var ticketID = $(this).closest('tr').find('td:eq(0)').text();
-		console.log(ticketID);
-
-
-		var tableId = "ongoing-table";
+	function deleteUserTicket(button) {
+		var tableId = "account-table";
+		var userID = button.closest('tr').find('td:eq(0)').text();
+		console.log(userID);
 		// Show loading animation with Swal
 		Swal.fire({
 			title: 'Are you sure?',
@@ -61,7 +62,94 @@ $(document).ready(function() {
 			if (result.isConfirmed) {
 				var xhr = new XMLHttpRequest();
 
+				xhr.open('DELETE', '/user/delete/' + userID);
 
+				xhr.onreadystatechange = function() {
+					if (this.readyState === XMLHttpRequest.DONE) {
+						if (this.status === 200) {
+							// Show a success message
+							Swal.fire({
+								icon: 'success',
+								title: 'Success',
+								text: 'User Deleted successfully!'
+							}).then((result) => {
+								if (result.isConfirmed) {
+									// Reload the data
+									$('#' + tableId).load('/getUserUpdate?tableId=' + tableId + ' #' + tableId + ' > *', function() {
+										// callback function
+
+										$('.account_modal').on('click', function(event) {
+											// Extract data from the input fields in the second modal
+											var _userid = $(this).closest('tr').find('td:eq(0)').text();
+											var _username = $(this).closest('tr').find('td:eq(1)').text();
+
+											var _useremail = $(this).closest('tr').find('td:eq(2)').text();
+											var _role = $(this).closest('tr').find('td:eq(3)').text();
+											var _status = $(this).closest('tr').find('td:eq(4)').text();
+											var password = $(this).closest('tr').find('td:eq(5)').text();
+											$('#user_id_').val(_userid);
+											$('#user_name_').val(_username);
+											$('#user_email_').val(_useremail);
+											$('#role').val(_role);
+											$('#user_status').val(_status);
+											$('#user_password_').val(password);
+											$('#accountModal').modal();
+
+										});
+
+
+									});
+
+								}
+							});
+						} else {
+							// Show an error message
+							Swal.fire({
+								icon: 'error',
+								title: 'Error',
+								text: 'There was an error while deleting the user: ' + this.statusText
+							});
+						}
+					}
+				};
+
+				xhr.send();
+			}
+		});
+	}
+});
+
+
+
+
+
+
+
+$(document).ready(function() {
+
+	// Attach click event handler to the parent of the delete buttons using event delegation
+	$('#ongoing-table').on('click', '.delete_ongoing_ticket', function(event) {
+		event.preventDefault();
+		deleteUserTicket($(this));
+	});
+
+	function deleteUserTicket(button) {
+		var tableId = "ongoing-table";
+		var ticketID = button.closest('tr').find('td:eq(0)').text();
+
+		// Show loading animation with Swal
+		Swal.fire({
+			title: 'Are you sure?',
+			text: 'You will not be able to revert this!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#3085d6',
+			confirmButtonText: 'Delete',
+			cancelButtonText: 'Cancel'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				var xhr = new XMLHttpRequest();
 
 				xhr.open('DELETE', '/tickets/delete/' + ticketID);
 
@@ -79,52 +167,32 @@ $(document).ready(function() {
 									$('#' + tableId).load('/getUpdateTicket?tableId=' + tableId + ' #' + tableId + ' > *', function() {
 										// callback function
 										// callback function to update the value of the pending count span
-										var ongoing_count = parseInt($('#ongoing_count').text());
-										$('#ongoing_count').text(ongoing_count - 1);
-
-										// Event listener for On-going Tickets button
-										$('.menu-item[data-table="ongoing"]').on('click', function() {
-											// Show all rows
-											$('#ongoing-table tbody tr').show();
-
-											// Remove filters from other buttons
-											$('.waiting_button').removeClass('active');
-											$('.ready_to_proceed').removeClass('active');
-											$('.ready_to_resolved').removeClass('active');
-										});
-
-										// Event listener for Waiting List button
-										$('.waiting_button').on('click', function() {
-											// Loop through each table row
-											$('#ongoing-table tbody tr').each(function() {
-												var signature = $(this).find('td:nth-child(11)').text();
-												var paymentProof = $(this).find('td:nth-child(12)').text();
-												// If either signature or payment proof is null, hide the row
-												if (signature && paymentProof) {
-													$(this).hide();
-												} else {
-													$(this).show();
-												}
-											});
-										});
-
-										// Event listener for Ready to proceed button
-										$('.ready_to_proceed').on('click', function() {
-											// Loop through each table row
-											$('#ongoing-table tbody tr').each(function() {
-												var _status = $(this).find('td:nth-child(5)').text();
-												var signature = $(this).find('td:nth-child(11)').text();
-												var paymentProof = $(this).find('td:nth-child(12)').text();
-												console.log(_status);
-												if ((!signature || !paymentProof) || (_status === 'closed')) {
-													$(this).hide();
-												} else {
-													$(this).show();
-												}
-											});
-										});
-
+										var ongoingCount = parseInt($('#ongoing_count').text());
+										$('#ongoing_count').text(ongoingCount - 1);
 									});
+
+									//ONGOING MODAL
+									$(document).ready(function() {
+										$('.eBtn').on('click', function(event) {
+											var ticketId = $(this).closest('tr').find('td:eq(0)').text();
+											var dateCreated = $(this).closest('tr').find('td:eq(1)').text();
+											var title = $(this).closest('tr').find('td:eq(2)').text();
+											var description = $(this).closest('tr').find('td:eq(3)').text();
+											var userName = $(this).closest('tr').find('td:eq(4)').text();
+											var status = $(this).closest('tr').find('td:eq(5)').text();
+											var conformeNo = $(this).closest('tr').find('td:eq(6)').text();
+											$('#id').val(ticketId);
+											$('#date').val(dateCreated);
+											$('#title').val(title);
+											$('#description').val(description);
+											$('#name').val(userName);
+											$('#status').val(status);
+											$('#conforme_no').val(conformeNo);
+											$('#modalView').modal();
+										});
+									});
+
+
 								}
 							});
 						} else {
@@ -141,12 +209,8 @@ $(document).ready(function() {
 				xhr.send();
 			}
 		});
-	});
+	}
 });
-
-
-
-
 
 $(document).ready(function() {
 	$('.send_to_client').on('click', function() {

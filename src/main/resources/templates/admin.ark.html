@@ -61,12 +61,6 @@
 <!-- My Bootstrap CSS -->
 <link rel="stylesheet"
 	th:href="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'">
-<script
-	th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
-<script
-	th:src="'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js'"></script>
-<script
-	th:src="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'"></script>
 
 <title>Admin</title>
 </head>
@@ -127,13 +121,14 @@
 			</a>
 
 			<form action="#"></form>
-			<strong>Hello, <span id="span_session" th:text="${session.user_name}"></span></strong>
-			<a href="#" class="profile"> <img src="img/people.png">
+			<strong>Hello, <span id="span_session"
+				th:text="${session.user_name}"></span></strong> <a href="#" class="profile">
+				<img src="img/people.png">
 			</a>
 		</nav>
 
 		<div class=" d-flex justify-content-between"
-			style="margin-right: 20px; margin-top: 10px">
+			style="margin-right: 20px; margin-top: 10px;">
 			<div></div>
 			<div class="btn-group dropleft" style="border-radius: 20px;">
 				<button type="button" class="btn btn-success"
@@ -374,6 +369,10 @@
 										data-target="#accountModal">
 										<i class="fa fa-edit" style="font-size: 20px;"></i>
 									</button>
+									<button type="button" class="btn btn-danger my-2 delete_user_btn"
+										th:style="${session.userRole == 'super_admin' ? '' : 'display:none;'}">
+										<i class="fa fa-trash" style="font-size: 20px;"></i>
+									</button>
 								</td>
 							</tr>
 						</tbody>
@@ -396,8 +395,8 @@
 								value="">
 
 							<div class="modal-header">
-								<h5 class="modal-title" id="exampleModalLabel">Create
-									Ticket</h5>
+								<h5 class="modal-title" id="exampleModalLabel">ACCOUNT DETAILS
+									</h5>
 								<button type="button" class="close" data-dismiss="modal"
 									aria-label="Close">
 									<span aria-hidden="true">&times;</span>
@@ -423,11 +422,10 @@
 									<div class="form-select-icon">
 										<i class="uil uil-user icon"></i>
 									</div>
-									<select class="form-select" id="dropdownRoleRoles" name="dropdownRole"
-										style="color: grey">
+									<select class="form-select" id="dropdownRoleRoles" th:style="${session.userRole == 'super_admin' ? '' : 'display:none;'}"
+										name="dropdownRole" style="color: grey">
 										<option value="pending">pending</option>
 										<option value="verified">verified</option>
-										<option value="deleted">deleted</option>
 									</select>
 								</div>
 							</div>
@@ -435,7 +433,7 @@
 								<button type="button" class="btn btn-secondary"
 									data-dismiss="modal">Close</button>
 								<button type="submit" class="btn btn-primary updateAccount"
-									id="accountModalButton">Update</button>
+									th:style="${session.userRole == 'super_admin' ? '' : 'display:none;'}">Update user</button>
 							</div>
 						</div>
 					</div>
@@ -1476,6 +1474,12 @@
 		<!-- MAIN -->
 	</section>
 	<!-- CONTENT -->
+<script
+	th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
+<script
+	th:src="'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js'"></script>
+<script
+	th:src="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'"></script>
 
 	<script src="Javascript/dashboard.js"></script>
 	<script src="Javascript/admin.ark.js"></script>
