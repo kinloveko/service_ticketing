@@ -2,6 +2,101 @@
  * 
  */
 
+window.onload = function() {
+	if (window.history && window.history.pushState) {
+		window.history.pushState('', null, '');
+		window.onpopstate = function() {
+			window.history.pushState('', null, '');
+		};
+	}
+};
+$(window).on('load pageshow', function() { // add pageshow event listener
+
+	var userEmail = $('#span_session').text();
+	if (!userEmail || userEmail === '') {
+		Swal.fire({
+			title: 'No credential detected!',
+			text: 'Need to re-login again!',
+			icon: 'danger',
+			confirmButtonText: 'OK',
+			allowOutsideClick: false
+		}).then((s) => {
+			if (s.isConfirmed) {
+				window.location.href = '/'; // replace with your login page URL
+			}
+		});
+	}
+});
+$(document).ready(function() {
+
+	$('.delete_btn_client').on('click', function() {
+		// Extract data from the input fields in the second modal
+		/*  var imageUpload = $('#image_upload').prop('files')[0];*/
+		event.preventDefault();
+
+		var ticketID = $(this).closest('tr').find('td:eq(0)').text();
+		console.log(ticketID);
+
+
+		var tableId = "pending-table";
+		// Show loading animation with Swal
+		Swal.fire({
+			title: 'Are you sure?',
+			text: 'You will not be able to revert this!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#3085d6',
+			confirmButtonText: 'Delete',
+			cancelButtonText: 'Cancel'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				var xhr = new XMLHttpRequest();
+
+
+
+				xhr.open('DELETE', '/tickets/delete/' + ticketID);
+
+				xhr.onreadystatechange = function() {
+					if (this.readyState === XMLHttpRequest.DONE) {
+						if (this.status === 200) {
+							// Show a success message
+							Swal.fire({
+								icon: 'success',
+								title: 'Success',
+								text: 'Ticket Deleted successfully!'
+							}).then((result) => {
+								if (result.isConfirmed) {
+									// Reload the data
+									$('#' + tableId).load('/updateClientTicket?tableId=' + tableId + ' #' + tableId + ' > *', function() {
+										// callback function
+										// callback function to update the value of the pending count span
+										var pendingCount = parseInt($('#pending_count').text());
+										$('#pending_count').text(pendingCount - 1);
+
+
+									});
+								}
+							});
+						} else {
+							// Show an error message
+							Swal.fire({
+								icon: 'error',
+								title: 'Error',
+								text: 'There was an error while deleting the ticket: ' + this.statusText
+							});
+						}
+					}
+				};
+
+				xhr.send();
+			}
+		});
+	});
+});
+
+
+
 
 
 //submit signature ongoing

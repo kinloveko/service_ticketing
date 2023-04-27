@@ -52,4 +52,5 @@ public class User {
 	@Column(name = "status", nullable = false)
 	private String status;
 
+
 }

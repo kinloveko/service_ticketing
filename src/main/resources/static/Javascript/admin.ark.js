@@ -2,6 +2,148 @@
  * for image viewer
  */
 
+//to prevent user to go back after a logout
+
+window.onload = function() {
+	if (window.history && window.history.pushState) {
+		window.history.pushState('', null, '');
+		window.onpopstate = function() {
+			window.history.pushState('', null, '');
+		};
+	}
+};
+$(window).on('load pageshow', function() { // add pageshow event listener
+
+	var userEmail = $('#span_session').text();
+	if (!userEmail || userEmail === '') {
+		Swal.fire({
+			title: 'No credential detected!',
+			text: 'Need to re-login again!',
+			icon: 'danger',
+			confirmButtonText: 'OK',
+			allowOutsideClick: false
+		}).then((s) => {
+			if (s.isConfirmed) {
+				window.location.href = '/'; // replace with your login page URL
+			}
+		});
+	}
+});
+
+
+
+
+
+
+$(document).ready(function() {
+
+	$('.delete_ongoing_ticket').on('click', function() {
+		// Extract data from the input fields in the second modal
+		/*  var imageUpload = $('#image_upload').prop('files')[0];*/
+		event.preventDefault();
+
+		var ticketID = $(this).closest('tr').find('td:eq(0)').text();
+		console.log(ticketID);
+
+
+		var tableId = "ongoing-table";
+		// Show loading animation with Swal
+		Swal.fire({
+			title: 'Are you sure?',
+			text: 'You will not be able to revert this!',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			cancelButtonColor: '#3085d6',
+			confirmButtonText: 'Delete',
+			cancelButtonText: 'Cancel'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				var xhr = new XMLHttpRequest();
+
+
+
+				xhr.open('DELETE', '/tickets/delete/' + ticketID);
+
+				xhr.onreadystatechange = function() {
+					if (this.readyState === XMLHttpRequest.DONE) {
+						if (this.status === 200) {
+							// Show a success message
+							Swal.fire({
+								icon: 'success',
+								title: 'Success',
+								text: 'Ticket Deleted successfully!'
+							}).then((result) => {
+								if (result.isConfirmed) {
+									// Reload the data
+									$('#' + tableId).load('/getUpdateTicket?tableId=' + tableId + ' #' + tableId + ' > *', function() {
+										// callback function
+										// callback function to update the value of the pending count span
+										var ongoing_count = parseInt($('#ongoing_count').text());
+										$('#ongoing_count').text(ongoing_count - 1);
+
+										// Event listener for On-going Tickets button
+										$('.menu-item[data-table="ongoing"]').on('click', function() {
+											// Show all rows
+											$('#ongoing-table tbody tr').show();
+
+											// Remove filters from other buttons
+											$('.waiting_button').removeClass('active');
+											$('.ready_to_proceed').removeClass('active');
+											$('.ready_to_resolved').removeClass('active');
+										});
+
+										// Event listener for Waiting List button
+										$('.waiting_button').on('click', function() {
+											// Loop through each table row
+											$('#ongoing-table tbody tr').each(function() {
+												var signature = $(this).find('td:nth-child(11)').text();
+												var paymentProof = $(this).find('td:nth-child(12)').text();
+												// If either signature or payment proof is null, hide the row
+												if (signature && paymentProof) {
+													$(this).hide();
+												} else {
+													$(this).show();
+												}
+											});
+										});
+
+										// Event listener for Ready to proceed button
+										$('.ready_to_proceed').on('click', function() {
+											// Loop through each table row
+											$('#ongoing-table tbody tr').each(function() {
+												var _status = $(this).find('td:nth-child(5)').text();
+												var signature = $(this).find('td:nth-child(11)').text();
+												var paymentProof = $(this).find('td:nth-child(12)').text();
+												console.log(_status);
+												if ((!signature || !paymentProof) || (_status === 'closed')) {
+													$(this).hide();
+												} else {
+													$(this).show();
+												}
+											});
+										});
+
+									});
+								}
+							});
+						} else {
+							// Show an error message
+							Swal.fire({
+								icon: 'error',
+								title: 'Error',
+								text: 'There was an error while deleting the ticket: ' + this.statusText
+							});
+						}
+					}
+				};
+
+				xhr.send();
+			}
+		});
+	});
+});
+
 
 
 
@@ -1727,6 +1869,7 @@ $(document).ready(function() {
 
 			//so that when the admin will click the button it will rewrite the data 
 
+
 			$('#waiting_payment').hide();
 			$('#waiting_signature').hide();
 			$('#client_payment_proof').show();
@@ -1750,7 +1893,7 @@ $(document).ready(function() {
 
 		} else {
 
-			$('#waiting_payment').show();
+
 			$('#waiting_signature').show();
 			$('#client_payment_proof').hide();
 			$('#client_signature').hide();
@@ -1994,6 +2137,88 @@ $('.account_modal').on('click', function(event) {
 
 });
 
+
+
+$(document).ready(function() {
+	$('.updateAccount').on('click', function() {
+		// Extract data from the input fields in the second modal
+		/*  var imageUpload = $('#image_upload').prop('files')[0];*/
+		event.preventDefault();
+		var selectElement = document.getElementById("dropdownRoleRoles");
+		var selectedValue = selectElement.options[selectElement.selectedIndex].value;
+
+		var formData = new FormData();
+		formData.append("selectedValue", selectedValue);
+		var userID = $("#user_id_").val();
+
+		console.log(userID);
+
+		var tableIdOngoing = "account-table";
+		// Show loading animation with Swal
+		Swal.fire({
+			title: 'Loading . . .',
+			allowEscapeKey: false,
+			allowOutsideClick: false,
+			didOpen: () => {
+				Swal.showLoading();
+			}
+		});
+
+		var xhr = new XMLHttpRequest();
+		xhr.open('PUT', '/user/update/' + userID);
+		xhr.onload = function() {
+			if (xhr.status === 200) {
+				// Show a success message
+
+
+				Swal.fire({
+					icon: 'success',
+					title: 'Status Updated',
+					text: 'User status is successfully updated!',
+				}).then((result) => {
+					if (result.isConfirmed) {
+						$('#accountModal').modal('hide');
+
+						$('#' + tableIdOngoing).load('/getUserUpdate?tableId=' + tableIdOngoing + ' #' + tableIdOngoing + ' > *', function() {
+							$('.account_modal').on('click', function(event) {
+								// Extract data from the input fields in the second modal
+								var _userid = $(this).closest('tr').find('td:eq(0)').text();
+								var _username = $(this).closest('tr').find('td:eq(1)').text();
+
+								var _useremail = $(this).closest('tr').find('td:eq(2)').text();
+								var _role = $(this).closest('tr').find('td:eq(3)').text();
+								var _status = $(this).closest('tr').find('td:eq(4)').text();
+								var password = $(this).closest('tr').find('td:eq(5)').text();
+								$('#user_id_').val(_userid);
+								$('#user_name_').val(_username);
+								$('#user_email_').val(_useremail);
+								$('#role').val(_role);
+								$('#user_status').val(_status);
+								$('#user_password_').val(password);
+								$('#accountModal').modal();
+
+							});
+
+						});
+
+					} else {
+						// Show error message with SweetAlert
+						Swal.fire({
+							icon: 'error',
+							title: 'Error',
+							text: 'There was an error while saving the user data; ' + xhr.statusText,
+						});
+					}
+				});
+
+			} else {
+				// Show an error message
+				console.log("Error Updating Ticket");
+			}
+		};
+		xhr.send(formData);
+	});
+});
 
 //FOR HIDING THE TABLES 
 function handleClick(menuItem) {

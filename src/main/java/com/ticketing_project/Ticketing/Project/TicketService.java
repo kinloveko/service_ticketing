@@ -67,9 +67,8 @@ public class TicketService {
 				// Check if the ticket is aging 2 days without progress
 				// Send email reminder
 
-				String emailBody = "Dear Sir/Ma'am,\n\n"
-						+ "This is a reminder that your ticket with ID #" + ticket.getTicket_id()
-						+ " has been pending for 2 days without progress. "
+				String emailBody = "Dear Sir/Ma'am,\n\n" + "This is a reminder that your ticket with ID #"
+						+ ticket.getTicket_id() + " has been pending for 2 days without progress. "
 						+ "To help the sales staff understand more fully the reason of your problem, kindly submit an updated explanation. We appreciate your assisting us..\n\n"
 						+ "Best regards,\n" + "info@ark.alliance";
 				String emailSubject = "Reminder: Ticket ID #" + ticket.getTicket_id()
@@ -78,7 +77,8 @@ public class TicketService {
 			} else if (ticket.getStatus().equals("ongoing") && ((ticket.getClient_signature() == null
 					|| ticket.getClient_signature().equals(""))
 					&& (ticket.getClient_payment_proof() == null || ticket.getClient_payment_proof().equals("")))) {
-					// Check if the ticket is ongoing but client signature and payment proof are not provided
+				// Check if the ticket is ongoing but client signature and payment proof are not
+				// provided
 				// Send email reminder
 				String emailBody = "Dear Sir/Ma'am,\n\n" + "This is a reminder that your ticket with ID #"
 						+ ticket.getTicket_id()

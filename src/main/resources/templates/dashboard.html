@@ -29,9 +29,9 @@
 
 	<!-- SIDEBAR -->
 	<section id="sidebar" class="hide">
-		<a href="dashboard" style="text-decoration:none" class="brand"> <img src="img/brandlogo.png"
-			style="width: 60px; height: 60px"> <span class="text"
-			style="color: gray">ARK</span>
+		<a href="dashboard" style="text-decoration: none" class="brand"> <img
+			src="img/brandlogo.png" style="width: 60px; height: 60px"> <span
+			class="text" style="color: gray">ARK</span>
 		</a>
 		<ul class="side-menu top">
 			<li class="active"><a href="#"> <i class='bx bxs-dashboard'></i>
@@ -73,12 +73,18 @@
 	<section id="content">
 		<!-- NAVBAR -->
 		<nav>
-			<i class='bx bx-menu'></i> <a href="dashboard" style="text-decoration:none;" class="nav-link">ARK Service Charge</a>
+			<i class='bx bx-menu'></i> <a href="dashboard"
+				style="text-decoration: none;" class="nav-link">ARK Service
+				Charge</a>
 			<form action=""></form>
-			<strong>Hello, <span class="text"
-				th:text="${session.user_name}"></span></strong> <a href="#" class="profile">
-				<img src="img/people.png">
+			<div>
+				<strong>Hello, <span class="text" id="span_session"
+					th:text="${session.user_name}"> </span>
+				</strong>
+			</div>
+			<a href="#" class="profile"> <img src="img/people.png">
 			</a>
+
 		</nav>
 		<!-- NAVBAR -->
 
@@ -160,13 +166,19 @@
 										data-toggle="modal" data-target="#viewTicket">
 										<i class="fa fa-edit" style="font-size: 20px;"></i>
 									</button>
-									<button type="button" class="btn btn-danger my-2">
+									<button type="button"
+										class="btn btn-danger my-2 delete_btn_client">
 										<i class="fa fa-trash" style="font-size: 20px;"></i>
 									</button>
 								</td>
 							</tr>
 						</tbody>
 					</table>
+					<div
+						th:if="${#lists.isEmpty(pending_tickets) or #lists.size(pending_tickets) == 0}"
+						style="text-align: center; margin-top: 20px">
+						<span style="color: red">No ticket is found.</span>
+					</div>
 				</div>
 			</div>
 
@@ -230,6 +242,11 @@
 							</tr>
 						</tbody>
 					</table>
+					<div
+						th:if="${#lists.isEmpty(ongoing_tickets) or #lists.size(ongoing_tickets) == 0}"
+						style="text-align: center; margin-top: 20px">
+						<span style="color: red">No ticket is found.</span>
+					</div>
 				</div>
 			</div>
 
@@ -280,6 +297,11 @@
 							</tr>
 						</tbody>
 					</table>
+					<div
+						th:if="${#lists.isEmpty(completed_tickets) or #lists.size(completed_tickets) == 0}"
+						style="text-align: center; margin-top: 20px">
+						<span style="color: red">No ticket is found.</span>
+					</div>
 				</div>
 			</div>
 		</main>
@@ -744,13 +766,14 @@
 
 
 	<script th:if="${successMessage}">
-        Swal.fire({
-            title: 'Success',
-            text: 'Ticket saved successfully!',
-            icon: 'success',
-            confirmButtonText: 'OK'
-        });
-    </script>
+		Swal.fire({
+			title : 'Success',
+			text : 'Ticket saved successfully!',
+			icon : 'success',
+			confirmButtonText : 'OK'
+		});
+	</script>
+
 
 
 </body>

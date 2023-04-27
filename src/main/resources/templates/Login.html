@@ -10,13 +10,17 @@
 	href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
 	type="text/css">
 <link href="css/logocs.css" rel="stylesheet" />
+<link rel="stylesheet" href="sweetalert2.min.css">
+<!-- My Bootstrap CSS -->
 
+<script
+	th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
 </head>
 
 <body>
-
+	<input type="hidden" id="input_text" th:value="${session.userRole}">
 	<div class="bg1"></div>
-
+	
 	<div class="mid">
 
 
@@ -24,7 +28,7 @@
 			<div class="forms">
 				<div class="form login">
 					<span class="title">Login</span>
-					<form th:action="@{/login}" method="post">
+					<form id="login-form">
 						<div class="input-field">
 							<input type="text" placeholder="Enter your email"
 								name="user_email" required> <i
@@ -47,7 +51,7 @@
 						</div>
 
 						<div class="input-field button">
-							<input type="submit" value="Login">
+							<input class="btn-login" type="button" value="Login">
 						</div>
 					</form>
 
@@ -122,7 +126,114 @@
 				confirmButtonText : 'OK'
 			});
 		</script>
+		<script type="text/javascript">
+		
+	
 
+		$(document).ready(function() {
+			
+		
+		 if (window.history && window.history.pushState) {
+		      window.history.pushState('', null, '');
+		      window.onpopstate = function() {
+		         window.history.pushState('', null, '');
+		      };
+		   }
+	
+			if(sessionStorage.getItem("user_role") !== null) {
+				
+				 var role =  sessionStorage.getItem("user_role");
+				 console.log(role);
+				if(role === 'client'){
+						  window.location.href = 'dashboard';
+				}
+			else{
+				  window.location.href = 'admin.ark';
+					}
+		   }
+
+			  
+
+			  $('.btn-login').on('click', function() {
+			    // Show the modal
+			    var form = document.getElementById("login-form");
+			    var formData = new FormData(form);
+			    var url = "/login";
+
+			    $.ajax({
+			      type: "POST",
+			      url: url,
+			      data: formData,
+			      processData: false,
+			      contentType: false,
+			      success: function(result) {
+			        console.log(result);
+			        if (result === "redirect:/Login") {
+			          Swal.fire({
+			            title: 'Account not exist!',
+			            text: 'Invalid email and password! Try again!',
+			            icon: 'warning',
+			            confirmButtonText: 'OK'
+			          }).then((s) => {
+
+			            if (s.isConfirmed) {
+			              window.location.href = result;
+			            }
+
+			          });
+			        } else if (result === "admin.ark") {
+			          Swal.fire({
+			            title: 'Login success!',
+			            text: 'Welcome back, Admin!',
+			            icon: 'success',
+			            confirmButtonText: 'OK'
+			          }).then((s) => {
+
+			            if (s.isConfirmed) {
+			              window.location.href = "admin.ark";
+			            }
+
+			          });
+
+			        }else if (result === "dashboard") {
+				          Swal.fire({
+					            title: 'Login success!',
+					            text: 'Welcome back, Lovely Client!',
+					            icon: 'success',
+					            confirmButtonText: 'OK'
+					          }).then((s) => {
+
+					            if (s.isConfirmed) {
+					              window.location.href = "dashboard";
+					            }
+
+					          });
+
+					  } else if (result === "notVerified") {
+			          Swal.fire({
+			            title: 'Account is not verified!',
+			            text: 'Waiting for admins approval! Try again later!',
+			            icon: 'warning',
+			            confirmButtonText: 'OK'
+			          }).then((s) => {
+
+			            if (s.isConfirmed) {
+			              window.location.href = "redirect:/Login";
+			            }
+
+			          });
+
+			        }
+
+			      },
+			      error: function(jqXHR, textStatus, errorThrown) {
+			        // handle the error here
+			        console.log(textStatus);
+			      }
+			    });
+			  });
+			});
+		</script>
 	</div>
 
 </body>
