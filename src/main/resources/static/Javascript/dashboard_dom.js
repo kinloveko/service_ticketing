@@ -65,7 +65,7 @@ $(document).ready(function() {
 								text: 'Your account has been successfully deleted. We\'re sorry to see you go.!'
 							}).then((result) => {
 								if (result.isConfirmed) {
-							  window.location.href = "/";
+									window.location.href = "/";
 								}
 							});
 						} else {
@@ -96,7 +96,9 @@ $(document).ready(function() {
 		event.preventDefault();
 		var user_password_ = $('#user_password_').val();
 
+		var token_pass = $('#token').val();
 
+		$('#token_pass').val(token_pass);
 
 		$('#pass_').val(user_password_);
 		$('#change_password_modal').modal();
@@ -105,10 +107,11 @@ $(document).ready(function() {
 	$('.change_pass_verify').on('click', function(event) {
 
 		event.preventDefault();
+		var token = $('#token_pass').val();
 		var password_ = $('#pass_').val();
 		var verify_pass = $('#password_user').val();
 
-		if (password_ === verify_pass) {
+		if (password_ === verify_pass || token === verify_pass) {
 			Swal.fire({
 				title: 'Password match!',
 				text: 'Click okay to continue!',
@@ -150,7 +153,9 @@ $(document).ready(function() {
 			console.log(userID);
 			const formData = new FormData();
 			const newpassword = $('#newpassword').val();
+			const tokenPass = $('#token_pass').val();
 			console.log(newpassword);
+			formData.append('token', tokenPass);
 			formData.append('user_password', newpassword);
 			if (newpassword === confirmPassword) {
 				Swal.fire({

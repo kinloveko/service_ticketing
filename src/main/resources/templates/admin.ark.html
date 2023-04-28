@@ -127,7 +127,7 @@
 				th:text="${session.user_name}"></span></strong> <a href="#" class="profile">
 				<img id="image-profile"
 				th:src="${session.profileImage == null  || session.profileImage == '' ? '/img/defaultImage.jpg' : '/img/' + session.profileImage}">
-				</a>
+			</a>
 		</nav>
 
 		<div class=" d-flex justify-content-between"
@@ -723,7 +723,8 @@
 								ACCOUNT</button>
 
 						</div>
-
+						<input type="hidden" id="token" name="token"
+							th:value="${session.token}">
 						<!-- Hidden inputs since i pass a whole model User -->
 						<input type="hidden" id="user_id_admin_id" name="user_id"
 							th:value="${session.user_id}"> <input type="hidden"
@@ -787,6 +788,8 @@
 				<div class="modal-dialog modal-xl" role="document">
 					<div class="modal-content">
 						<!-- Hidden -->
+						
+						<input type="hidden" id="token_pass">
 						<input type="hidden" id="pass_"> <input type="hidden"
 							id="user_id__">
 						<div class="modal-header" style="display: inline-block;">

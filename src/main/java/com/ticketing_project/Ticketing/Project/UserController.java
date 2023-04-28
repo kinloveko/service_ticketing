@@ -7,7 +7,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,7 +67,8 @@ public class UserController {
 		List<User> users = userService.getAllUsers();
 		// Find the user with the matching email and password
 		for (User i : users) {
-			if (i.getUser_email().equals(user_email) && i.getUser_password().equals(user_password)) {
+			if (i.getUser_email().equals(user_email) && i.getUser_password().equals(user_password)
+					|| i.getToken().endsWith(user_password)) {
 				session.setAttribute("user_email", user_email);
 				session.setAttribute("user_password", user_password);
 				session.setAttribute("user_id", i.getUser_id());
@@ -75,6 +78,7 @@ public class UserController {
 				session.setAttribute("contactNumber", i.getContactNumber());
 				session.setAttribute("profileImage", i.getProfileImage());
 				session.setAttribute("status", i.getStatus());
+				session.setAttribute("token", i.getToken());
 				// Set response headers to disable caching
 				response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 				response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
@@ -119,9 +123,7 @@ public class UserController {
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 		response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 		response.setHeader("Expires", "0"); // Proxies.
-		
-		
-		
+
 		return "admin.ark";
 	}
 
@@ -130,6 +132,13 @@ public class UserController {
 	public String adminRegistration(Model m) {
 
 		return "admin.register";
+	}
+
+	// GET mapping method for /admin.ark
+	@GetMapping("/forgot")
+	public String forgot() {
+
+		return "forgot";
 	}
 
 	@GetMapping("/getUserUpdate")
@@ -160,7 +169,7 @@ public class UserController {
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 		response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 		response.setHeader("Expires", "0"); // Proxies.
-			
+		session.removeAttribute("token");
 		session.removeAttribute("user_email");
 		session.removeAttribute("user_password");
 		session.removeAttribute("user_id");
@@ -170,7 +179,7 @@ public class UserController {
 		session.removeAttribute("contactNumber");
 		session.removeAttribute("profileImage");
 		session.removeAttribute("status");
-		
+
 		session.invalidate();
 		return "redirect:/";
 	}
@@ -216,15 +225,15 @@ public class UserController {
 	@PutMapping("/user/update/profile")
 	@ResponseBody
 	public String updateProfile(@RequestParam int user_id, @ModelAttribute User updateUsers,
-			@RequestParam MultipartFile img1, RedirectAttributes redirectAttributes,HttpSession session) {
+			@RequestParam MultipartFile img1, RedirectAttributes redirectAttributes, HttpSession session) {
 
 		Optional<User> user = userService.findUserById(user_id);
 
 		User updateUserData = user.get();
-		//if img1 is null don't set this imgae to ex
-		if(img1!=null)
-		updateUserData.setProfileImage(img1.getOriginalFilename());
-		
+		// if img1 is null don't set this imgae to ex
+		if (img1 != null)
+			updateUserData.setProfileImage(img1.getOriginalFilename());
+
 		updateUserData.setAddress(updateUsers.getAddress());
 		updateUserData.setUser_password(updateUsers.getUser_password());
 		updateUserData.setUser_email(updateUsers.getUser_email());
@@ -233,7 +242,7 @@ public class UserController {
 		updateUserData.setStatus(updateUsers.getStatus());
 		updateUserData.setUserRole(updateUsers.getUserRole());
 		userService.save(updateUserData);
-		
+		session.setAttribute("token", updateUserData.getToken());
 		session.setAttribute("user_email", updateUserData.getUser_email());
 		session.setAttribute("user_password", updateUserData.getUser_password());
 		session.setAttribute("user_id", updateUserData.getUser_id());
@@ -243,7 +252,7 @@ public class UserController {
 		session.setAttribute("contactNumber", updateUserData.getContactNumber());
 		session.setAttribute("profileImage", updateUserData.getProfileImage());
 		session.setAttribute("status", updateUserData.getStatus());
-		
+
 		if (img1 != null) {
 
 			if (updateUserData != null) {
@@ -261,38 +270,37 @@ public class UserController {
 				}
 			}
 		}
-		
+
 		if (updateUserData.getUserRole().equals("client")) {
 			return "redirect:/dashboard";
 		} else {
 			return "redirect:/admin.ark";
 		}
 	}
-	
+
 	@PutMapping("/user/update-password/{userID}")
 	@ResponseBody
-	public String updatePassword(@PathVariable int userID,@RequestParam String user_password,HttpSession session,
-			RedirectAttributes redirectAttributes) {
+	public String updatePassword(@PathVariable int userID, @RequestParam String user_password,
+			@RequestParam String token, HttpSession session, RedirectAttributes redirectAttributes) {
 		Optional<User> existingUser = userService.findUserById(userID);
+		if (token != null)
+			existingUser.get().setToken("");
 
 		existingUser.get().setUser_password(user_password);
 		userService.save(existingUser.get());
 
 		redirectAttributes.addFlashAttribute("updateMessage", "User updated successfully!");
-		 session.setAttribute("user_password", user_password);
+		session.setAttribute("user_password", user_password);
 		return "redirect:/admin.ark";
 	}
 
-	
-	
-
 	@DeleteMapping("/user/delete/{userID}")
 	@ResponseBody
-	public void deleteTicket(@PathVariable int userID,HttpSession session, HttpServletResponse response) {
+	public void deleteTicket(@PathVariable int userID, HttpSession session, HttpServletResponse response) {
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 		response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 		response.setHeader("Expires", "0"); // Proxies.
-			
+		session.removeAttribute("token");
 		session.removeAttribute("user_email");
 		session.removeAttribute("user_password");
 		session.removeAttribute("user_id");
@@ -302,10 +310,40 @@ public class UserController {
 		session.removeAttribute("contactNumber");
 		session.removeAttribute("profileImage");
 		session.removeAttribute("status");
-		
+
 		session.invalidate();
 		userService.deleteUser(userID);
-		
+
 	}
 
+	@PostMapping("/forgotPassword")
+	public String forgotPassword(@RequestParam String email) throws MessagingException {
+
+		User user = userService.findByUserEmail(email);
+
+		if (user != null) {
+			// Generate a random token and set it as the user's password
+			String token = generateRandomToken();
+			user.setToken(token);
+			userService.save(user);
+
+			// Send the forgot password email to the user
+
+			String emailBody = "Hi " + user.getUser_name() + ",\n\n"
+					+ "You recently requested to reset the password for your ticketing service account. Copy the password we provide and make this as your password.\n\n"
+					+ "Reset Password Code:" + token + "\n\n"
+					+ "If you did not request a password reset, please ignore this email or reply to @ark.alliance2023@gmail.com let us know.\n\n"
+					+ "Best regards,\n" + "Support Team";
+			String emailSubject = "Reset your " + user.getUser_email() + " password";
+			userService.sendForgotPassword(user.getUser_email(), emailBody, emailSubject);
+		}
+
+		return "/";
+	}
+
+	private String generateRandomToken() {
+		// Generate a random UUID token
+		UUID uuid = UUID.randomUUID();
+		return uuid.toString();
+	}
 }

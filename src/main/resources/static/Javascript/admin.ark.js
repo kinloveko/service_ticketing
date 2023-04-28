@@ -93,8 +93,9 @@ $(document).ready(function() {
 
 		event.preventDefault();
 		var user_password_ = $('#user_password_admin').val();
-
-
+		var token_pass = $('#token').val();
+		
+		$('#token_pass').val(token_pass);
 		$('#user_id__').val(user_id__);
 		$('#pass_').val(user_password_);
 		$('#change_password_modal').modal();
@@ -103,11 +104,11 @@ $(document).ready(function() {
 	$('.change_pass_verify').on('click', function(event) {
 	
 		event.preventDefault();
-
+		var token = $('#token_pass').val();
 		var password_ = $('#pass_').val();
 		var verify_pass = $('#password_user').val();
 
-		if (password_ === verify_pass) {
+		if (password_ === verify_pass || token === verify_pass) {
 			Swal.fire({
 				title: 'Password match!',
 				text: 'Click okay to continue!',
@@ -150,8 +151,11 @@ $(document).ready(function() {
 			console.log(userID);
 			const formData = new FormData();
 			const newpassword = $('#newpassword').val();
+			const tokenPass = $('#token_pass').val();
 			console.log(newpassword);
 			formData.append('user_password', newpassword);
+			formData.append('token', tokenPass);
+			
 			if (newpassword === confirmPassword) {
 				Swal.fire({
 					title: 'Password Change Successfully!',

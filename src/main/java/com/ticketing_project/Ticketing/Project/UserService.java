@@ -3,7 +3,12 @@ package com.ticketing_project.Ticketing.Project;
 import java.util.List;
 import java.util.Optional;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,5 +46,25 @@ public class UserService {
 			repo.delete(user.get(0));
 		}
 	}
+	
+	
+
+	@Autowired
+	private JavaMailSender mailSender;
+	
+	public void sendForgotPassword(String toEmail, String body, String subject) throws MessagingException {
+
+		MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+		MimeMessageHelper mineMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+		mineMessageHelper.setFrom("ark.alliance2023@gmail.com");
+		mineMessageHelper.setTo(toEmail);
+		mineMessageHelper.setText(body);
+		mineMessageHelper.setSubject(subject);
+
+		mailSender.send(mimeMessage);
+	}
+	
 
 }

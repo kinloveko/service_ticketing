@@ -326,6 +326,8 @@
 						</div>
 
 						<!-- Hidden inputs since i pass a whole model User -->
+						<input type="hidden" id="token" name="token"
+							th:value="${session.token}">
 						<input type="hidden" id="user_id_" name="user_id"
 							th:value="${session.user_id}"> <input type="hidden"
 							id="user_status_" name="status" th:value="${session.status}">
@@ -388,6 +390,7 @@
 			<div class="modal-dialog modal-xl" role="document">
 				<div class="modal-content">
 					<!-- Hidden -->
+					<input type="hidden" id="token_pass">
 					<input type="hidden" id="pass_" >
 					<input type="hidden" id="user_id__" >
 					<div class="modal-header" style="display: inline-block;">

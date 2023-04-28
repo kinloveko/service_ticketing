@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.com">
+<head>
+<meta charset="UTF-8">
+<title>Forgot Password</title>
+<link rel="stylesheet" href="sweetalert2.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet"
+	href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
+	type="text/css">
+<link href="css/logocs.css" rel="stylesheet" />
+<link rel="stylesheet" href="sweetalert2.min.css">
+<!-- My Bootstrap CSS -->
+
+<script
+	th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
+</head>
+
+<body>
+	<input type="hidden" id="input_text" th:value="${session.userRole}">
+	<div class="bg1"></div>
+
+	<div class="mid">
+
+
+		<div class="container" style="max-height: 300px;">
+			<div class="forms">
+				<div class="form login">
+					<span class="title">Forgot password</span>
+					<form id="login-form">
+						<div class="input-field">
+							<input type="text" placeholder="Enter your email"
+							id="email"
+								name="email" required> <i
+								class="uil uil-envelope icon"></i>
+						</div>
+
+						<div class="input-field button">
+							<input class="btn-login " id="login_btn"  type="button" value="SEND EMAIL">
+						</div>
+						<div class="input-field button"></div>
+						<div class="input-field button"></div>
+					</form>
+
+
+				</div>
+			</div>
+		</div>
+
+		<script src="Javascript/script.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+		
+		<script th:if="${emailDuplicate}">
+			Swal.fire({
+				title : 'Email already exist!',
+				text : 'Please try different email!',
+				icon : 'danger',
+				confirmButtonText : 'OK'
+			});
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				
+				  $('#login_btn').on('click', function() {
+					  const formData = new FormData();
+						  const email = $('#email').val();
+						console.log(email);
+						formData.append('email', email);
+				
+					  console.log(email);
+						if(email === null || email === ''){
+							Swal.fire({
+								title: 'No email being entered!',
+								text: 'Please input a valid email!',
+								icon: 'warning'
+							});
+						}
+						else{
+							Swal.fire({
+								title : 'Email sent!',
+								text : 'Please check your email inbox!!',
+								icon : 'success',
+								confirmButtonText : 'OK'
+							}).then((s) => {
+
+					            if (s.isConfirmed) {
+					            	
+					            	var xhr = new XMLHttpRequest();
+
+									xhr.open('POST', '/forgotPassword');
+
+									xhr.onreadystatechange = function() {
+										if (this.readyState === XMLHttpRequest.DONE) {
+											if (this.status === 200) {
+												// Show a success message
+												Swal.fire({
+													icon: 'success',
+													title: 'We Successfully sent a code',
+													text: 'Please check your email inbox!'
+												}).then((result) => {
+													if (result.isConfirmed) {
+														
+														  window.location.href = "redirect:/Login";
+											              
+													}
+												});
+											} else {
+												// Show an error message
+												Swal.fire({
+													icon: 'error',
+													title: 'Error',
+													text: 'There was an error while sending a code: '
+												});
+											}
+										}
+									};
+
+									xhr.send(formData);
+					  
+					            }
+
+					          });
+						}
+				  });
+					
+			});
+		</script>
+	</div>
+
+</body>
+
+</html>

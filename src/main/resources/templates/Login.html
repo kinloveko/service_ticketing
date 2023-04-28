@@ -47,7 +47,7 @@
 									for="logCheck" class="text">Remember me</label>
 							</div>
 
-							<a href="#" class="text">Forgot password?</a>
+							<a th:href="@{forgot}" class="text">Forgot password?</a>
 						</div>
 
 						<div class="input-field button">
@@ -61,9 +61,10 @@
 						</span>
 					</div>
 				</div>
-
+				
 				<!-- Registration Form -->
 				<div class="form signup">
+				
 					<span class="title">Registration</span>
 
 					<form id="registrationForm" th:action="@{/save}" method="post">

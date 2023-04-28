@@ -67,4 +67,11 @@ public class User {
 	@Setter
 	@Column(name = "profileImage", nullable = true)
 	private String profileImage;
+	
+	@Getter
+	@Setter
+	@Column(name = "token", nullable = false)
+	private String token;
+	
+	
 }
