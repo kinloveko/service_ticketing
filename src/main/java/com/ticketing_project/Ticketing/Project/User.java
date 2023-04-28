@@ -37,10 +37,21 @@ public class User {
 	@Setter
 	@Column(name = "user_name", nullable = false)
 	private String user_name;
+	
 	@Getter
 	@Setter
 	@Column(name = "user_password", nullable = false)
 	private String user_password;
+	
+	@Getter
+	@Setter
+	@Column(name = "contactNumber", nullable = true)
+	private String contactNumber;
+	
+	@Getter
+	@Setter
+	@Column(name = "address", nullable = true)
+	private String address;
 
 	@Getter
 	@Setter
@@ -52,5 +63,8 @@ public class User {
 	@Column(name = "status", nullable = false)
 	private String status;
 
-
+	@Getter
+	@Setter
+	@Column(name = "profileImage", nullable = true)
+	private String profileImage;
 }

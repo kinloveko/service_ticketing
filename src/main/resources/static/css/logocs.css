@@ -115,12 +115,14 @@ body{
     transition: opacity 0.09s ease;
 }
 .container.active .signup{
+
     opacity: 1;
     transition: opacity 0.2s ease;
 }
 
 .container.active .forms{
-    height: 700px;
+    height: 800px;
+    	margin:auto;
 }
 .container .form .title{
     position: relative;

@@ -78,12 +78,12 @@
 			</a></li>
 			<li class="menu-item " data-table="pending"
 				onclick="handleClick(this)"><a href="#"> <i
-					class='bx bxs-shopping-bag-alt'></i> <span class="text">Pending
+					class='bx bxs-time-five'></i> <span class="text">Pending
 						Tickets</span>
 			</a></li>
 			<li class="menu-item" data-table="ongoing"
 				onclick="handleClick(this)"><a href="#"> <i
-					class='bx bxs-doughnut-chart'></i> <span class="text">On-going
+					class='bx bxs-hourglass'></i> <span class="text">On-going
 						Tickets</span>
 			</a></li>
 			<li class="menu-item " data-table="completed"
@@ -99,12 +99,14 @@
 				onclick="handleClick(this)"><a href="#"> <i
 					class="bx bxs-group"></i> <span class="text">Accounts</span>
 			</a></li>
+			<li class="menu-item" data-table="profile"
+				onclick="handleClick(this)"><a href="#"> <i
+					class='bx bxs-cog'></i> <span class="text">Settings</span>
+			</a></li>
 
 		</ul>
 		<ul class="side-menu">
-			<li><a href="#"> <i class='bx bxs-cog'></i> <span
-					class="text">Settings</span>
-			</a></li>
+
 			<li><a href="/logout" class="logout"> <i
 					class='bx bxs-log-out-circle'></i> <span class="text">Logout</span>
 			</a></li>
@@ -123,14 +125,16 @@
 			<form action="#"></form>
 			<strong>Hello, <span id="span_session"
 				th:text="${session.user_name}"></span></strong> <a href="#" class="profile">
-				<img src="img/people.png">
-			</a>
+				<img id="image-profile"
+				th:src="${session.profileImage == null  || session.profileImage == '' ? '/img/defaultImage.jpg' : '/img/' + session.profileImage}">
+				</a>
 		</nav>
 
 		<div class=" d-flex justify-content-between"
 			style="margin-right: 20px; margin-top: 10px;">
 			<div></div>
-			<div class="btn-group dropleft" style="border-radius: 20px;">
+			<div class="btn-group dropleft" style="border-radius: 20px;"
+				id="tickets_lists">
 				<button type="button" class="btn btn-success"
 					style="border-radius: 20px; padding: 5px 10px; font-size: 13px;"
 					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -149,12 +153,14 @@
 		</div>
 		<!-- NAVBAR -->
 
+
+
 		<!-- MAIN -->
 		<main>
-			<ul class="box-info">
+			<ul class="box-info" id="dashboard_header">
 				<li class="menu-item " data-table="pending"
-					onclick="handleClick(this)"><i class='bx bxs-calendar-check'></i>
-					<span class="text">
+					onclick="handleClick(this)"><i class='bx bxs-time-five'></i> <span
+					class="text">
 						<h3 id="pending_count" th:text="${pending_ticket_count}">0</h3>
 						<p>Pending Tickets</p>
 				</span></li>
@@ -369,7 +375,8 @@
 										data-target="#accountModal">
 										<i class="fa fa-edit" style="font-size: 20px;"></i>
 									</button>
-									<button type="button" class="btn btn-danger my-2 delete_user_btn"
+									<button type="button"
+										class="btn btn-danger my-2 delete_user_btn"
 										th:style="${session.userRole == 'super_admin' ? '' : 'display:none;'}">
 										<i class="fa fa-trash" style="font-size: 20px;"></i>
 									</button>
@@ -395,8 +402,8 @@
 								value="">
 
 							<div class="modal-header">
-								<h5 class="modal-title" id="exampleModalLabel">ACCOUNT DETAILS
-									</h5>
+								<h5 class="modal-title" id="exampleModalLabel">ACCOUNT
+									DETAILS</h5>
 								<button type="button" class="close" data-dismiss="modal"
 									aria-label="Close">
 									<span aria-hidden="true">&times;</span>
@@ -422,7 +429,8 @@
 									<div class="form-select-icon">
 										<i class="uil uil-user icon"></i>
 									</div>
-									<select class="form-select" id="dropdownRoleRoles" th:style="${session.userRole == 'super_admin' ? '' : 'display:none;'}"
+									<select class="form-select" id="dropdownRoleRoles"
+										th:style="${session.userRole == 'super_admin' ? '' : 'display:none;'}"
 										name="dropdownRole" style="color: grey">
 										<option value="pending">pending</option>
 										<option value="verified">verified</option>
@@ -433,7 +441,8 @@
 								<button type="button" class="btn btn-secondary"
 									data-dismiss="modal">Close</button>
 								<button type="submit" class="btn btn-primary updateAccount"
-									th:style="${session.userRole == 'super_admin' ? '' : 'display:none;'}">Update user</button>
+									th:style="${session.userRole == 'super_admin' ? '' : 'display:none;'}">Update
+									user</button>
 							</div>
 						</div>
 					</div>
@@ -700,6 +709,153 @@
 
 			<!-- End of Support Table-->
 
+
+			<!--  Profile modal -->
+
+			<form id="form-profile-data" enctype="multipart/form-data">
+				<div class="table-data" id="profile-table"
+					style="display: none; margin-top: -10px">
+					<div class="order">
+						<div class="head">
+							<h3>Profile Details</h3>
+							<button style="margin-top: 20px"
+								class="btn btn-danger delete_own_account_btn" type="button">DELETE
+								ACCOUNT</button>
+
+						</div>
+
+						<!-- Hidden inputs since i pass a whole model User -->
+						<input type="hidden" id="user_id_admin_id" name="user_id"
+							th:value="${session.user_id}"> <input type="hidden"
+							id="user_status_admin" name="status" th:value="${session.status}">
+						<input type="hidden" id="userRole_user_admin" name="userRole"
+							th:value="${session.userRole}"> <input type="hidden"
+							id="user_password_admin" name="user_password"
+							th:value="${session.user_password}">
+						<div class="row">
+							<div class="col-sm-2">
+								<img id="user_image" class="profile"
+									style="width: 150px; height: 150px; margin-left: 0px; cursor: pointer; border-radius: 50%; border: 2px solid #ccc;"
+									th:src="${session.profileImage == null || session.profileImage == '' ? '/img/defaultImage.jpg' : '/img/' + session.profileImage}">
+								<input type="file" id="profile_image_input" name="img1"
+									style="display: none;">
+							</div>
+
+							<div class="col-sm-5">
+								<label for="user_name_admin" class="col-form-label">Username</label>
+								<input type="text" id="user_name_admin" name="user_name"
+									class="form-control" th:value="${session.user_name}" required>
+								<label for="user_email_admin" class="col-form-label">Email</label>
+								<input type="text" id="user_email_admin" name="user_email"
+									class="form-control" th:value="${session.user_email}" required>
+
+							</div>
+							<div class="col-sm-5">
+								<label for="address_admin" class="col-form-label">Address</label>
+								<input type="text" id="address_admin" name="address"
+									class="form-control" th:value="${session.address}" required>
+								<label for="contactNumber" class="col-form-label">Contact
+									Number</label> <input type="text" name="contactNumber"
+									id="contactNumber_admin" class="form-control"
+									th:value="${session.contactNumber}" required>
+
+							</div>
+						</div>
+						<div class="d-flex justify-content-between">
+							<div></div>
+							<div>
+								<button style="margin-top: 20px"
+									class="btn btn-info change_password_btn" type="button">CHANGE
+									PASSWORD</button>
+								<button style="margin-top: 20px"
+									class="btn btn-success save_changes_btn" type="button">SAVE
+									CHANGES</button>
+
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</form>
+
+			<!--  End of Profile Modal -->
+			<!-- Change password modals -->
+
+			<!-- Change password modal -->
+			<div class="modal fade" id="change_password_modal" tabindex="-1"
+				role="dialog" aria-labelledby="example" aria-hidden="true">
+				<div class="modal-dialog modal-xl" role="document">
+					<div class="modal-content">
+						<!-- Hidden -->
+						<input type="hidden" id="pass_"> <input type="hidden"
+							id="user_id__">
+						<div class="modal-header" style="display: inline-block;">
+							<h6 class="modal-title" id="exampleModalLabel"
+								style="display: inline-block;">Enter current password</h6>
+						</div>
+
+						<div class="modal-body">
+							<div class="form-group">
+								<label for="id" class="col-form-label">Enter current
+									password:</label> <input class="form-control" type="text"
+									id="password_user" required>
+							</div>
+
+
+						</div>
+						<div class="modal-footer ">
+
+							<button type="button" class="btn btn-info change_pass_verify">Confirm
+								password</button>
+							<button type="button" class="btn"
+								style="margin-left: 10px; background-color: grey; color: white"
+								data-dismiss="modal">Closes</button>
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="change_password_modals" tabindex="-1"
+				role="dialog" aria-labelledby="example" aria-hidden="true">
+				<div class="modal-dialog modal-xl" role="document">
+					<div class="modal-content">
+						<!-- Hidden -->
+						<input type="hidden" id="id_user_id">
+						<div class="modal-header" style="display: inline-block;">
+							<h6 class="modal-title" id="exampleModalLabel"
+								style="display: inline-block;">Enter new password</h6>
+						</div>
+
+						<div class="modal-body">
+							<div class="form-group">
+								<label for="id" class="col-form-label">Enter new
+									password </label> <input class="form-control" type="text"
+									id="newpassword" name="user_password" required> <label
+									for="id" class="col-form-label">Confirm password </label> <input
+									class="form-control" type="text" id="confirmPassword" required>
+							</div>
+						</div>
+						<div class="modal-footer ">
+							<button type="button"
+								class="btn btn-success confirm_new_password">SET
+								PASSWORD</button>
+							<button type="button" class="btn"
+								style="margin-left: 10px; background-color: grey; color: white"
+								data-dismiss="modal">Close</button>
+							<div class="d-flex justify-content-between"
+								style="margin-top: 35px">
+								<div></div>
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- End of change password modal -->
 			<!-- View Ticket -->
 			<div id="myForm">
 
@@ -1474,12 +1630,12 @@
 		<!-- MAIN -->
 	</section>
 	<!-- CONTENT -->
-<script
-	th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
-<script
-	th:src="'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js'"></script>
-<script
-	th:src="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'"></script>
+	<script
+		th:src="'https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'"></script>
+	<script
+		th:src="'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js'"></script>
+	<script
+		th:src="'https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'"></script>
 
 	<script src="Javascript/dashboard.js"></script>
 	<script src="Javascript/admin.ark.js"></script>

@@ -1,5 +1,10 @@
 package com.ticketing_project.Ticketing.Project;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -45,7 +52,7 @@ public class UserController {
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 		response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 		response.setHeader("Expires", "0"); // Proxies.
-		return "login";
+		return "Login";
 	}
 
 	@PostMapping("/login")
@@ -64,7 +71,10 @@ public class UserController {
 				session.setAttribute("user_id", i.getUser_id());
 				session.setAttribute("user_name", i.getUser_name());
 				session.setAttribute("userRole", i.getUserRole());
-
+				session.setAttribute("address", i.getAddress());
+				session.setAttribute("contactNumber", i.getContactNumber());
+				session.setAttribute("profileImage", i.getProfileImage());
+				session.setAttribute("status", i.getStatus());
 				// Set response headers to disable caching
 				response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 				response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
@@ -109,6 +119,9 @@ public class UserController {
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 		response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 		response.setHeader("Expires", "0"); // Proxies.
+		
+		
+		
 		return "admin.ark";
 	}
 
@@ -147,13 +160,17 @@ public class UserController {
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
 		response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
 		response.setHeader("Expires", "0"); // Proxies.
-
+			
 		session.removeAttribute("user_email");
 		session.removeAttribute("user_password");
 		session.removeAttribute("user_id");
 		session.removeAttribute("user_name");
 		session.removeAttribute("userRole");
-
+		session.removeAttribute("address");
+		session.removeAttribute("contactNumber");
+		session.removeAttribute("profileImage");
+		session.removeAttribute("status");
+		
 		session.invalidate();
 		return "redirect:/";
 	}
@@ -196,10 +213,99 @@ public class UserController {
 		return "redirect:/users";
 	}
 
+	@PutMapping("/user/update/profile")
+	@ResponseBody
+	public String updateProfile(@RequestParam int user_id, @ModelAttribute User updateUsers,
+			@RequestParam MultipartFile img1, RedirectAttributes redirectAttributes,HttpSession session) {
+
+		Optional<User> user = userService.findUserById(user_id);
+
+		User updateUserData = user.get();
+		//if img1 is null don't set this imgae to ex
+		if(img1!=null)
+		updateUserData.setProfileImage(img1.getOriginalFilename());
+		
+		updateUserData.setAddress(updateUsers.getAddress());
+		updateUserData.setUser_password(updateUsers.getUser_password());
+		updateUserData.setUser_email(updateUsers.getUser_email());
+		updateUserData.setUser_name(updateUsers.getUser_name());
+		updateUserData.setContactNumber(updateUsers.getContactNumber());
+		updateUserData.setStatus(updateUsers.getStatus());
+		updateUserData.setUserRole(updateUsers.getUserRole());
+		userService.save(updateUserData);
+		
+		session.setAttribute("user_email", updateUserData.getUser_email());
+		session.setAttribute("user_password", updateUserData.getUser_password());
+		session.setAttribute("user_id", updateUserData.getUser_id());
+		session.setAttribute("user_name", updateUserData.getUser_name());
+		session.setAttribute("userRole", updateUserData.getUserRole());
+		session.setAttribute("address", updateUserData.getAddress());
+		session.setAttribute("contactNumber", updateUserData.getContactNumber());
+		session.setAttribute("profileImage", updateUserData.getProfileImage());
+		session.setAttribute("status", updateUserData.getStatus());
+		
+		if (img1 != null) {
+
+			if (updateUserData != null) {
+				try {
+					// Save proof of payment file
+					File saveFile = new ClassPathResource("static/img").getFile();
+					Path proofPath = Paths
+							.get(saveFile.getAbsolutePath() + File.separator + img1.getOriginalFilename());
+					System.out.println(proofPath);
+					System.out.println(img1.getOriginalFilename());
+					Files.copy(img1.getInputStream(), proofPath, StandardCopyOption.REPLACE_EXISTING);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		if (updateUserData.getUserRole().equals("client")) {
+			return "redirect:/dashboard";
+		} else {
+			return "redirect:/admin.ark";
+		}
+	}
+	
+	@PutMapping("/user/update-password/{userID}")
+	@ResponseBody
+	public String updatePassword(@PathVariable int userID,@RequestParam String user_password,HttpSession session,
+			RedirectAttributes redirectAttributes) {
+		Optional<User> existingUser = userService.findUserById(userID);
+
+		existingUser.get().setUser_password(user_password);
+		userService.save(existingUser.get());
+
+		redirectAttributes.addFlashAttribute("updateMessage", "User updated successfully!");
+		 session.setAttribute("user_password", user_password);
+		return "redirect:/admin.ark";
+	}
+
+	
+	
+
 	@DeleteMapping("/user/delete/{userID}")
 	@ResponseBody
-	public void deleteTicket(@PathVariable int userID) {
+	public void deleteTicket(@PathVariable int userID,HttpSession session, HttpServletResponse response) {
+		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+		response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+		response.setHeader("Expires", "0"); // Proxies.
+			
+		session.removeAttribute("user_email");
+		session.removeAttribute("user_password");
+		session.removeAttribute("user_id");
+		session.removeAttribute("user_name");
+		session.removeAttribute("userRole");
+		session.removeAttribute("address");
+		session.removeAttribute("contactNumber");
+		session.removeAttribute("profileImage");
+		session.removeAttribute("status");
+		
+		session.invalidate();
 		userService.deleteUser(userID);
+		
 	}
 
 }
